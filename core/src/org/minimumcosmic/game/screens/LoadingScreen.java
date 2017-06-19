@@ -7,11 +7,10 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.ProgressBar;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
-import com.badlogic.gdx.utils.Align;
+
 import org.minimumcosmic.game.MinimumCosmic;
 
 public class LoadingScreen implements Screen {
@@ -70,6 +69,8 @@ public class LoadingScreen implements Screen {
 
     @Override
     public void show() {
+
+
        progressBar = new ProgressBar(0 , 100, 20, false, skin);
        progressBar.setAnimateDuration(countDown);
        progressBar.setPosition(Gdx.graphics.getWidth() / 2 - progressBar.getWidth() / 2, Gdx.graphics.getHeight() * 0.1f);
@@ -154,3 +155,4 @@ public class LoadingScreen implements Screen {
         stage.dispose();
     }
 }
+

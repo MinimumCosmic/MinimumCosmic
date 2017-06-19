@@ -1,6 +1,5 @@
 package org.minimumcosmic.game.screens;
 
-
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
@@ -16,15 +15,18 @@ import com.badlogic.gdx.utils.viewport.ScreenViewport;
 
 import org.minimumcosmic.game.MinimumCosmic;
 
-public class MenuScreen implements Screen {
+/**
+ * Created by Kostin on 20.06.2017.
+ */
 
+public class HangarScreen implements Screen {
     private MinimumCosmic game;
     private Stage stage;
     private Skin skin;
     private TextureAtlas textureAtlas;
     Sprite backSprite;
 
-    public MenuScreen(MinimumCosmic game) {
+    public HangarScreen(MinimumCosmic game) {
         this.game = game;
 
         stage = new Stage(new ScreenViewport());
@@ -35,8 +37,9 @@ public class MenuScreen implements Screen {
         backSprite = textureAtlas.createSprite("background");
         backSprite.setBounds(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
     }
+
     @Override
-    public void show() {
+    public void show(){
         Gdx.input.setInputProcessor(stage);
 
         Table table = new Table();
@@ -44,37 +47,16 @@ public class MenuScreen implements Screen {
 
         stage.addActor(table);
 
-        TextButton newGame = new TextButton("New Game", skin);
-        TextButton exit = new TextButton("Exit", skin);
-        TextButton hangar = new TextButton("Hangar", skin);
-        //table.bottom().defaults();
-        table.add(newGame).fillX().uniformX().padBottom(Gdx.graphics.getHeight() * 0.1f).width(Gdx.graphics.getWidth() * 0.3f).height(Gdx.graphics.getHeight() * 0.08f);
-        table.row();
-        table.getCell(newGame).spaceBottom(newGame.getHeight() * 0.1f);
-        table.add(hangar).fillX().uniformX().padBottom(Gdx.graphics.getHeight() * 0.1f).width(Gdx.graphics.getWidth() * 0.3f).height(Gdx.graphics.getHeight() * 0.08f);
-        table.getCell(hangar).spaceBottom(hangar.getHeight() * 0.1f);
-        table.row();
-        table.add(exit).fillX().uniformX().padBottom(Gdx.graphics.getHeight() * 0.1f).width(Gdx.graphics.getWidth() * 0.3f).height(Gdx.graphics.getHeight() * 0.08f);
+        TextButton back = new TextButton("Back", skin);
+        table.bottom().defaults();
+        table.left().defaults();
+        table.add(back).fillX().uniformX().width(Gdx.graphics.getWidth() * 0.15f).height(Gdx.graphics.getHeight() * 0.07f);
 
-        // create button listeners
-        exit.addListener(new ChangeListener() {
+
+        back.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
-                Gdx.app.exit();
-            }
-        });
-
-        newGame.addListener(new ChangeListener() {
-            @Override
-            public void changed(ChangeEvent event, Actor actor) {
-                game.changeScreen(MinimumCosmic.APPLICATION);
-            }
-        });
-
-        hangar.addListener(new ChangeListener() {
-            @Override
-            public void changed(ChangeEvent event, Actor actor) {
-                game.changeScreen(MinimumCosmic.HANGAR);
+                game.changeScreen(MinimumCosmic.MENU);
             }
         });
     }
