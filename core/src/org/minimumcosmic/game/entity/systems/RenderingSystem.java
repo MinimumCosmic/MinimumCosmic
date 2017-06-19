@@ -14,19 +14,24 @@ import org.minimumcosmic.game.entity.components.TransformComponent;
 import java.util.Comparator;
 
 public class RenderingSystem extends SortedIteratingSystem {
-    static final float PIXELS_PER_METER = 32.0f;
-    public static final float PIXEL_TO_METERS = 1.0f / PIXELS_PER_METER;
+    static final float PIXELS_PER_METER = 16.0f;
 
-    static final float WORLD_WIDTH = Gdx.graphics.getWidth() / PIXELS_PER_METER;
-    static final float WORLD_HEIGHT = Gdx.graphics.getHeight() / PIXELS_PER_METER;
+    public static final float WORLD_WIDTH = Gdx.graphics.getWidth() / PIXELS_PER_METER;
+    public static final float WORLD_HEIGHT = Gdx.graphics.getHeight() / PIXELS_PER_METER;
+
+    public static final float PIXELS_TO_METRES = 1.0f / PIXELS_PER_METER;
 
     private SpriteBatch spriteBatch;
-    private Array<Entity> entities;
+    private Array<Entity> renderQueue;
     private Comparator<Entity> comparator;
     private OrthographicCamera camera;
 
     private ComponentMapper<TextureComponent> cmTexture;
     private ComponentMapper<TransformComponent> cmTransform;
+
+    public static float pixelsToMeters(float pixelValue) {
+        return pixelValue * PIXELS_TO_METRES;
+    }
 
     @SuppressWarnings("unchecked")
     public RenderingSystem(SpriteBatch spriteBatch) {
@@ -35,7 +40,8 @@ public class RenderingSystem extends SortedIteratingSystem {
         this.spriteBatch = spriteBatch;
         cmTexture = ComponentMapper.getFor(TextureComponent.class);
         cmTransform = ComponentMapper.getFor(TransformComponent.class);
-        entities = new Array<Entity>();
+        renderQueue = new Array<Entity>();
+
         camera = new OrthographicCamera(WORLD_WIDTH, WORLD_HEIGHT);
         camera.position.set(WORLD_WIDTH / 2f, WORLD_HEIGHT / 2f, 0);
     }
@@ -43,14 +49,14 @@ public class RenderingSystem extends SortedIteratingSystem {
     public void update(float deltaTime) {
         super.update(deltaTime);
 
-        //entities.sort(comparator);
+        renderQueue.sort(comparator);
 
         camera.update();
         spriteBatch.setProjectionMatrix(camera.combined);
         spriteBatch.enableBlending();
         spriteBatch.begin();
 
-        for (Entity entity : entities) {
+        for (Entity entity : renderQueue) {
             TextureComponent textureComponent = cmTexture.get(entity);
             TransformComponent transformComponent = cmTransform.get(entity);
 
@@ -68,19 +74,19 @@ public class RenderingSystem extends SortedIteratingSystem {
                     transformComponent.position.x - originX,
                     transformComponent.position.y - originY,
                     originX, originY, width, height,
-                    (transformComponent.scale.x * PIXEL_TO_METERS),
-                    (transformComponent.scale.y * PIXEL_TO_METERS),
+                    pixelsToMeters(transformComponent.scale.x),
+                    pixelsToMeters(transformComponent.scale.y),
                     transformComponent.rotation);
 
         }
 
         spriteBatch.end();
-        entities.clear();
+        renderQueue.clear();
     }
 
     @Override
     protected void processEntity(Entity entity, float deltaTime) {
-        entities.add(entity);
+        renderQueue.add(entity);
     }
 
     public OrthographicCamera getCamera() {
