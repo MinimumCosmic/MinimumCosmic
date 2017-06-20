@@ -10,14 +10,14 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 public class B2dAssetManager {
     public final AssetManager assetManager = new AssetManager();
 
-    //public final String gameImages = "images/game.atlas";
+    public final String gameImages = "images/game_screen.atlas";
 
     public final String loadingImages = "images/loading_screen.atlas";
 
     public final String skin = "skin/uiskin.json";
 
     public void queueAddImages() {
-        //assetManager.load(gameImages, TextureAtlas.class);
+        assetManager.load(gameImages, TextureAtlas.class);
     }
 
     public void queueAddLoadingImages() {

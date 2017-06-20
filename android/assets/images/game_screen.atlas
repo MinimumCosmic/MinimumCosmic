@@ -1,0 +1,11 @@
+spaceship.png
+format: RGBA8888
+filter: MipMapLinearLinear,MipMapLinearLinear
+repeat: none
+player
+  rotate: false
+  xy: 0, 0
+  size: 64, 128
+  orig: 64, 128
+  offset: 0, 0
+  index: -1

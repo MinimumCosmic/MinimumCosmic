@@ -29,7 +29,7 @@ public class MinimumCosmic extends Game {
 				this.setScreen(menuScreen);
 				break;
 			case APPLICATION:
-				if (gameScreen == null) gameScreen = new GameScreen();
+				if (gameScreen == null) gameScreen = new GameScreen(this);
 				this.setScreen(gameScreen);
 				break;
 		}

@@ -7,10 +7,7 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.ui.Image;
-import com.badlogic.gdx.scenes.scene2d.ui.ProgressBar;
-import com.badlogic.gdx.scenes.scene2d.ui.Skin;
-import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.utils.Align;
 import org.minimumcosmic.game.MinimumCosmic;
 
@@ -43,7 +40,7 @@ public class LoadingScreen implements Screen {
         stage = new Stage();
 
         loadAssets();
-
+        game.AssetManager.queueAddImages();
     }
 
     private void loadAssets() {
@@ -59,8 +56,7 @@ public class LoadingScreen implements Screen {
         textureAtlas = game.AssetManager.assetManager.get("images/loading_screen.atlas");
 
         logoSprite = textureAtlas.createSprite("logo");
-        logoSprite.setCenter(Gdx.graphics.getWidth() / 2, Gdx.graphics.getHeight() / 2);
-        logoSprite.setScale(0.5f);
+        logoSprite.setCenter(Gdx.graphics.getWidth() / 2, Gdx.graphics.getHeight() * 0.75f);
 
         backSprite = textureAtlas.createSprite("background");
         backSprite.setBounds(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
@@ -71,9 +67,14 @@ public class LoadingScreen implements Screen {
     @Override
     public void show() {
        progressBar = new ProgressBar(0 , 100, 20, false, skin);
+       progressBar.setWidth(Gdx.graphics.getWidth() / 2);
        progressBar.setAnimateDuration(countDown);
        progressBar.setPosition(Gdx.graphics.getWidth() / 2 - progressBar.getWidth() / 2, Gdx.graphics.getHeight() * 0.1f);
        stage.addActor(progressBar);
+
+       table = new Table();
+       table.setPosition(Gdx.graphics.getWidth() / 2, Gdx.graphics.getHeight() * 0.2f);
+       stage.addActor(table);
     }
 
     @Override
@@ -87,25 +88,27 @@ public class LoadingScreen implements Screen {
 
             progressBar.setValue(currentLoadingStage * 20.0f);
 
+
             switch (currentLoadingStage) {
                 case FONT:
-                    System.out.println("Loading fonts....");
+                    table.row();
+                    table.add(new Label("Loading fonts....", skin)).align(Align.left);
                     game.AssetManager.queueAddFonts();
                     break;
                 case PARTY:
-                    System.out.println("Loading Particle Effects....");
+                    table.row();
+                    table.add(new Label("Loading Particle Effects....", skin)).align(Align.left);
                     game.AssetManager.queueAddParticleEffects();
                     break;
                 case SOUND:
-                    System.out.println("Loading Sounds....");
+                    table.row();
+                    table.add(new Label("Loading Sounds....", skin)).align(Align.left);
                     game.AssetManager.queueAddSounds();
                     break;
                 case MUSIC:
-                    System.out.println("Loading fonts....");
+                    table.row();
+                    table.add(new Label("Loading music....", skin)).align(Align.left);
                     game.AssetManager.queueAddMusic();
-                    break;
-                case 5:
-                    System.out.println("Finished");
                     break;
             }
 

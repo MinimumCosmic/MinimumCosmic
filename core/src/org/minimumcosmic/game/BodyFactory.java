@@ -1,6 +1,9 @@
 package org.minimumcosmic.game;
 
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
+
+import java.util.ArrayList;
 
 public class BodyFactory {
     public static final int STEEL = 0;
@@ -73,6 +76,24 @@ public class BodyFactory {
         return body;
     }
 
+    public Body makeTriangleBody(float x, float y, float size, int material, BodyDef.BodyType bodyType,  boolean fixedRotation) {
+        BodyDef bodyDef = new BodyDef();
+        bodyDef.type = bodyType;
+        bodyDef.position.x = x;
+        bodyDef.position.y = y;
+        bodyDef.fixedRotation = fixedRotation;
+
+        Body body = world.createBody(bodyDef);
+        PolygonShape polygonShape = new PolygonShape();
+        Vector2 []vertices = new Vector2[3];
+        vertices[0] = new Vector2(-1 * size, -1 * size);
+        vertices[1] = new Vector2(0, 1  * size);
+        vertices[2] = new Vector2(1 * size , -1 * size);
+        polygonShape.set(vertices);
+        body.createFixture(makeFixture(material, polygonShape));
+        polygonShape.dispose();
+        return body;
+    }
     // TODO::ADD SENSOR BODIES
 
     static public FixtureDef makeFixture(int material, Shape shape) {

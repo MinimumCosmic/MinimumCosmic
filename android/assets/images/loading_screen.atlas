@@ -10,7 +10,7 @@ background
   offset: 0, 0
   index: -1
 
-logo_v2.png
+logo_v4.png
 format: RGBA8888
 filter: MipMapLinearLinear,MipMapLinearLinear
 repeat: none

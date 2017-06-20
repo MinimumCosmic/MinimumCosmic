@@ -23,7 +23,7 @@ public class ObjectFactory {
     }
 
     // Create a platform
-    private void createPlatform(float x, float y, TextureRegion texture) {
+    public void createPlatform(float x, float y, TextureRegion texture) {
         Entity entity = engine.createEntity();
         B2dBodyComponent b2dbody = engine.createComponent(B2dBodyComponent.class);
         b2dbody.body = bodyFactory.makeBoxBody(x, y, 1.5f, 0.2f, BodyFactory.STONE, BodyDef.BodyType.StaticBody);
@@ -48,7 +48,7 @@ public class ObjectFactory {
     }
 
     // Create a floor entity
-    private void createFloor(TextureRegion texture) {
+    public void createFloor(TextureRegion texture) {
         Entity entity = engine.createEntity();
         B2dBodyComponent b2dbody = engine.createComponent(B2dBodyComponent.class);
         b2dbody.body = bodyFactory.makeBoxBody(0, 0, 100, 0.2f, BodyFactory.STONE, BodyDef.BodyType.StaticBody);
@@ -56,8 +56,8 @@ public class ObjectFactory {
         TypeComponent type = engine.createComponent(TypeComponent.class);
         type.type = TypeComponent.SCENERY;
 
-        TextureComponent textComp = engine.createComponent(TextureComponent.class);
-        textComp.region = texture;
+        //TextureComponent textComp = engine.createComponent(TextureComponent.class);
+        //textComp.region = texture;
 
         TransformComponent position = engine.createComponent(TransformComponent.class);
         position.position.set(0, 0, 0);
@@ -66,14 +66,14 @@ public class ObjectFactory {
 
         entity.add(b2dbody);
         entity.add(position);
-        entity.add(textComp);
+        //entity.add(textComp);
         entity.add(type);
 
         engine.addEntity(entity);
     }
 
     // Create the player entity
-    private void createPlayer(TextureRegion texture, OrthographicCamera camera) {
+    public void createPlayer(TextureRegion texture, OrthographicCamera camera) {
         // Create an empty entity
         Entity entity = engine.createEntity();
 
@@ -87,8 +87,9 @@ public class ObjectFactory {
         TextureComponent textComp = engine.createComponent(TextureComponent.class);
 
         player.camera = camera;
-        b2dbody.body = bodyFactory.makeCircleBody(10, 1, 1, BodyFactory.STONE, BodyDef.BodyType.DynamicBody);
-        position.position.set(10, 1, 0); // Used in RenderingSystem
+        //b2dbody.body = bodyFactory.makeBoxBody(10, 5, 2.5f, 7.5f, BodyFactory.STEEL, BodyDef.BodyType.DynamicBody, false);
+        b2dbody.body = bodyFactory.makeTriangleBody(10, 5, 2.5f, BodyFactory.STEEL, BodyDef.BodyType.DynamicBody, false);
+        position.position.set(10, 5, 0); // Used in RenderingSystem
         textComp.region = texture;
         type.type = TypeComponent.PLAYER;
         stateCom.set(StateComponent.STATE_NORMAL);
