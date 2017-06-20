@@ -1,10 +1,13 @@
 package org.minimumcosmic.game.screens;
 
 
+import aurelienribon.tweenengine.Tween;
+import aurelienribon.tweenengine.TweenManager;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.Sprite;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
@@ -15,6 +18,8 @@ public class LoadingScreen implements Screen {
 
     private MinimumCosmic game;
     private TextureAtlas textureAtlas;
+    private TweenManager tweenManager;
+    private SpriteBatch batch;
 
     public final int IMAGE = 0;        // loading images
     public final int FONT = 1;        // loading fonts
@@ -66,22 +71,34 @@ public class LoadingScreen implements Screen {
 
     @Override
     public void show() {
-       progressBar = new ProgressBar(0 , 100, 20, false, skin);
-       progressBar.setWidth(Gdx.graphics.getWidth() / 2);
-       progressBar.setAnimateDuration(countDown);
-       progressBar.setPosition(Gdx.graphics.getWidth() / 2 - progressBar.getWidth() / 2, Gdx.graphics.getHeight() * 0.1f);
-       stage.addActor(progressBar);
+        tweenManager = new TweenManager();
+        batch = new SpriteBatch();
+        Tween.registerAccessor(Sprite.class, new SpriteAccesor());
 
-       table = new Table();
-       table.setPosition(Gdx.graphics.getWidth() / 2, Gdx.graphics.getHeight() * 0.2f);
-       stage.addActor(table);
+
+        progressBar = new ProgressBar(0 , 100, 20, false, skin);
+        progressBar.setWidth(Gdx.graphics.getWidth() / 2);
+        progressBar.setAnimateDuration(countDown);
+        progressBar.setPosition(Gdx.graphics.getWidth() / 2 - progressBar.getWidth() / 2, Gdx.graphics.getHeight() * 0.1f);
+        stage.addActor(progressBar);
+
+        Tween.set(logoSprite, SpriteAccesor.ALPHA).target(0).start(tweenManager);
+        Tween.to(logoSprite, SpriteAccesor.ALPHA, 2).target(1).start(tweenManager);
+        Tween.to(logoSprite, SpriteAccesor.ALPHA, 2).target(0).delay(3).start(tweenManager);
+
+        table = new Table();
+        table.setPosition(Gdx.graphics.getWidth() / 2, Gdx.graphics.getHeight() * 0.2f);
+        stage.addActor(table);
     }
 
     @Override
     public void render(float delta) {
-        Gdx.gl.glClearColor(0, 0, 0, 1);
+        float red = 36f / 255f; float green = 34f / 255f; float blue = 56f / 255f;
+        Gdx.gl.glClearColor(red, green, blue, 1);
         Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+
+        tweenManager.update(delta);
 
         if (game.AssetManager.assetManager.update()) { // Load some, will return true if done loading
             currentLoadingStage += 1;
@@ -124,9 +141,7 @@ public class LoadingScreen implements Screen {
         stage.act();
 
         stage.getBatch().begin();
-        backSprite.draw(stage.getBatch());
         logoSprite.draw(stage.getBatch());
-        progressBar.draw(stage.getBatch(), 1.0f);
         stage.getBatch().end();
 
         stage.draw();
