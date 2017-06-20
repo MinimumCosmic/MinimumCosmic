@@ -5,6 +5,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.Sprite;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.ProgressBar;
@@ -13,10 +14,15 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table;
 
 import org.minimumcosmic.game.MinimumCosmic;
 
+import aurelienribon.tweenengine.Tween;
+import aurelienribon.tweenengine.TweenManager;
+
 public class LoadingScreen implements Screen {
 
     private MinimumCosmic game;
     private TextureAtlas textureAtlas;
+    private TweenManager tweenManager;
+    private SpriteBatch batch;
 
     public final int IMAGE = 0;        // loading images
     public final int FONT = 1;        // loading fonts
@@ -69,12 +75,18 @@ public class LoadingScreen implements Screen {
 
     @Override
     public void show() {
-
+        tweenManager = new TweenManager();
+        batch = new SpriteBatch();
+        Tween.registerAccessor(Sprite.class, new SpriteAccesor());
 
        progressBar = new ProgressBar(0 , 100, 20, false, skin);
        progressBar.setAnimateDuration(countDown);
        progressBar.setPosition(Gdx.graphics.getWidth() / 2 - progressBar.getWidth() / 2, Gdx.graphics.getHeight() * 0.1f);
        stage.addActor(progressBar);
+
+        Tween.set(logoSprite, SpriteAccesor.ALPHA).target(0).start(tweenManager);
+        Tween.to(logoSprite, SpriteAccesor.ALPHA, 2).target(1).start(tweenManager);
+        Tween.to(logoSprite, SpriteAccesor.ALPHA, 2).target(0).delay(3).start(tweenManager);
     }
 
     @Override
@@ -82,6 +94,8 @@ public class LoadingScreen implements Screen {
         Gdx.gl.glClearColor(0, 0, 0, 1);
         Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+
+        tweenManager.update(delta);
 
         if (game.AssetManager.assetManager.update()) { // Load some, will return true if done loading
             currentLoadingStage += 1;
@@ -119,7 +133,10 @@ public class LoadingScreen implements Screen {
             }
         }
 
-        stage.act();
+        batch.begin();
+        logoSprite.draw(batch);
+        batch.end();
+       /* stage.act();
 
         stage.getBatch().begin();
         backSprite.draw(stage.getBatch());
@@ -127,7 +144,7 @@ public class LoadingScreen implements Screen {
         progressBar.draw(stage.getBatch(), 1.0f);
         stage.getBatch().end();
 
-        stage.draw();
+        stage.draw();*/
     }
 
     @Override
