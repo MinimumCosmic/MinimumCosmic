@@ -7,7 +7,11 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.List;
+import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
+import com.badlogic.gdx.scenes.scene2d.ui.SelectBox;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.badlogic.gdx.scenes.scene2d.ui.Slider;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
@@ -25,6 +29,8 @@ public class HangarScreen implements Screen {
     private Skin skin;
     private TextureAtlas textureAtlas;
     Sprite backSprite;
+    private ScrollPane scrollPane;
+    private Slider slider;
 
     public HangarScreen(MinimumCosmic game) {
         this.game = game;
@@ -59,6 +65,43 @@ public class HangarScreen implements Screen {
                 game.changeScreen(MinimumCosmic.MENU);
             }
         });
+
+        Table listTable = new Table();
+        listTable.top();
+        listTable.left();
+        listTable.setBounds(0, Gdx.graphics.getHeight() * 0.3f, Gdx.graphics.getWidth() * 0.5f, Gdx.graphics.getHeight() * 0.6f);
+        listTable.debug();
+        String []test = new String[10];
+        String []test2 = new String[20];
+        //test = {"first module", "second module", "third module", "fourth module"};
+        for(int i = 0; i < 10; ++i){
+            test[i] = "module 1";
+        }
+        test[0] = "something to show";
+
+        for(int i = 0; i < 20; ++i){
+            test2[i] = "module 2";
+        }
+
+        SelectBox<String> module1 = new SelectBox<String>(skin);
+        module1.setItems(test);
+
+        SelectBox<String> module2 = new SelectBox<String>(skin);
+        module2.setItems(test2);
+
+
+
+        List list = new List(skin);
+        list.setItems(module1);
+        list.setItems(module2);
+
+
+
+
+
+        scrollPane = new ScrollPane(list, skin);
+        listTable.add(scrollPane);
+        stage.addActor(listTable);
     }
 
     @Override
@@ -100,5 +143,7 @@ public class HangarScreen implements Screen {
     @Override
     public void dispose() {
         stage.dispose();
+        skin.dispose();
+        textureAtlas.dispose();
     }
 }
