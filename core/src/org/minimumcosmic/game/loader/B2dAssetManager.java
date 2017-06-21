@@ -4,6 +4,7 @@ import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.assets.loaders.SkinLoader;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.audio.Sound;
+import com.badlogic.gdx.graphics.g2d.ParticleEffect;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 
@@ -11,6 +12,8 @@ public class B2dAssetManager {
     public final AssetManager assetManager = new AssetManager();
 
     public final String gameImages = "images/game_screen.atlas";
+
+    public final String smokeEffect = "smoke.p";
 
     public final String loadingImages = "images/loading_screen.atlas";
 
@@ -29,7 +32,7 @@ public class B2dAssetManager {
     }
 
     public void queueAddParticleEffects() {
-
+        assetManager.load(smokeEffect, ParticleEffect.class);
     }
 
     public void queueAddSkin() {

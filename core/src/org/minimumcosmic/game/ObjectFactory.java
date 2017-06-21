@@ -2,13 +2,17 @@ package org.minimumcosmic.game;
 
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.PooledEngine;
-import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.g2d.ParticleEffect;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.World;
 import org.minimumcosmic.game.entity.components.*;
+import org.minimumcosmic.game.entity.components.modules.*;
+import org.minimumcosmic.game.entity.components.modules.HeadModuleComponent;
 
 public class ObjectFactory {
     private BodyFactory bodyFactory;
@@ -72,15 +76,169 @@ public class ObjectFactory {
         engine.addEntity(entity);
     }
 
+    public Entity createRocket(TextureAtlas textureAtlas, OrthographicCamera orthographicCamera, ParticleEffect particleEffect) {
+        // Create an empty entity
+        Entity entity = engine.createEntity();
+
+        // Add components
+        B2dBodyComponent b2dBody = engine.createComponent(B2dBodyComponent.class);
+        TransformComponent position = engine.createComponent(TransformComponent.class);
+        CameraComponent player = engine.createComponent(CameraComponent.class);
+        RocketComponent rocketComponent = engine.createComponent(RocketComponent.class);
+        ParticleEffectComponent partEffComponent = engine.createComponent(ParticleEffectComponent.class);
+
+        // Empty texture to render the particle effect
+        TextureComponent textureComponent = engine.createComponent(TextureComponent.class);
+
+        particleEffect.scaleEffect(0.025f);
+        particleEffect.getEmitters().first().setPosition(10, 0);
+        partEffComponent.particleEffect = particleEffect;
+        partEffComponent.particleEffect.start();
+
+        rocketComponent.headModule =
+                createHeadModule(10 ,5, textureAtlas.findRegion("head_1"),
+                        50, 30, 15, 50, 25);
+
+        rocketComponent.bodyModule =
+                createBodyModule(10 ,5, textureAtlas.findRegion("body_1"),
+                        150, 20, 100, 75);
+
+        rocketComponent.finsModule =
+                createFinsModule(10,5, textureAtlas.findRegion("fins_1"),
+                        5, 5, 15);
+
+        rocketComponent.engineModule =
+                createEngineModule(10, 5, textureAtlas.findRegion("engine_1"),
+                        35, 10, 35);
+
+        player.camera = orthographicCamera;
+
+        Vector2 []vertices = new Vector2[4];
+        vertices[0] = new Vector2(-2,-3);
+        vertices[1] = new Vector2(2,-3);
+        vertices[2] = new Vector2(1,2);
+        vertices[3] = new Vector2(-1,2);
+
+        b2dBody.body = bodyFactory.makePolygonBody(10, 5, vertices, BodyFactory.STEEL, BodyDef.BodyType.DynamicBody, false);
+        position.position.set(10, 5, 0);
+        b2dBody.body.setUserData(entity);
+
+        entity.add(b2dBody);
+        entity.add(position);
+        entity.add(player);
+        entity.add(rocketComponent);
+        entity.add(partEffComponent);
+        entity.add(textureComponent);
+
+        //add entity to engine
+        engine.addEntity(entity);
+        return entity;
+    }
+
+    public Entity createHeadModule(int x, int y, TextureRegion texture, int weight, int hp, int power, int fuel, int cost) {
+        Entity entity = engine.createEntity();
+
+        TransformComponent position = engine.createComponent(TransformComponent.class);
+        HeadModuleComponent headModuleComponent = engine.createComponent(org.minimumcosmic.game.entity.components.modules.HeadModuleComponent.class);
+        TextureComponent textureComponent = engine.createComponent(TextureComponent.class);
+
+        headModuleComponent.weight = weight;
+        headModuleComponent.cost = cost;
+        headModuleComponent.fuel = fuel;
+        headModuleComponent.healthPoints = hp;
+        headModuleComponent.power = power;
+
+        position.position.set(x, y, 0);
+        textureComponent.region = texture;
+
+        entity.add(position);
+        entity.add(headModuleComponent);
+        entity.add(textureComponent);
+
+        engine.addEntity(entity);
+
+        return entity;
+    }
+
+    public Entity createBodyModule(int x, int y, TextureRegion texture, int weight, int power, int fuel, int cost) {
+        Entity entity = engine.createEntity();
+
+        TransformComponent position = engine.createComponent(TransformComponent.class);
+        BodyModuleComponent bodyModuleComponent = engine.createComponent(BodyModuleComponent.class);
+        TextureComponent textureComponent = engine.createComponent(TextureComponent.class);
+
+        bodyModuleComponent.weight = weight;
+        bodyModuleComponent.cost = cost;
+        bodyModuleComponent.fuel = fuel;
+        bodyModuleComponent.power = power;
+
+        position.position.set(x, y, 0);
+        textureComponent.region = texture;
+
+        entity.add(position);
+        entity.add(bodyModuleComponent);
+        entity.add(textureComponent);
+
+        engine.addEntity(entity);
+
+        return entity;
+    }
+
+    public Entity createFinsModule(int x, int y, TextureRegion texture, int weight, int maneuver, int cost) {
+        Entity entity = engine.createEntity();
+
+        TransformComponent position = engine.createComponent(TransformComponent.class);
+        FinsModuleComponent finsModuleComponent = engine.createComponent(FinsModuleComponent.class);
+        TextureComponent textureComponent = engine.createComponent(TextureComponent.class);
+
+        finsModuleComponent.weight = weight;
+        finsModuleComponent.cost = cost;
+        finsModuleComponent.maneuver = maneuver;
+
+        position.position.set(x, y, 0);
+        textureComponent.region = texture;
+
+        entity.add(position);
+        entity.add(finsModuleComponent);
+        entity.add(textureComponent);
+
+        engine.addEntity(entity);
+
+        return entity;
+    }
+
+    public Entity createEngineModule(int x, int y, TextureRegion texture, int weight, int power, int cost) {
+        Entity entity = engine.createEntity();
+
+        TransformComponent position = engine.createComponent(TransformComponent.class);
+        EngineModuleComponent engineModuleComponent = engine.createComponent(EngineModuleComponent.class);
+        TextureComponent textureComponent = engine.createComponent(TextureComponent.class);
+
+        engineModuleComponent.weight = weight;
+        engineModuleComponent.cost = cost;
+        engineModuleComponent.power = power;
+
+        position.position.set(x, y, 0);
+        textureComponent.region = texture;
+
+        entity.add(position);
+        entity.add(engineModuleComponent);
+        entity.add(textureComponent);
+
+        engine.addEntity(entity);
+
+        return entity;
+    }
+
     // Create the player entity
     public void createPlayer(TextureRegion texture, OrthographicCamera camera) {
         // Create an empty entity
         Entity entity = engine.createEntity();
 
         // Create a Box2dBody, transform, player, collision, type and state component
-        B2dBodyComponent b2dbody = engine.createComponent(B2dBodyComponent.class);
+        B2dBodyComponent b2dBody = engine.createComponent(B2dBodyComponent.class);
         TransformComponent position = engine.createComponent(TransformComponent.class);
-        PlayerComponent player = engine.createComponent(PlayerComponent.class);
+        CameraComponent player = engine.createComponent(CameraComponent.class);
         CollisionComponent colComp = engine.createComponent(CollisionComponent.class);
         TypeComponent type = engine.createComponent(TypeComponent.class);
         StateComponent stateCom = engine.createComponent(StateComponent.class);
@@ -88,15 +246,15 @@ public class ObjectFactory {
 
         player.camera = camera;
         //b2dbody.body = bodyFactory.makeBoxBody(10, 5, 2.5f, 7.5f, BodyFactory.STEEL, BodyDef.BodyType.DynamicBody, false);
-        b2dbody.body = bodyFactory.makeTriangleBody(10, 5, 2.5f, BodyFactory.STEEL, BodyDef.BodyType.DynamicBody, false);
+        b2dBody.body = bodyFactory.makeTriangleBody(10, 5, 2.5f, BodyFactory.STONE, BodyDef.BodyType.DynamicBody, false);
         position.position.set(10, 5, 0); // Used in RenderingSystem
         textComp.region = texture;
         type.type = TypeComponent.PLAYER;
         stateCom.set(StateComponent.STATE_NORMAL);
-        b2dbody.body.setUserData(entity);
+        b2dBody.body.setUserData(entity);
 
         // add components to entity
-        entity.add(b2dbody);
+        entity.add(b2dBody);
         entity.add(position);
         entity.add(textComp);
         entity.add(player);

@@ -94,6 +94,21 @@ public class BodyFactory {
         polygonShape.dispose();
         return body;
     }
+
+    public Body makePolygonBody(float x, float y, Vector2 []vertices, int material, BodyDef.BodyType bodyType,  boolean fixedRotation) {
+        BodyDef bodyDef = new BodyDef();
+        bodyDef.type = bodyType;
+        bodyDef.position.x = x;
+        bodyDef.position.y = y;
+        bodyDef.fixedRotation = fixedRotation;
+
+        Body body = world.createBody(bodyDef);
+        PolygonShape polygonShape = new PolygonShape();
+        polygonShape.set(vertices);
+        body.createFixture(makeFixture(material, polygonShape));
+        polygonShape.dispose();
+        return body;
+    }
     // TODO::ADD SENSOR BODIES
 
     static public FixtureDef makeFixture(int material, Shape shape) {

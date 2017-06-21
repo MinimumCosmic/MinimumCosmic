@@ -4,20 +4,20 @@ import com.badlogic.ashley.core.ComponentMapper;
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.Family;
 import com.badlogic.ashley.systems.IteratingSystem;
+import org.minimumcosmic.game.entity.components.CameraComponent;
 import org.minimumcosmic.game.entity.components.CollisionComponent;
-import org.minimumcosmic.game.entity.components.PlayerComponent;
 import org.minimumcosmic.game.entity.components.TypeComponent;
 
 public class CollisionSystem extends IteratingSystem {
     ComponentMapper<CollisionComponent> cm;
-    ComponentMapper<PlayerComponent> pm;
+    ComponentMapper<CameraComponent> pm;
 
     @SuppressWarnings("unchecked")
     public CollisionSystem() {
-        super(Family.all(CollisionComponent.class, PlayerComponent.class).get());
+        super(Family.all(CollisionComponent.class, CameraComponent.class).get());
 
         cm = ComponentMapper.getFor(CollisionComponent.class);
-        pm = ComponentMapper.getFor(PlayerComponent.class);
+        pm = ComponentMapper.getFor(CameraComponent.class);
     }
 
 

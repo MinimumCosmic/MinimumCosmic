@@ -38,7 +38,7 @@ public class LoadingScreen implements Screen {
     private Sprite backSprite;
     private Sprite logoSprite;
     private Skin skin;
-    ProgressBar progressBar;
+    private ProgressBar progressBar;
 
     public LoadingScreen(MinimumCosmic game) {
         this.game = game;
@@ -74,7 +74,6 @@ public class LoadingScreen implements Screen {
         tweenManager = new TweenManager();
         batch = new SpriteBatch();
         Tween.registerAccessor(Sprite.class, new SpriteAccesor());
-
 
         progressBar = new ProgressBar(0 , 100, 20, false, skin);
         progressBar.setWidth(Gdx.graphics.getWidth() / 2);

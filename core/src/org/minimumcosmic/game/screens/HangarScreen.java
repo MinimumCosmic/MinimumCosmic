@@ -3,6 +3,7 @@ package org.minimumcosmic.game.screens;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.g2d.ParticleEffect;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.scenes.scene2d.Actor;
@@ -21,6 +22,7 @@ public class HangarScreen implements Screen {
     private Skin skin;
     private TextureAtlas textureAtlas;
     Sprite backSprite;
+    ParticleEffect pe;
 
     public HangarScreen(MinimumCosmic game) {
         this.game = game;
@@ -32,6 +34,8 @@ public class HangarScreen implements Screen {
 
         backSprite = textureAtlas.createSprite("background");
         backSprite.setBounds(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+
+
     }
 
     @Override
@@ -55,6 +59,12 @@ public class HangarScreen implements Screen {
                 game.changeScreen(MinimumCosmic.MENU);
             }
         });
+
+        pe = new ParticleEffect();
+        pe = game.AssetManager.assetManager.get("smoke.p");
+        pe.getEmitters().first().setPosition(Gdx.graphics.getWidth() / 2, Gdx.graphics.getHeight() / 2);
+        pe.scaleEffect(0.25f);
+        pe.start();
     }
 
     @Override
@@ -66,9 +76,16 @@ public class HangarScreen implements Screen {
         // tell our stage to do actions and draw itself
         stage.act(Math.min(Gdx.graphics.getDeltaTime(), 1 / 30f));
 
+        pe.update(Gdx.graphics.getDeltaTime());
+
         stage.getBatch().begin();
         backSprite.draw(stage.getBatch());
+        pe.draw(stage.getBatch());
         stage.getBatch().end();
+
+        if (pe.isComplete()) {
+            pe.reset();
+        }
 
         stage.draw();
     }

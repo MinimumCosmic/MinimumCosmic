@@ -7,7 +7,9 @@ import com.badlogic.ashley.systems.SortedIteratingSystem;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.utils.Array;
+import org.minimumcosmic.game.entity.components.ParticleEffectComponent;
 import org.minimumcosmic.game.entity.components.TextureComponent;
 import org.minimumcosmic.game.entity.components.TransformComponent;
 
@@ -28,6 +30,7 @@ public class RenderingSystem extends SortedIteratingSystem {
 
     private ComponentMapper<TextureComponent> cmTexture;
     private ComponentMapper<TransformComponent> cmTransform;
+    private ComponentMapper<ParticleEffectComponent> cmPEffect;
 
     public static float pixelsToMeters(float pixelValue) {
         return pixelValue * PIXELS_TO_METRES;
@@ -40,6 +43,7 @@ public class RenderingSystem extends SortedIteratingSystem {
         this.spriteBatch = spriteBatch;
         cmTexture = ComponentMapper.getFor(TextureComponent.class);
         cmTransform = ComponentMapper.getFor(TransformComponent.class);
+        cmPEffect = ComponentMapper.getFor(ParticleEffectComponent.class);
         renderQueue = new Array<Entity>();
 
         camera = new OrthographicCamera(WORLD_WIDTH, WORLD_HEIGHT);
@@ -59,6 +63,16 @@ public class RenderingSystem extends SortedIteratingSystem {
         for (Entity entity : renderQueue) {
             TextureComponent textureComponent = cmTexture.get(entity);
             TransformComponent transformComponent = cmTransform.get(entity);
+            ParticleEffectComponent particleEffectComponent = cmPEffect.get(entity);
+
+            if (particleEffectComponent != null && particleEffectComponent.isVisible) {
+                particleEffectComponent.particleEffect.update(deltaTime);
+                particleEffectComponent.particleEffect.draw(spriteBatch);
+
+                if (particleEffectComponent.particleEffect.isComplete()) {
+                    particleEffectComponent.particleEffect.reset();
+                }
+            }
 
             if (textureComponent.region == null || transformComponent.isHidden) {
                 continue;
@@ -76,8 +90,7 @@ public class RenderingSystem extends SortedIteratingSystem {
                     originX, originY, width, height,
                     pixelsToMeters(transformComponent.scale.x),
                     pixelsToMeters(transformComponent.scale.y),
-                    transformComponent.rotation);
-
+                    MathUtils.radiansToDegrees * transformComponent.rotation);
         }
 
         spriteBatch.end();
