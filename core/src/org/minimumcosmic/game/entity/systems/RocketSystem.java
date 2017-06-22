@@ -4,6 +4,8 @@ import com.badlogic.ashley.core.ComponentMapper;
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.Family;
 import com.badlogic.ashley.systems.IteratingSystem;
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import org.minimumcosmic.game.controller.KeyboardController;
@@ -60,7 +62,7 @@ public class RocketSystem extends IteratingSystem {
         FinsModuleComponent finsModule = fmm.get(rocket.finsModule);
 
 
-        if (controller.up && bodyModule.fuel > 0) {
+        if ((controller.up || controller.isMouse1Down) && bodyModule.fuel > 0) {
             smoke.particleEffect.start();
             bodyModule.fuel -= 0.25;
             float velocityX = b2Body.body.getMass() * (bodyModule.power + engineModule.power) * -MathUtils.sin(b2Body.body.getAngle());
@@ -81,6 +83,9 @@ public class RocketSystem extends IteratingSystem {
         // Rotate CCW (left)
         if (controller.left) {
             b2Body.body.applyTorque(finsModule.maneuver * b2Body.body.getMass(), true);
+        }
+        if (Gdx.input.getAccelerometerX() != 0) {
+            b2Body.body.applyTorque(Gdx.input.getAccelerometerX() * finsModule.maneuver * b2Body.body.getMass(), true);
         }
 
         // Rotate CW (right)
