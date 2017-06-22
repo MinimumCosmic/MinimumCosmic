@@ -12,8 +12,9 @@ public class BodyFactory {
     public static final int STONE = 3;
 
     private static BodyFactory instance;
-    private World world;
+    public World world;
     private final float DEGTORAD = 0.0174533f;
+    private ArrayList<Body> bodies;
 
     private BodyFactory(World world) {
         this.world = world;
@@ -22,8 +23,16 @@ public class BodyFactory {
     public static BodyFactory getInstance(World world) {
         if (instance == null) {
             instance = new BodyFactory(world);
+            instance.bodies = new ArrayList<Body>();
         }
         return instance;
+    }
+
+    public void deleteAllBodies() {
+        for (Body body : bodies) {
+            world.destroyBody(body);
+        }
+        bodies.clear();
     }
 
     public Body makeBoxBody(float x, float y, float width, float height, int material, BodyDef.BodyType bodyType) {
@@ -46,6 +55,8 @@ public class BodyFactory {
         body.createFixture(makeFixture(material, polygonShape));
         polygonShape.dispose();
 
+
+        bodies.add(body);
         return body;
     }
 
@@ -73,6 +84,8 @@ public class BodyFactory {
         body.createFixture(makeFixture(material, circleShape));
         circleShape.dispose();
 
+
+        bodies.add(body);
         return body;
     }
 
@@ -92,6 +105,9 @@ public class BodyFactory {
         polygonShape.set(vertices);
         body.createFixture(makeFixture(material, polygonShape));
         polygonShape.dispose();
+
+
+        bodies.add(body);
         return body;
     }
 
@@ -107,6 +123,8 @@ public class BodyFactory {
         polygonShape.set(vertices);
         body.createFixture(makeFixture(material, polygonShape));
         polygonShape.dispose();
+
+        bodies.add(body);
         return body;
     }
     // TODO::ADD SENSOR BODIES

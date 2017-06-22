@@ -10,20 +10,30 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.World;
+import jdk.nashorn.internal.runtime.regexp.joni.exception.SyntaxException;
 import org.minimumcosmic.game.entity.components.*;
 import org.minimumcosmic.game.entity.components.modules.*;
 import org.minimumcosmic.game.entity.components.modules.HeadModuleComponent;
+
+import java.util.ArrayList;
 
 public class ObjectFactory {
     private BodyFactory bodyFactory;
     public World world;
     private PooledEngine engine;
 
+
     public ObjectFactory(PooledEngine engine) {
         this.engine = engine;
+
+        System.out.println("Created world");
         world = new World(new Vector2(0, -10f), true);
         world.setContactListener(new B2dContactListener());
         bodyFactory = BodyFactory.getInstance(world);
+    }
+
+    public void dispose() {
+        bodyFactory.deleteAllBodies();
     }
 
     // Create a platform
@@ -54,8 +64,8 @@ public class ObjectFactory {
     // Create a floor entity
     public void createFloor(TextureRegion texture) {
         Entity entity = engine.createEntity();
-        B2dBodyComponent b2dbody = engine.createComponent(B2dBodyComponent.class);
-        b2dbody.body = bodyFactory.makeBoxBody(0, 0, 100, 0.2f, BodyFactory.STONE, BodyDef.BodyType.StaticBody);
+        B2dBodyComponent b2dBody = engine.createComponent(B2dBodyComponent.class);
+        b2dBody.body = bodyFactory.makeBoxBody(0, 0, 100, 0.2f, BodyFactory.STONE, BodyDef.BodyType.StaticBody);
 
         TypeComponent type = engine.createComponent(TypeComponent.class);
         type.type = TypeComponent.SCENERY;
@@ -66,9 +76,9 @@ public class ObjectFactory {
         TransformComponent position = engine.createComponent(TransformComponent.class);
         position.position.set(0, 0, 0);
 
-        b2dbody.body.setUserData(entity);
+        b2dBody.body.setUserData(entity);
 
-        entity.add(b2dbody);
+        entity.add(b2dBody);
         entity.add(position);
         //entity.add(textComp);
         entity.add(type);
@@ -96,19 +106,19 @@ public class ObjectFactory {
         partEffComponent.particleEffect.start();
 
         rocketComponent.headModule =
-                createHeadModule(10 ,5, textureAtlas.findRegion("head_1"),
+                createHeadModule(10 ,5, textureAtlas.findRegion("head_3"),
                         50, 30, 15, 50, 25);
 
         rocketComponent.bodyModule =
-                createBodyModule(10 ,5, textureAtlas.findRegion("body_1"),
+                createBodyModule(10 ,5, textureAtlas.findRegion("body_3"),
                         150, 20, 100, 75);
 
         rocketComponent.finsModule =
-                createFinsModule(10,5, textureAtlas.findRegion("fins_1"),
+                createFinsModule(10,5, textureAtlas.findRegion("fins_3"),
                         5, 5, 15);
 
         rocketComponent.engineModule =
-                createEngineModule(10, 5, textureAtlas.findRegion("engine_1"),
+                createEngineModule(10, 5, textureAtlas.findRegion("engine_3"),
                         35, 10, 35);
 
         player.camera = orthographicCamera;

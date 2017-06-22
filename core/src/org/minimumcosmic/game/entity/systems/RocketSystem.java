@@ -22,9 +22,6 @@ public class RocketSystem extends IteratingSystem {
 
     KeyboardController controller; // input controller
 
-    boolean isThrusting = false;
-
-
     private final static float ROTATION = 5.0f;
     private final static float START_DELAY = 400.0f;
     private final static float BLINK_DELAY = 25.0f;
@@ -66,7 +63,6 @@ public class RocketSystem extends IteratingSystem {
         if (controller.up && bodyModule.fuel > 0) {
             smoke.particleEffect.start();
             bodyModule.fuel -= 0.25;
-            isThrusting = true;
             float velocityX = b2Body.body.getMass() * (bodyModule.power + engineModule.power) * -MathUtils.sin(b2Body.body.getAngle());
             float velocityY = b2Body.body.getMass() * (bodyModule.power + engineModule.power) * MathUtils.cos(b2Body.body.getAngle());
             b2Body.body.applyForceToCenter(new Vector2(velocityX, velocityY), true);
@@ -78,7 +74,6 @@ public class RocketSystem extends IteratingSystem {
                 smoke.particleEffect.reset();
             }
 
-            isThrusting = false;
             b2Body.body.setLinearVelocity(MathUtils.lerp(b2Body.body.getLinearVelocity().x, 0, 0.1f),
                     MathUtils.lerp(b2Body.body.getLinearVelocity().y, -25, 0.05f));
         }
@@ -106,7 +101,5 @@ public class RocketSystem extends IteratingSystem {
         posEngine.position.set(bodyPosition, 2);
         smoke.particleEffect.setPosition(bodyPosition.x, bodyPosition.y - 2.5f);
         posEngine.rotation = posFins.rotation = posBody.rotation = posHead.rotation = bodyRotation;
-
-        System.out.println(bodyModule.fuel);
     }
 }

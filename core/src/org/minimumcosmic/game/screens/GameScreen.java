@@ -1,8 +1,10 @@
 package org.minimumcosmic.game.screens;
 
+import com.badlogic.ashley.core.Engine;
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.PooledEngine;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.*;
 import com.badlogic.gdx.graphics.g2d.ParticleEffect;
@@ -10,9 +12,11 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Button;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.ProgressBar;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import org.minimumcosmic.game.BodyFactory;
 import org.minimumcosmic.game.MinimumCosmic;
 import org.minimumcosmic.game.ObjectFactory;
 import org.minimumcosmic.game.controller.KeyboardController;
@@ -23,7 +27,6 @@ import org.minimumcosmic.game.entity.systems.*;
 
 public class GameScreen implements Screen {
     private KeyboardController controller;
-    //private World world;
     private SpriteBatch spriteBatch;
     private OrthographicCamera camera;
     private PooledEngine engine;
@@ -38,7 +41,7 @@ public class GameScreen implements Screen {
 
     public GameScreen(MinimumCosmic game) {
         this.game = game;
-        stage = new Stage();
+
 
         game.AssetManager.queueAddSounds();
         game.AssetManager.assetManager.finishLoading();
@@ -46,30 +49,36 @@ public class GameScreen implements Screen {
         textureAtlas = game.AssetManager.assetManager.get("images/game_screen.atlas");
         skin = game.AssetManager.assetManager.get("skin/uiskin.json");
 
+
+    }
+
+    @Override
+    public void show() {
+        stage = new Stage();
         controller = new KeyboardController();
         engine = new PooledEngine();
         objectFactory = new ObjectFactory(engine);
         spriteBatch = new SpriteBatch();
 
+        System.out.println("World's body count: " + objectFactory.world.getBodyCount());
         RenderingSystem renderingSystem = new RenderingSystem(spriteBatch);
         camera = renderingSystem.getCamera();
         spriteBatch.setProjectionMatrix(camera.combined);
 
         // Add required systems to the engine
-        engine.addSystem(new PhysicsSystem(objectFactory.world));
+        engine.addSystem(new PhysicsSystem(BodyFactory.getInstance(objectFactory.world).world));
         engine.addSystem(renderingSystem);
-        engine.addSystem(new PhysicsDebugSystem(objectFactory.world, camera));
+        engine.addSystem(new PhysicsDebugSystem(BodyFactory.getInstance(objectFactory.world).world, camera));
         engine.addSystem(new CollisionSystem());
         engine.addSystem(new RocketSystem(controller));
         engine.addSystem(new CameraSystem());
 
+
         ParticleEffect pe = game.AssetManager.assetManager.get("smoke.p");
         rocket = objectFactory.createRocket(textureAtlas, camera, pe);
         objectFactory.createFloor(textureAtlas.findRegion("player"));
-    }
 
-    @Override
-    public void show() {
+
         Gdx.input.setInputProcessor(controller);
 
         fuelMeter = new ProgressBar(0 , 100, 0.25f, true, skin);
@@ -78,6 +87,9 @@ public class GameScreen implements Screen {
         stage.addActor(fuelMeter);
         speedLabel = new Label(100 + "m/s", skin);
         stage.addActor(speedLabel);
+
+        System.out.println("World's body count: " + objectFactory.world.getBodyCount());
+        System.out.println("World's body count in bodyFactory: " + BodyFactory.getInstance(objectFactory.world).world.getBodyCount());
     }
     @Override
     public void render(float delta) {
@@ -93,6 +105,10 @@ public class GameScreen implements Screen {
         stage.draw();
 
         engine.update(delta);
+
+        if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
+            game.changeScreen(MinimumCosmic.MENU);
+        }
     }
 
     @Override
@@ -112,11 +128,11 @@ public class GameScreen implements Screen {
 
     @Override
     public void hide() {
-
+        objectFactory.dispose();
+        stage.dispose();
     }
 
     @Override
     public void dispose() {
-
     }
 }

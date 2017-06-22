@@ -30,3 +30,59 @@ engine_1
   orig: 64, 128
   offset: 0, 0
   index: -1
+body_2
+  rotate: false
+  xy: 64, 0
+  size: 64, 128
+  orig: 64, 128
+  offset: 0, 0
+  index: -1
+head_2
+  rotate: false
+  xy: 64, 128
+  size: 64, 128
+  orig: 64, 128
+  offset: 0, 0
+  index: -1
+fins_2
+  rotate: false
+  xy: 64, 256
+  size: 64, 128
+  orig: 64, 128
+  offset: 0, 0
+  index: -1
+engine_2
+  rotate: false
+  xy: 64, 384
+  size: 64, 128
+  orig: 64, 128
+  offset: 0, 0
+  index: -1
+body_3
+  rotate: false
+  xy: 128, 0
+  size: 64, 128
+  orig: 64, 128
+  offset: 0, 0
+  index: -1
+head_3
+  rotate: false
+  xy: 128, 128
+  size: 64, 128
+  orig: 64, 128
+  offset: 0, 0
+  index: -1
+fins_3
+  rotate: false
+  xy: 128, 256
+  size: 64, 128
+  orig: 64, 128
+  offset: 0, 0
+  index: -1
+engine_3
+  rotate: false
+  xy: 128, 384
+  size: 64, 128
+  orig: 64, 128
+  offset: 0, 0
+  index: -1

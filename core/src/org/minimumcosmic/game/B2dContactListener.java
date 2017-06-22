@@ -9,11 +9,10 @@ public class B2dContactListener implements ContactListener {
 
     @Override
     public void beginContact(Contact contact) {
-        System.out.println("Contact");
         // Get fixtures
         Fixture fa = contact.getFixtureA();
         Fixture fb = contact.getFixtureB();
-        System.out.println(fa.getBody().getType() + " has hit " + fb.getBody().getType());
+
         // check if either fixture has an Entity object stored in the body's userData
         if (fa.getBody().getUserData() instanceof Entity) {
             Entity ent = (Entity) fa.getBody().getUserData();
@@ -45,7 +44,6 @@ public class B2dContactListener implements ContactListener {
 
     @Override
     public void endContact(Contact contact) {
-        System.out.println("Contact end");
     }
 
     @Override

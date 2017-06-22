@@ -1,45 +1,78 @@
 package org.minimumcosmic.game.screens;
 
+import com.badlogic.ashley.core.Entity;
+import com.badlogic.ashley.core.PooledEngine;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.ParticleEffect;
 import com.badlogic.gdx.graphics.g2d.Sprite;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
+
 import org.minimumcosmic.game.MinimumCosmic;
+import org.minimumcosmic.game.ObjectFactory;
+import org.minimumcosmic.game.entity.components.B2dBodyComponent;
+import org.minimumcosmic.game.entity.systems.RenderingSystem;
 
 
 public class HangarScreen implements Screen {
     private MinimumCosmic game;
+    private SpriteBatch spriteBatch;
     private Stage stage;
     private Skin skin;
     private TextureAtlas textureAtlas;
+    private Entity rocket;
+    private PooledEngine engine;
+    private ObjectFactory objectFactory;
+    private OrthographicCamera camera;
     Sprite backSprite;
     ParticleEffect pe;
 
     public HangarScreen(MinimumCosmic game) {
         this.game = game;
 
-        stage = new Stage(new ScreenViewport());
+        //stage = new Stage(new ScreenViewport());
 
         skin = game.AssetManager.assetManager.get("skin/uiskin.json");
-        textureAtlas = game.AssetManager.assetManager.get("images/loading_screen.atlas");
+        textureAtlas = game.AssetManager.assetManager.get("images/game_screen.atlas");
 
-        backSprite = textureAtlas.createSprite("background");
-        backSprite.setBounds(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+        //backSprite = textureAtlas.createSprite("background");
+        //backSprite.setBounds(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+
 
 
     }
 
     @Override
     public void show(){
+        engine = new PooledEngine();
+
+        objectFactory = new ObjectFactory(engine);
+        spriteBatch = new SpriteBatch();
+
+        RenderingSystem renderingSystem = new RenderingSystem(spriteBatch);
+        camera = new OrthographicCamera();
+        spriteBatch.setProjectionMatrix(camera.combined);
+
+
+        engine.addSystem(renderingSystem);
+
+        pe = new ParticleEffect();
+        pe = game.AssetManager.assetManager.get("smoke.p");
+        rocket = objectFactory.createRocket(textureAtlas, camera, pe);
+
+        stage = new Stage(new ScreenViewport());
         Gdx.input.setInputProcessor(stage);
 
         Table table = new Table();
@@ -60,12 +93,36 @@ public class HangarScreen implements Screen {
             }
         });
 
-        pe = new ParticleEffect();
-        pe = game.AssetManager.assetManager.get("smoke.p");
+        //Top buttons to switch module
+        Table modules = new Table();
+        TextButton headButton = new TextButton("Head modules", skin);
+        //TextButton bodyButton = new TextButton();
+
+        Table listTable = new Table();
+        listTable.top();
+        listTable.left();
+        listTable.setBounds(0, Gdx.graphics.getHeight() * 0.2f, Gdx.graphics.getWidth() * 0.5f, Gdx.graphics.getHeight() * 0.6f);
+        listTable.debug();
+
+        Table rocketTable = new Table();
+        rocketTable.setBounds(listTable.getWidth(), Gdx.graphics.getHeight() * 0.2f, Gdx.graphics.getWidth() * 0.5f, Gdx.graphics.getHeight() * 0.6f);
+        rocketTable.debug();
+
+        String []str = {"aaa", "bbb", "ccc"};
+
+        ScrollPane scrollPane = new ScrollPane(new Label("Test", skin), skin);
+        listTable.add(scrollPane);
+        //stage.addActor(listTable);
+        //stage.addActor(rocketTable);
+
+
         pe.getEmitters().first().setPosition(Gdx.graphics.getWidth() / 2, Gdx.graphics.getHeight() / 2);
         pe.scaleEffect(0.25f);
         pe.start();
     }
+
+
+
 
     @Override
     public void render(float delta) {
@@ -76,18 +133,20 @@ public class HangarScreen implements Screen {
         // tell our stage to do actions and draw itself
         stage.act(Math.min(Gdx.graphics.getDeltaTime(), 1 / 30f));
 
-        pe.update(Gdx.graphics.getDeltaTime());
+        //pe.update(Gdx.graphics.getDeltaTime());
 
         stage.getBatch().begin();
-        backSprite.draw(stage.getBatch());
-        pe.draw(stage.getBatch());
+        //backSprite.draw(stage.getBatch());
+        //pe.draw(stage.getBatch());
         stage.getBatch().end();
 
-        if (pe.isComplete()) {
+        /*if (pe.isComplete()) {
             pe.reset();
-        }
+        }*/
 
         stage.draw();
+
+        engine.update(delta);
     }
 
     @Override
@@ -107,7 +166,8 @@ public class HangarScreen implements Screen {
 
     @Override
     public void hide() {
-
+        objectFactory.dispose();
+        stage.dispose();
     }
 
     @Override
