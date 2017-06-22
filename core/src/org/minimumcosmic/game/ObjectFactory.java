@@ -2,7 +2,6 @@ package org.minimumcosmic.game;
 
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.PooledEngine;
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.ParticleEffect;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
@@ -10,8 +9,19 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.World;
-import org.minimumcosmic.game.entity.components.*;
-import org.minimumcosmic.game.entity.components.modules.*;
+
+import org.minimumcosmic.game.entity.components.B2dBodyComponent;
+import org.minimumcosmic.game.entity.components.CameraComponent;
+import org.minimumcosmic.game.entity.components.CollisionComponent;
+import org.minimumcosmic.game.entity.components.ParticleEffectComponent;
+import org.minimumcosmic.game.entity.components.RocketComponent;
+import org.minimumcosmic.game.entity.components.StateComponent;
+import org.minimumcosmic.game.entity.components.TextureComponent;
+import org.minimumcosmic.game.entity.components.TransformComponent;
+import org.minimumcosmic.game.entity.components.TypeComponent;
+import org.minimumcosmic.game.entity.components.modules.BodyModuleComponent;
+import org.minimumcosmic.game.entity.components.modules.EngineModuleComponent;
+import org.minimumcosmic.game.entity.components.modules.FinsModuleComponent;
 import org.minimumcosmic.game.entity.components.modules.HeadModuleComponent;
 
 public class ObjectFactory {
