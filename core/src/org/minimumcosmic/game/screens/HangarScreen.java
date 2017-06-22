@@ -3,10 +3,12 @@ package org.minimumcosmic.game.screens;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.List;
 import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
 import com.badlogic.gdx.scenes.scene2d.ui.SelectBox;
@@ -83,23 +85,39 @@ public class HangarScreen implements Screen {
             test2[i] = "module 2";
         }
 
-        SelectBox<String> module1 = new SelectBox<String>(skin);
-        module1.setItems(test);
+        SelectBox<Image> module1 = new SelectBox<Image>(skin);
+        module1.setItems(new Image(new Texture(Gdx.files.internal("images/logo_v2.png"))));
+        module1.setItems(new Image(new Texture(Gdx.files.internal("images/logo_v2.png"))));
+        module1.setItems(new Image(new Texture(Gdx.files.internal("images/logo_v2.png"))));
+        module1.setItems(new Image(new Texture(Gdx.files.internal("images/logo_v2.png"))));
+        SelectBox module2 = new SelectBox(skin);
 
-        SelectBox<String> module2 = new SelectBox<String>(skin);
-        module2.setItems(test2);
 
 
 
         List list = new List(skin);
-        list.setItems(module1);
-        list.setItems(module2);
+       // list.setItems(module1);
+       // list.setItems(module2);
+       // list.setItems(new Image(new Texture(Gdx.files.internal("images/logo_v2.png"))));
+       // list.setItems(new Image(new Texture(Gdx.files.internal("images/logo_v2.png"))));
+       // list.setItems(new Image(new Texture(Gdx.files.internal("images/logo_v2.png"))));
+       // list.setItems(new Image(new Texture(Gdx.files.internal("images/logo_v2.png"))));
 
 
+        Table table1 = new Table(skin);
+        table1.add(new Image(new Texture(Gdx.files.internal("images/logo_v2.png"))));
+        table1.row();
+        table1.add(new Image(new Texture(Gdx.files.internal("images/logo_v2.png"))));
+        table1.row();
+        table1.add(new Image(new Texture(Gdx.files.internal("images/logo_v2.png"))));
+        table1.row();
+        table1.add(new Image(new Texture(Gdx.files.internal("images/logo_v2.png"))));
+        table1.row();
+
+        module2.setItems(table1);
 
 
-
-        scrollPane = new ScrollPane(list, skin);
+        scrollPane = new ScrollPane(module2, skin);
         listTable.add(scrollPane);
         stage.addActor(listTable);
     }
