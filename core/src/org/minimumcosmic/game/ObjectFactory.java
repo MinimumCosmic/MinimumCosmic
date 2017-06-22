@@ -106,19 +106,19 @@ public class ObjectFactory {
         partEffComponent.particleEffect.start();
 
         rocketComponent.headModule =
-                createHeadModule(10 ,5, textureAtlas.findRegion("head_3"),
+                createHeadModule(15 ,5, textureAtlas.findRegion("head_3"),
                         50, 30, 15, 50, 25);
 
         rocketComponent.bodyModule =
-                createBodyModule(10 ,5, textureAtlas.findRegion("body_3"),
+                createBodyModule(15 ,5, textureAtlas.findRegion("body_3"),
                         150, 20, 100, 75);
 
         rocketComponent.finsModule =
-                createFinsModule(10,5, textureAtlas.findRegion("fins_3"),
+                createFinsModule(15,5, textureAtlas.findRegion("fins_3"),
                         5, 5, 15);
 
         rocketComponent.engineModule =
-                createEngineModule(10, 5, textureAtlas.findRegion("engine_3"),
+                createEngineModule(15, 5, textureAtlas.findRegion("engine_3"),
                         35, 10, 35);
 
         player.camera = orthographicCamera;
@@ -129,8 +129,8 @@ public class ObjectFactory {
         vertices[2] = new Vector2(1,2);
         vertices[3] = new Vector2(-1,2);
 
-        b2dBody.body = bodyFactory.makePolygonBody(10, 5, vertices, BodyFactory.STEEL, BodyDef.BodyType.DynamicBody, false);
-        position.position.set(10, 5, 0);
+        b2dBody.body = bodyFactory.makePolygonBody(15, 5, vertices, BodyFactory.STEEL, BodyDef.BodyType.DynamicBody, false);
+        position.position.set(15, 5, 0);
         b2dBody.body.setUserData(entity);
 
         entity.add(b2dBody);
