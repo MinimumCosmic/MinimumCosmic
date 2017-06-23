@@ -31,7 +31,7 @@ public class LoadingScreen implements Screen {
     private int currentLoadingStage = 0;
 
     // timer for exiting loading screen
-    private float countDown = 2.0f;
+    private float countDown = 1.0f;
 
     private Stage stage;
     private Table table;
@@ -82,8 +82,8 @@ public class LoadingScreen implements Screen {
         stage.addActor(progressBar);
 
         Tween.set(logoSprite, SpriteAccesor.ALPHA).target(0).start(tweenManager);
-        Tween.to(logoSprite, SpriteAccesor.ALPHA, 2).target(1).start(tweenManager);
-        Tween.to(logoSprite, SpriteAccesor.ALPHA, 2).target(0).delay(3).start(tweenManager);
+        Tween.to(logoSprite, SpriteAccesor.ALPHA, countDown).target(1).start(tweenManager);
+        Tween.to(logoSprite, SpriteAccesor.ALPHA, countDown).target(0).delay(countDown).start(tweenManager);
 
         table = new Table();
         table.setPosition(Gdx.graphics.getWidth() / 2, Gdx.graphics.getHeight() * 0.2f);

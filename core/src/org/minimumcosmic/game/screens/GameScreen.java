@@ -42,14 +42,11 @@ public class GameScreen implements Screen {
     public GameScreen(MinimumCosmic game) {
         this.game = game;
 
-
         game.AssetManager.queueAddSounds();
         game.AssetManager.assetManager.finishLoading();
 
         textureAtlas = game.AssetManager.assetManager.get("images/game_screen.atlas");
         skin = game.AssetManager.assetManager.get("skin/uiskin.json");
-
-
     }
 
     @Override
@@ -59,9 +56,8 @@ public class GameScreen implements Screen {
         engine = new PooledEngine();
         objectFactory = new ObjectFactory(engine);
         spriteBatch = new SpriteBatch();
-
-        System.out.println("World's body count: " + objectFactory.world.getBodyCount());
         RenderingSystem renderingSystem = new RenderingSystem(spriteBatch);
+
         camera = renderingSystem.getCamera();
         spriteBatch.setProjectionMatrix(camera.combined);
 
@@ -74,8 +70,9 @@ public class GameScreen implements Screen {
         engine.addSystem(new CameraSystem());
 
 
-        ParticleEffect pe = game.AssetManager.assetManager.get("smoke.p");
-        rocket = objectFactory.createRocket(textureAtlas, camera, pe);
+        rocket = objectFactory.createRocket(textureAtlas, camera,
+                (ParticleEffect) game.AssetManager.assetManager.get("smoke.p"),
+                "xml/rocket.xml");
         objectFactory.createFloor(textureAtlas.findRegion("player"));
 
 
@@ -88,8 +85,6 @@ public class GameScreen implements Screen {
         speedLabel = new Label(100 + "m/s", skin);
         stage.addActor(speedLabel);
 
-        System.out.println("World's body count: " + objectFactory.world.getBodyCount());
-        System.out.println("World's body count in bodyFactory: " + BodyFactory.getInstance(objectFactory.world).world.getBodyCount());
     }
     @Override
     public void render(float delta) {
@@ -134,5 +129,7 @@ public class GameScreen implements Screen {
 
     @Override
     public void dispose() {
+        objectFactory.dispose();
+        stage.dispose();
     }
 }

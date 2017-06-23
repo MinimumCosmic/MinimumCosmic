@@ -10,12 +10,17 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.World;
-import jdk.nashorn.internal.runtime.regexp.joni.exception.SyntaxException;
+import com.badlogic.gdx.utils.Json;
+import com.badlogic.gdx.utils.XmlReader;
 import org.minimumcosmic.game.entity.components.*;
 import org.minimumcosmic.game.entity.components.modules.*;
 import org.minimumcosmic.game.entity.components.modules.HeadModuleComponent;
 
-import java.util.ArrayList;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.Scanner;
 
 public class ObjectFactory {
     private BodyFactory bodyFactory;
@@ -26,7 +31,6 @@ public class ObjectFactory {
     public ObjectFactory(PooledEngine engine) {
         this.engine = engine;
 
-        System.out.println("Created world");
         world = new World(new Vector2(0, -10f), true);
         world.setContactListener(new B2dContactListener());
         bodyFactory = BodyFactory.getInstance(world);
@@ -86,7 +90,113 @@ public class ObjectFactory {
         engine.addEntity(entity);
     }
 
-    public Entity createRocket(TextureAtlas textureAtlas, OrthographicCamera orthographicCamera, ParticleEffect particleEffect) {
+    public Entity createRocket(TextureAtlas atlas, OrthographicCamera camera, ParticleEffect pe, String filePath) {
+        XmlReader xmlReader = new XmlReader();
+        try {
+            XmlReader.Element root = xmlReader.parse(Gdx.files.internal(filePath));
+
+            Vector2 rocketPosition = new Vector2(root.getChildByName("Position").getFloat("x"),
+                    root.getChildByName("Position").getFloat("y"));
+
+            // Create an empty entity
+            Entity entity = engine.createEntity();
+
+            // Add components
+            B2dBodyComponent b2dBody = engine.createComponent(B2dBodyComponent.class);
+            TransformComponent position = engine.createComponent(TransformComponent.class);
+            CameraComponent player = engine.createComponent(CameraComponent.class);
+            RocketComponent rocketComponent = engine.createComponent(RocketComponent.class);
+            ParticleEffectComponent partEffComponent = engine.createComponent(ParticleEffectComponent.class);
+
+            // Empty texture to render the particle effect
+            TextureComponent textureComponent = engine.createComponent(TextureComponent.class);
+
+
+            XmlReader.Element headElement = root.getChildByName("HeadModule");
+            XmlReader.Element bodyElement = root.getChildByName("BodyModule");
+            XmlReader.Element finsElement = root.getChildByName("FinsModule");
+            XmlReader.Element engineElement = root.getChildByName("EngineModule");
+
+            rocketComponent.headModule =
+                    createHeadModule(
+                            rocketPosition.x,
+                            rocketPosition.y,
+                            atlas.findRegion("head_" + headElement.getInt("textureID")),
+                            headElement.getInt("weight"),
+                            headElement.getInt("hp"),
+                            headElement.getInt("power"),
+                            headElement.getInt("fuel"),
+                            headElement.getInt("cost"));
+
+            rocketComponent.bodyModule =
+                    createBodyModule(
+                            rocketPosition.x,
+                            rocketPosition.y,
+                            atlas.findRegion("body_" + bodyElement.getInt("textureID")),
+                            bodyElement.getInt("weight"),
+                            bodyElement.getInt("power"),
+                            bodyElement.getInt("fuel"),
+                            bodyElement.getInt("cost"));
+
+            rocketComponent.finsModule =
+                    createFinsModule(
+                            rocketPosition.x,
+                            rocketPosition.y,
+                            atlas.findRegion("fins_" + finsElement.getInt("textureID")),
+                            finsElement.getInt("weight"),
+                            finsElement.getInt("maneuver"),
+                            finsElement.getInt("cost"));
+
+            rocketComponent.engineModule =
+                    createEngineModule(
+                            rocketPosition.x,
+                            rocketPosition.y,
+                            atlas.findRegion("engine_" + engineElement.getInt("textureID")),
+                            engineElement.getInt("weight"),
+                            engineElement.getInt("power"),
+                            engineElement.getInt("cost"));
+
+            player.camera = camera;
+
+            float scale = root.getChildByName("Scale").getInt("factor");
+
+            partEffComponent.particleEffect = pe;
+            pe.getEmitters().first().setPosition(rocketPosition.x, rocketPosition.y - 3 * scale);
+            pe.scaleEffect(0.025f);
+            partEffComponent.particleEffect.start();
+
+            Vector2[] vertices = new Vector2[4];
+            vertices[0] = new Vector2(-2 * scale, -3 * scale);
+            vertices[1] = new Vector2(2 * scale, -3 * scale);
+            vertices[2] = new Vector2(1 * scale, 2 * scale);
+            vertices[3] = new Vector2(-1 * scale, 2 * scale);
+
+            b2dBody.body = bodyFactory.makePolygonBody(
+                    rocketPosition.x,
+                    rocketPosition.y,
+                    vertices,
+                    BodyFactory.STEEL,
+                    BodyDef.BodyType.DynamicBody,
+                    false);
+            b2dBody.body.setUserData(entity);
+
+            entity.add(b2dBody);
+            entity.add(position);
+            entity.add(player);
+            entity.add(rocketComponent);
+            entity.add(partEffComponent);
+            entity.add(textureComponent);
+
+            //add entity to engine
+            engine.addEntity(entity);
+            return entity;
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+    public Entity createRocket(TextureAtlas atlas, OrthographicCamera camera, ParticleEffect pe) {
         // Create an empty entity
         Entity entity = engine.createEntity();
 
@@ -100,34 +210,34 @@ public class ObjectFactory {
         // Empty texture to render the particle effect
         TextureComponent textureComponent = engine.createComponent(TextureComponent.class);
 
-        particleEffect.scaleEffect(0.025f);
-        particleEffect.getEmitters().first().setPosition(10, 0);
-        partEffComponent.particleEffect = particleEffect;
+        pe.scaleEffect(0.025f);
+        pe.getEmitters().first().setPosition(10, 0);
+        partEffComponent.particleEffect = pe;
         partEffComponent.particleEffect.start();
 
         rocketComponent.headModule =
-                createHeadModule(15 ,5, textureAtlas.findRegion("head_3"),
+                createHeadModule(15, 5, atlas.findRegion("head_3"),
                         50, 30, 15, 50, 25);
 
         rocketComponent.bodyModule =
-                createBodyModule(15 ,5, textureAtlas.findRegion("body_3"),
+                createBodyModule(15, 5, atlas.findRegion("body_3"),
                         150, 20, 100, 75);
 
         rocketComponent.finsModule =
-                createFinsModule(15,5, textureAtlas.findRegion("fins_3"),
+                createFinsModule(15, 5, atlas.findRegion("fins_3"),
                         5, 5, 15);
 
         rocketComponent.engineModule =
-                createEngineModule(15, 5, textureAtlas.findRegion("engine_3"),
+                createEngineModule(15, 5, atlas.findRegion("engine_3"),
                         35, 10, 35);
 
-        player.camera = orthographicCamera;
+        player.camera = camera;
 
-        Vector2 []vertices = new Vector2[4];
-        vertices[0] = new Vector2(-2,-3);
-        vertices[1] = new Vector2(2,-3);
-        vertices[2] = new Vector2(1,2);
-        vertices[3] = new Vector2(-1,2);
+        Vector2[] vertices = new Vector2[4];
+        vertices[0] = new Vector2(-2, -3);
+        vertices[1] = new Vector2(2, -3);
+        vertices[2] = new Vector2(1, 2);
+        vertices[3] = new Vector2(-1, 2);
 
         b2dBody.body = bodyFactory.makePolygonBody(15, 5, vertices, BodyFactory.STEEL, BodyDef.BodyType.DynamicBody, false);
         position.position.set(15, 5, 0);
@@ -145,7 +255,7 @@ public class ObjectFactory {
         return entity;
     }
 
-    public Entity createHeadModule(int x, int y, TextureRegion texture, int weight, int hp, int power, int fuel, int cost) {
+    public Entity createHeadModule(float x, float y, TextureRegion texture, int weight, int hp, int power, int fuel, int cost) {
         Entity entity = engine.createEntity();
 
         TransformComponent position = engine.createComponent(TransformComponent.class);
@@ -170,7 +280,7 @@ public class ObjectFactory {
         return entity;
     }
 
-    public Entity createBodyModule(int x, int y, TextureRegion texture, int weight, int power, int fuel, int cost) {
+    public Entity createBodyModule(float x, float y, TextureRegion texture, int weight, int power, int fuel, int cost) {
         Entity entity = engine.createEntity();
 
         TransformComponent position = engine.createComponent(TransformComponent.class);
@@ -194,7 +304,7 @@ public class ObjectFactory {
         return entity;
     }
 
-    public Entity createFinsModule(int x, int y, TextureRegion texture, int weight, int maneuver, int cost) {
+    public Entity createFinsModule(float x, float y, TextureRegion texture, int weight, int maneuver, int cost) {
         Entity entity = engine.createEntity();
 
         TransformComponent position = engine.createComponent(TransformComponent.class);
@@ -217,7 +327,7 @@ public class ObjectFactory {
         return entity;
     }
 
-    public Entity createEngineModule(int x, int y, TextureRegion texture, int weight, int power, int cost) {
+    public Entity createEngineModule(float x, float y, TextureRegion texture, int weight, int power, int cost) {
         Entity entity = engine.createEntity();
 
         TransformComponent position = engine.createComponent(TransformComponent.class);
@@ -238,42 +348,5 @@ public class ObjectFactory {
         engine.addEntity(entity);
 
         return entity;
-    }
-
-    // Create the player entity
-    public void createPlayer(TextureRegion texture, OrthographicCamera camera) {
-        // Create an empty entity
-        Entity entity = engine.createEntity();
-
-        // Create a Box2dBody, transform, player, collision, type and state component
-        B2dBodyComponent b2dBody = engine.createComponent(B2dBodyComponent.class);
-        TransformComponent position = engine.createComponent(TransformComponent.class);
-        CameraComponent player = engine.createComponent(CameraComponent.class);
-        CollisionComponent colComp = engine.createComponent(CollisionComponent.class);
-        TypeComponent type = engine.createComponent(TypeComponent.class);
-        StateComponent stateCom = engine.createComponent(StateComponent.class);
-        TextureComponent textComp = engine.createComponent(TextureComponent.class);
-
-        player.camera = camera;
-        //b2dbody.body = bodyFactory.makeBoxBody(10, 5, 2.5f, 7.5f, BodyFactory.STEEL, BodyDef.BodyType.DynamicBody, false);
-        b2dBody.body = bodyFactory.makeTriangleBody(10, 5, 2.5f, BodyFactory.STONE, BodyDef.BodyType.DynamicBody, false);
-        position.position.set(10, 5, 0); // Used in RenderingSystem
-        textComp.region = texture;
-        type.type = TypeComponent.PLAYER;
-        stateCom.set(StateComponent.STATE_NORMAL);
-        b2dBody.body.setUserData(entity);
-
-        // add components to entity
-        entity.add(b2dBody);
-        entity.add(position);
-        entity.add(textComp);
-        entity.add(player);
-        entity.add(colComp);
-        entity.add(type);
-        entity.add(stateCom);
-
-        //add entity to engine
-        engine.addEntity(entity);
-
     }
 }

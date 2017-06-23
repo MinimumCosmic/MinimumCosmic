@@ -68,9 +68,9 @@ public class HangarScreen implements Screen {
 
         engine.addSystem(renderingSystem);
 
-        pe = new ParticleEffect();
-        pe = game.AssetManager.assetManager.get("smoke.p");
-        rocket = objectFactory.createRocket(textureAtlas, camera, pe);
+        rocket = objectFactory.createRocket(textureAtlas, camera,
+                (ParticleEffect)game.AssetManager.assetManager.get("smoke.p"),
+                "xml/rocket.xml");
 
         stage = new Stage(new ScreenViewport());
         Gdx.input.setInputProcessor(stage);
@@ -112,13 +112,6 @@ public class HangarScreen implements Screen {
 
         ScrollPane scrollPane = new ScrollPane(new Label("Test", skin), skin);
         listTable.add(scrollPane);
-        //stage.addActor(listTable);
-        //stage.addActor(rocketTable);
-
-
-        pe.getEmitters().first().setPosition(Gdx.graphics.getWidth() / 2, Gdx.graphics.getHeight() / 2);
-        pe.scaleEffect(0.25f);
-        pe.start();
     }
 
 
