@@ -1,0 +1,83 @@
+<Modules>
+    <HeadModules>
+        <Module id="1" name="Basic">
+            <Description text="A cheap and weak basic head section"/>
+            <BasicProperties weight="50" cost="25"/>
+            <AdvancedProperties hp="50" power="15" fuel="50"/>
+        </Module>
+
+        <Module id="2" name="Boxy">
+            <Description text="A more 'boxy' head"/>
+            <BasicProperties weight="150" cost="100"/>
+            <AdvancedProperties hp="100" power="10" fuel="100"/>
+        </Module>
+
+        <Module id="3" name="Sleek">
+            <Description text="Stylish modification of the basic model"/>
+            <BasicProperties weight="50" cost="200"/>
+            <AdvancedProperties hp="75" power="20" fuel="75"/>
+        </Module>
+    </HeadModules>
+
+    <BodyModules>
+        <Module id="1" name="Basic">
+            <Description text="A cheap and weak basic body section"/>
+            <BasicProperties weight="150" cost="75"/>
+            <AdvancedProperties power="20" fuel="100"/>
+        </Module>
+
+        <Module id="2" name="Boxy">
+            <Description text="Sometimes you just need more fuel"/>
+            <BasicProperties weight="250" cost="200"/>
+            <AdvancedProperties power="20" fuel="150"/>
+        </Module>
+
+        <Module id="3" name="Reddish">
+            <Description text="A pair of stylish red stripes make your rocket go faster"/>
+            <BasicProperties weight="175" cost="350"/>
+            <AdvancedProperties power="30" fuel="200"/>
+        </Module>
+
+        <Module/>
+    </BodyModules>
+
+    <FinsModules>
+        <Module id="1" name="Basic">
+            <Description text="A cheap fins that get the things done"/>
+            <BasicProperties weight="5" cost="15"/>
+            <AdvancedProperties maneuver="5"/>
+        </Module>
+
+        <Module id="2" name="Fuzzy">
+            <Description text="Fuzzy!"/>
+            <BasicProperties weight="5" cost="50"/>
+            <AdvancedProperties maneuver="7"/>
+        </Module>
+
+        <Module id="3" name="Curve">
+            <Description text="Best, at the right places"/>
+            <BasicProperties weight="5" cost="100"/>
+            <AdvancedProperties maneuver="10"/>
+        </Module>
+    </FinsModules>
+
+    <EngineModules>
+        <Module id="1" name="Basic">
+            <Description text="A basic, bland engines"/>
+            <BasicProperties weight="35" cost="35"/>
+            <AdvancedProperties power="10"/>
+        </Module>
+
+        <Module id="2" name="Clingy">
+            <Description text="Through the time and more time"/>
+            <BasicProperties weight="5" cost="100"/>
+            <AdvancedProperties power="12"/>
+        </Module>
+
+        <Module id="3" name="Curve">
+            <Description text="Best, at the right places"/>
+            <BasicProperties weight="5" cost="175"/>
+            <AdvancedProperties power="15"/>
+        </Module>
+    </EngineModules>
+</Modules>

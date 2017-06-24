@@ -36,22 +36,11 @@ public class HangarScreen implements Screen {
     private PooledEngine engine;
     private ObjectFactory objectFactory;
     private OrthographicCamera camera;
-    Sprite backSprite;
-    ParticleEffect pe;
 
     public HangarScreen(MinimumCosmic game) {
         this.game = game;
-
-        //stage = new Stage(new ScreenViewport());
-
         skin = game.AssetManager.assetManager.get("skin/uiskin.json");
         textureAtlas = game.AssetManager.assetManager.get("images/game_screen.atlas");
-
-        //backSprite = textureAtlas.createSprite("background");
-        //backSprite.setBounds(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-
-
-
     }
 
     @Override

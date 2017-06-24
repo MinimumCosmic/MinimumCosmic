@@ -39,6 +39,8 @@ public class GameScreen implements Screen {
     private Skin skin;
     private Label speedLabel;
 
+
+
     public GameScreen(MinimumCosmic game) {
         this.game = game;
 
@@ -65,20 +67,24 @@ public class GameScreen implements Screen {
         engine.addSystem(new PhysicsSystem(BodyFactory.getInstance(objectFactory.world).world));
         engine.addSystem(renderingSystem);
         engine.addSystem(new PhysicsDebugSystem(BodyFactory.getInstance(objectFactory.world).world, camera));
-        engine.addSystem(new CollisionSystem());
+        engine.addSystem(new CollisionSystem(objectFactory));
         engine.addSystem(new RocketSystem(controller));
         engine.addSystem(new CameraSystem());
+        engine.addSystem(new BoundsSystem());
 
 
         rocket = objectFactory.createRocket(textureAtlas, camera,
                 (ParticleEffect) game.AssetManager.assetManager.get("smoke.p"),
                 "xml/rocket.xml");
         objectFactory.createFloor(textureAtlas.findRegion("player"));
+        objectFactory.createMoney(15, 20, textureAtlas);
 
 
         Gdx.input.setInputProcessor(controller);
 
-        fuelMeter = new ProgressBar(0 , 100, 0.25f, true, skin);
+        fuelMeter = new ProgressBar(0 ,
+                rocket.getComponent(RocketComponent.class).bodyModule.getComponent(BodyModuleComponent.class).fuel,
+                0.25f, true, skin);
         fuelMeter.setHeight(Gdx.graphics.getHeight() / 2);
         fuelMeter.setPosition(Gdx.graphics.getWidth() * 0.95f, Gdx.graphics.getHeight() * 0.1f);
         stage.addActor(fuelMeter);
@@ -97,12 +103,17 @@ public class GameScreen implements Screen {
         speedLabel.setText(rocket.getComponent(B2dBodyComponent.class).body.getLinearVelocity().y + "m/s");
 
         stage.act();
-        stage.draw();
-
         engine.update(delta);
 
-        if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
+        stage.draw();
+
+        if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE) || Gdx.input.isCatchBackKey()) {
             game.changeScreen(MinimumCosmic.MENU);
+        }
+
+        if (Gdx.input.isKeyJustPressed(Input.Keys.R)) {
+            this.dispose();
+            this.show();
         }
     }
 

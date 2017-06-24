@@ -4,6 +4,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 
 public class BodyFactory {
     public static final int STEEL = 0;
@@ -33,6 +34,18 @@ public class BodyFactory {
             world.destroyBody(body);
         }
         bodies.clear();
+    }
+
+    public void deleteBody(Body body) {
+        Iterator<Body> itr = bodies.iterator();
+        while (itr.hasNext()) {
+            Body curBody = itr.next();
+            if (curBody == body) {
+                itr.remove();
+                world.destroyBody(body);
+                return;
+            }
+        }
     }
 
     public Body makeBoxBody(float x, float y, float width, float height, int material, BodyDef.BodyType bodyType) {
@@ -127,7 +140,33 @@ public class BodyFactory {
         bodies.add(body);
         return body;
     }
-    // TODO::ADD SENSOR BODIES
+
+    public Body makeSensorBody(float x, float y, float radius, BodyDef.BodyType bodyType, boolean fixedRotation) {
+        // create a definition
+        BodyDef boxBodyDef = new BodyDef();
+        boxBodyDef.type = bodyType;
+        boxBodyDef.position.x = x;
+        boxBodyDef.position.y = y;
+        boxBodyDef.fixedRotation = fixedRotation;
+
+        //create the body to attach said definition
+        Body boxBody = world.createBody(boxBodyDef);
+        this.makeSensorFixture(boxBody, radius);
+
+        bodies.add(boxBody);
+        return boxBody;
+    }
+
+    public void makeSensorFixture(Body body, float size){
+        FixtureDef fixtureDef = new FixtureDef();
+        fixtureDef.isSensor = true;
+        CircleShape circleShape = new CircleShape();
+        circleShape.setRadius(size);
+        fixtureDef.shape = circleShape;
+        body.createFixture(fixtureDef);
+        circleShape.dispose();
+
+    }
 
     static public FixtureDef makeFixture(int material, Shape shape) {
         FixtureDef fixtureDef = new FixtureDef();

@@ -4,6 +4,9 @@ import com.badlogic.ashley.core.ComponentMapper;
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.Family;
 import com.badlogic.ashley.systems.IteratingSystem;
+import org.minimumcosmic.game.BodyFactory;
+import org.minimumcosmic.game.ObjectFactory;
+import org.minimumcosmic.game.entity.components.B2dBodyComponent;
 import org.minimumcosmic.game.entity.components.CameraComponent;
 import org.minimumcosmic.game.entity.components.CollisionComponent;
 import org.minimumcosmic.game.entity.components.TypeComponent;
@@ -11,13 +14,15 @@ import org.minimumcosmic.game.entity.components.TypeComponent;
 public class CollisionSystem extends IteratingSystem {
     ComponentMapper<CollisionComponent> cm;
     ComponentMapper<CameraComponent> pm;
+    ObjectFactory objectFactory;
 
     @SuppressWarnings("unchecked")
-    public CollisionSystem() {
+    public CollisionSystem(ObjectFactory objectFactory) {
         super(Family.all(CollisionComponent.class, CameraComponent.class).get());
 
         cm = ComponentMapper.getFor(CollisionComponent.class);
         pm = ComponentMapper.getFor(CameraComponent.class);
+        this.objectFactory = objectFactory;
     }
 
 
@@ -36,6 +41,10 @@ public class CollisionSystem extends IteratingSystem {
                         break;
                     case TypeComponent.SCENERY:
                         System.out.println("player hit scenery");
+                        break;
+                    case TypeComponent.PICKUP:
+                        objectFactory.deleteBody(collidedEntity.getComponent(B2dBodyComponent.class).body);
+                        System.out.println("player hit pickup");
                         break;
                     case TypeComponent.OTHER:
                         System.out.println("player hit other");

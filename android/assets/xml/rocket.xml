@@ -1,13 +1,14 @@
 <Rocket>
     <Position x="15" y="5"/>
+
     <Scale factor="1"/>
 
-    <HeadModule textureID="2" weight="50" hp="30" power="15" fuel="50" cost="25"/>
+    <HeadModule id="2"/>
 
-    <BodyModule textureID="3" weight="150" power="20" fuel="100" cost="75"/>
+    <BodyModule id="2"/>
 
-    <FinsModule textureID="3" weight="5" maneuver="5" cost="15"/>
+    <FinsModule id="2"/>
 
-    <EngineModule textureID="3" weight="35" power="10" cost="35"/>
+    <EngineModule id="2"/>
 
 </Rocket>

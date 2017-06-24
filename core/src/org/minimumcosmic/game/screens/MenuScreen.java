@@ -48,11 +48,14 @@ public class MenuScreen implements Screen {
         TextButton exit = new TextButton("Exit", skin);
 
         table.bottom().defaults();
-        table.add(newGame).fillX().uniformX().padBottom(Gdx.graphics.getHeight() * 0.025f).width(Gdx.graphics.getWidth() * 0.4f).height(Gdx.graphics.getHeight() * 0.05f);
+        table.add(newGame).fillX().uniformX().padBottom(Gdx.graphics.getHeight() * 0.025f)
+                .width(Gdx.graphics.getWidth() * 0.4f).height(Gdx.graphics.getHeight() * 0.05f);
         table.row();
-        table.add(hangar).fillX().uniformX().padBottom(Gdx.graphics.getHeight() * 0.025f).width(Gdx.graphics.getWidth() * 0.4f).height(Gdx.graphics.getHeight() * 0.05f);
+        table.add(hangar).fillX().uniformX().padBottom(Gdx.graphics.getHeight() * 0.025f)
+                .width(Gdx.graphics.getWidth() * 0.4f).height(Gdx.graphics.getHeight() * 0.05f);
         table.row();
-        table.add(exit).fillX().uniformX().padBottom(Gdx.graphics.getHeight() * 0.1f).width(Gdx.graphics.getWidth() * 0.4f).height(Gdx.graphics.getHeight() * 0.05f);
+        table.add(exit).fillX().uniformX().padBottom(Gdx.graphics.getHeight() * 0.1f)
+                .width(Gdx.graphics.getWidth() * 0.4f).height(Gdx.graphics.getHeight() * 0.05f);
 
         // create button listeners
         exit.addListener(new ChangeListener() {
