@@ -7,9 +7,11 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.ParticleEffect;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.ProgressBar;
@@ -21,6 +23,8 @@ import org.minimumcosmic.game.ObjectFactory;
 import org.minimumcosmic.game.controller.KeyboardController;
 import org.minimumcosmic.game.entity.components.B2dBodyComponent;
 import org.minimumcosmic.game.entity.components.RocketComponent;
+import org.minimumcosmic.game.entity.components.TextureComponent;
+import org.minimumcosmic.game.entity.components.TransformComponent;
 import org.minimumcosmic.game.entity.components.modules.BodyModuleComponent;
 import org.minimumcosmic.game.entity.systems.BoundsSystem;
 import org.minimumcosmic.game.entity.systems.CameraSystem;
@@ -81,8 +85,8 @@ public class GameScreen implements Screen {
                 (ParticleEffect) game.AssetManager.assetManager.get("smoke.p"),
                 "xml/rocket.xml");
         objectFactory.createFloor(textureAtlas.findRegion("player"));
-        objectFactory.createMoney(15, 20, textureAtlas);
-
+        //objectFactory.createMoney(15, 20, textureAtlas);
+        objectFactory.generateWorld(textureAtlas);
 
         Gdx.input.setInputProcessor(controller);
 

@@ -7,6 +7,7 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.ParticleEffect;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
@@ -26,17 +27,25 @@ import org.minimumcosmic.game.entity.components.modules.BodyModuleComponent;
 import org.minimumcosmic.game.entity.components.modules.EngineModuleComponent;
 import org.minimumcosmic.game.entity.components.modules.FinsModuleComponent;
 import org.minimumcosmic.game.entity.components.modules.HeadModuleComponent;
+import org.minimumcosmic.game.entity.systems.RenderingSystem;
 
 import java.io.IOException;
+import java.util.Random;
 
 public class ObjectFactory {
+
+    public static final float WORLD_WIDTH = RenderingSystem.WORLD_WIDTH;
+    public static final float WORLD_HEIGHT = RenderingSystem.WORLD_HEIGHT * 100;
+
     private BodyFactory bodyFactory;
     public World world;
     private PooledEngine engine;
+    public final Random rand;
 
 
     public ObjectFactory(PooledEngine engine) {
         this.engine = engine;
+        rand = new Random();
 
         world = new World(new Vector2(0, -10f), true);
         world.setContactListener(new B2dContactListener());
@@ -48,6 +57,19 @@ public class ObjectFactory {
     }
 
     public void deleteBody(Body body) {bodyFactory.deleteBody(body);}
+
+
+    public void generateWorld(TextureAtlas atlas) {
+        int y = 0;
+        while (y < WORLD_HEIGHT) {
+            float x = rand.nextFloat() * WORLD_WIDTH;
+            if (rand.nextFloat() > 0.6f) {
+                createMoney(x + MathUtils.random(-0.5f, 0.5f), y + rand.nextFloat() * 3, atlas);
+            }
+            y += rand.nextFloat() * 10 ;
+        }
+    }
+
 
     // Create a platform
     public void createPlatform(float x, float y, TextureRegion texture) {

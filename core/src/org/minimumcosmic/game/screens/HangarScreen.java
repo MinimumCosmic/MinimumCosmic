@@ -80,12 +80,8 @@ public class HangarScreen implements Screen {
         textureAtlas = game.AssetManager.assetManager.get("images/loading_screen.atlas");
         rocketAtlas = game.AssetManager.assetManager.get("images/game_screen.atlas");
 
-        stage = new Stage(new ScreenViewport());
-
         backSprite = textureAtlas.createSprite("background");
         backSprite.setBounds(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-
-
     }
 
     @Override
@@ -93,7 +89,7 @@ public class HangarScreen implements Screen {
         engine = new PooledEngine();
         objectFactory = new ObjectFactory(engine);
         spriteBatch = new SpriteBatch();
-
+        stage = new Stage(new ScreenViewport());
 
 
         camera = new OrthographicCamera();
@@ -411,7 +407,9 @@ public class HangarScreen implements Screen {
                 table.row();
             }
 
-            final MyActor headModule = new MyActor(rocketAtlas.findRegion("head_" + i), objectFactory.createHeadModule(rocketPosition, rocketAtlas, i));
+            Entity head = objectFactory.createHeadModule(rocketPosition, rocketAtlas, i);
+            engine.removeEntity(head);
+            final MyActor headModule = new MyActor(rocketAtlas.findRegion("head_" + i), head);
             headModule.addListener(new InputListener(){
                 public boolean touchDown (InputEvent event, float x, float y, int pointer, int button) {
                     confirmChooseTable.clear();
@@ -490,6 +488,7 @@ public class HangarScreen implements Screen {
 
     @Override
     public void dispose() {
+        objectFactory.dispose();
         stage.dispose();
     }
 }

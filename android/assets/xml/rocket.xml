@@ -3,12 +3,12 @@
 
     <Scale factor="1"/>
 
-    <HeadModule id="2"/>
+    <HeadModule id="3"/>
 
-    <BodyModule id="2"/>
+    <BodyModule id="3"/>
 
-    <FinsModule id="2"/>
+    <FinsModule id="3"/>
 
-    <EngineModule id="2"/>
+    <EngineModule id="3"/>
 
 </Rocket>
