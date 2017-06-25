@@ -12,8 +12,19 @@ import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.XmlReader;
-import org.minimumcosmic.game.entity.components.*;
-import org.minimumcosmic.game.entity.components.modules.*;
+
+import org.minimumcosmic.game.entity.components.B2dBodyComponent;
+import org.minimumcosmic.game.entity.components.BoundsComponent;
+import org.minimumcosmic.game.entity.components.CameraComponent;
+import org.minimumcosmic.game.entity.components.CollisionComponent;
+import org.minimumcosmic.game.entity.components.ParticleEffectComponent;
+import org.minimumcosmic.game.entity.components.RocketComponent;
+import org.minimumcosmic.game.entity.components.TextureComponent;
+import org.minimumcosmic.game.entity.components.TransformComponent;
+import org.minimumcosmic.game.entity.components.TypeComponent;
+import org.minimumcosmic.game.entity.components.modules.BodyModuleComponent;
+import org.minimumcosmic.game.entity.components.modules.EngineModuleComponent;
+import org.minimumcosmic.game.entity.components.modules.FinsModuleComponent;
 import org.minimumcosmic.game.entity.components.modules.HeadModuleComponent;
 
 import java.io.IOException;
@@ -370,5 +381,83 @@ public class ObjectFactory {
         engine.addEntity(entity);
 
         return entity;
+    }
+
+    public Entity createRocket(TextureAtlas atlas, OrthographicCamera camera, ParticleEffect pe, String filePath, Vector2 rp) {
+        XmlReader xmlReader = new XmlReader();
+        try {
+            XmlReader.Element root = xmlReader.parse(Gdx.files.internal(filePath));
+
+            Vector2 rocketPosition = rp;
+
+            // Create an empty entity
+            Entity entity = engine.createEntity();
+
+            // Add components
+            B2dBodyComponent b2dBody = engine.createComponent(B2dBodyComponent.class);
+            TransformComponent position = engine.createComponent(TransformComponent.class);
+            CameraComponent player = engine.createComponent(CameraComponent.class);
+            RocketComponent rocketComponent = engine.createComponent(RocketComponent.class);
+            ParticleEffectComponent partEffComponent = engine.createComponent(ParticleEffectComponent.class);
+            BoundsComponent boundsComponent = engine.createComponent(BoundsComponent.class);
+            CollisionComponent collision = engine.createComponent(CollisionComponent.class);
+            TypeComponent type = engine.createComponent(TypeComponent.class);
+
+            type.type = TypeComponent.PLAYER;
+            collision.collisionEntity = entity;
+
+            // Empty texture to render the particle effect
+            TextureComponent textureComponent = engine.createComponent(TextureComponent.class);
+
+            rocketComponent.headModule = createHeadModule(rocketPosition, atlas, root.getChildByName("HeadModule").getInt("id"));
+
+            rocketComponent.bodyModule = createBodyModule(rocketPosition, atlas, root.getChildByName("BodyModule").getInt("id"));
+
+            rocketComponent.finsModule = createFinsModule(rocketPosition, atlas, root.getChildByName("FinsModule").getInt("id"));
+
+            rocketComponent.engineModule = createEngineModule(rocketPosition, atlas, root.getChildByName("EngineModule").getInt("id"));
+
+            player.camera = camera;
+
+            float scale = 2;//root.getChildByName("Scale").getInt("factor");
+
+            partEffComponent.particleEffect = pe;
+            pe.getEmitters().first().setPosition(rocketPosition.x, rocketPosition.y - 3 * scale);
+            pe.scaleEffect(0.025f);
+            partEffComponent.particleEffect.start();
+
+            Vector2[] vertices = new Vector2[4];
+            vertices[0] = new Vector2(-2 * scale, -3 * scale);
+            vertices[1] = new Vector2(2 * scale, -3 * scale);
+            vertices[2] = new Vector2(1 * scale, 2 * scale);
+            vertices[3] = new Vector2(-1 * scale, 2 * scale);
+
+            b2dBody.body = bodyFactory.makePolygonBody(
+                    rocketPosition.x,
+                    rocketPosition.y,
+                    vertices,
+                    BodyFactory.STEEL,
+                    BodyDef.BodyType.DynamicBody,
+                    false);
+            b2dBody.body.setUserData(entity);
+
+            entity.add(b2dBody);
+            entity.add(position);
+            entity.add(player);
+            entity.add(rocketComponent);
+            entity.add(partEffComponent);
+            entity.add(textureComponent);
+            entity.add(boundsComponent);
+            entity.add(collision);
+            entity.add(type);
+
+            //add entity to engine
+            engine.addEntity(entity);
+            return entity;
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 }
