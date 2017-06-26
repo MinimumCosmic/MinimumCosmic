@@ -81,14 +81,11 @@ public class HangarScreen implements Screen {
         this.game = game;
         skin = game.AssetManager.assetManager.get("skin/uiskin.json");
         textureAtlas = game.AssetManager.assetManager.get("images/loading_screen.atlas");
-        rocketAtlas = game.AssetManager.assetManager.get("images/game_screen.atlas");
 
-
+        rocketAtlas = game.AssetManager.assetManager.get("images/rocket.atlas");
 
         backSprite = textureAtlas.createSprite("background");
         backSprite.setBounds(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-
-
     }
 
     @Override
@@ -96,7 +93,6 @@ public class HangarScreen implements Screen {
         engine = new PooledEngine();
         objectFactory = new ObjectFactory(engine);
         spriteBatch = new SpriteBatch();
-
         stage = new Stage(new ScreenViewport());
 
 
@@ -420,6 +416,7 @@ public class HangarScreen implements Screen {
     }
 
 
+
     public void scaleRocketSize(float scale){
         rocket.getComponent(RocketComponent.class).headModule.getComponent(TransformComponent.class).scale.x = scale;
         rocket.getComponent(RocketComponent.class).headModule.getComponent(TransformComponent.class).scale.y = scale;
@@ -537,6 +534,7 @@ public class HangarScreen implements Screen {
 
     @Override
     public void dispose() {
+        objectFactory.dispose();
         stage.dispose();
         objectFactory.dispose();
     }

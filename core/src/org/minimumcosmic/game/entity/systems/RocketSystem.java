@@ -77,7 +77,7 @@ public class RocketSystem extends IteratingSystem {
             }
 
             b2Body.body.setLinearVelocity(MathUtils.lerp(b2Body.body.getLinearVelocity().x, 0, 0.1f),
-                    MathUtils.lerp(b2Body.body.getLinearVelocity().y, -25, 0.05f));
+                    MathUtils.lerp(b2Body.body.getLinearVelocity().y, -125, 0.01f));
         }
 
         // Rotate CCW (left)

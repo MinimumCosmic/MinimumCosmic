@@ -29,6 +29,7 @@ import org.minimumcosmic.game.entity.systems.PhysicsDebugSystem;
 import org.minimumcosmic.game.entity.systems.PhysicsSystem;
 import org.minimumcosmic.game.entity.systems.RenderingSystem;
 import org.minimumcosmic.game.entity.systems.RocketSystem;
+import org.minimumcosmic.game.parallax.Parallax;
 
 public class GameScreen implements Screen {
     private KeyboardController controller;
@@ -43,6 +44,8 @@ public class GameScreen implements Screen {
     private TextureAtlas textureAtlas;
     private Skin skin;
     private Label speedLabel;
+    private Parallax parallax;
+
 
 
 
@@ -52,7 +55,7 @@ public class GameScreen implements Screen {
         game.AssetManager.queueAddSounds();
         game.AssetManager.assetManager.finishLoading();
 
-        textureAtlas = game.AssetManager.assetManager.get("images/game_screen.atlas");
+        textureAtlas = game.AssetManager.assetManager.get("images/rocket.atlas");
         skin = game.AssetManager.assetManager.get("skin/uiskin.json");
     }
 
@@ -63,6 +66,7 @@ public class GameScreen implements Screen {
         engine = new PooledEngine();
         objectFactory = new ObjectFactory(engine);
         spriteBatch = new SpriteBatch();
+        parallax = new Parallax();
         RenderingSystem renderingSystem = new RenderingSystem(spriteBatch);
 
         camera = renderingSystem.getCamera();
@@ -81,8 +85,8 @@ public class GameScreen implements Screen {
                 (ParticleEffect) game.AssetManager.assetManager.get("smoke.p"),
                 "xml/rocket.xml");
         objectFactory.createFloor(textureAtlas.findRegion("player"));
-        objectFactory.createMoney(15, 20, textureAtlas);
-
+        objectFactory.generateWorld(textureAtlas);
+        objectFactory.generateParallaxBackground(new TextureAtlas("images/parallaxbnd.atlas"), parallax);
 
         Gdx.input.setInputProcessor(controller);
 
@@ -107,6 +111,11 @@ public class GameScreen implements Screen {
         speedLabel.setText(rocket.getComponent(B2dBodyComponent.class).body.getLinearVelocity().y + "m/s");
 
         stage.act();
+
+        spriteBatch.begin();
+        parallax.draw(camera, spriteBatch);
+        spriteBatch.end();
+
         engine.update(delta);
 
         stage.draw();
