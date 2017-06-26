@@ -1,0 +1,76 @@
+parallaxbnd.png
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
+ground
+  rotate: false
+  xy: 0, 0
+  size: 240, 400
+  orig: 240, 400
+  offset: 0, 0
+  index: -1
+startingplace
+  rotate: false
+  xy: 240, 0
+  size: 240, 400
+  orig: 240, 400
+  offset: 0, 0
+  index: -1
+bush1
+  rotate: false
+  xy: 480, 0
+  size: 240, 400
+  orig: 240, 400
+  offset: 0, 0
+  index: -1
+bush2
+  rotate: false
+  xy: 720, 0
+  size: 240, 400
+  orig: 240, 400
+  offset: 0, 0
+  index: -1
+bush3
+  rotate: false
+  xy: 960, 0
+  size: 240, 400
+  orig: 240, 400
+  offset: 0, 0
+  index: -1
+bush4
+  rotate: false
+  xy: 1200, 0
+  size: 240, 400
+  orig: 240, 400
+  offset: 0, 0
+  index: -1
+bush5
+  rotate: false
+  xy: 0, 400
+  size: 240, 400
+  orig: 240, 400
+  offset: 0, 0
+  index: -1
+bush6
+  rotate: false
+  xy: 240, 400
+  size: 240, 400
+  orig: 240, 400
+  offset: 0, 0
+  index: -1
+bush7
+  rotate: false
+  xy: 480, 400
+  size: 240, 400
+  orig: 240, 400
+  offset: 0, 0
+  index: -1
+gradient1
+  rotate: false
+  xy: 720, 400
+  size: 240, 400
+  orig: 240, 400
+  offset: 0, 0
+  index: -1
+
+

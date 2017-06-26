@@ -28,6 +28,9 @@ import org.minimumcosmic.game.entity.components.modules.EngineModuleComponent;
 import org.minimumcosmic.game.entity.components.modules.FinsModuleComponent;
 import org.minimumcosmic.game.entity.components.modules.HeadModuleComponent;
 import org.minimumcosmic.game.entity.systems.RenderingSystem;
+import org.minimumcosmic.game.parallax.Parallax;
+import org.minimumcosmic.game.parallax.ParallaxLayer;
+import org.minimumcosmic.game.parallax.TexturedParallaxLayer;
 
 import java.io.IOException;
 import java.util.Random;
@@ -68,6 +71,62 @@ public class ObjectFactory {
             }
             y += rand.nextFloat() * 10 ;
         }
+    }
+
+    public void generateParallaxBackground(TextureAtlas atlas, Parallax parallax) {
+        TextureRegion groundRegion = atlas.findRegion("ground");
+        TexturedParallaxLayer groundLayer =
+                new TexturedParallaxLayer(groundRegion, WORLD_WIDTH,
+                        new Vector2(.6f, .6f), TexturedParallaxLayer.WH.width);
+
+        TextureRegion startRegion = atlas.findRegion("startingplace");
+        TexturedParallaxLayer startLayer =
+                new TexturedParallaxLayer(startRegion, WORLD_WIDTH,
+                        new Vector2(.5f, .5f), TexturedParallaxLayer.WH.width);
+
+        TextureRegion bush1Region = atlas.findRegion("bush1");
+        TexturedParallaxLayer bush1Layer =
+                new TexturedParallaxLayer(bush1Region, WORLD_WIDTH,
+                        new Vector2(.45f, .45f), TexturedParallaxLayer.WH.width);
+
+        TextureRegion bush2Region = atlas.findRegion("bush2");
+        TexturedParallaxLayer bush2Layer =
+                new TexturedParallaxLayer(bush2Region, WORLD_WIDTH,
+                        new Vector2(.4f, .4f), TexturedParallaxLayer.WH.width);
+
+        TextureRegion bush3Region = atlas.findRegion("bush3");
+        TexturedParallaxLayer bush3Layer =
+                new TexturedParallaxLayer(bush3Region, WORLD_WIDTH,
+                        new Vector2(.35f, .35f), TexturedParallaxLayer.WH.width);
+
+        TextureRegion bush4Region = atlas.findRegion("bush4");
+        TexturedParallaxLayer bush4Layer =
+                new TexturedParallaxLayer(bush4Region, WORLD_WIDTH,
+                        new Vector2(.3f, .3f), TexturedParallaxLayer.WH.width);
+
+        TextureRegion bush5Region = atlas.findRegion("bush5");
+        TexturedParallaxLayer bush5Layer =
+                new TexturedParallaxLayer(bush5Region, WORLD_WIDTH,
+                        new Vector2(.3f, .3f), TexturedParallaxLayer.WH.width);
+
+        TextureRegion bush6Region = atlas.findRegion("bush6");
+        TexturedParallaxLayer bush6Layer =
+                new TexturedParallaxLayer(bush6Region, WORLD_WIDTH,
+                        new Vector2(.25f, .25f), TexturedParallaxLayer.WH.width);
+
+        TextureRegion bush7Region = atlas.findRegion("bush7");
+        TexturedParallaxLayer bush7Layer =
+                new TexturedParallaxLayer(bush7Region, WORLD_WIDTH,
+                        new Vector2(.25f, .25f), TexturedParallaxLayer.WH.width);
+
+        TextureRegion gradient1Region = atlas.findRegion("gradient1");
+        TexturedParallaxLayer gradient1Layer =
+                new TexturedParallaxLayer(gradient1Region, WORLD_WIDTH,
+                        new Vector2(.025f, .025f), TexturedParallaxLayer.WH.width);
+
+        parallax.addLayers(gradient1Layer, bush7Layer, bush6Layer, bush5Layer, bush4Layer,
+                bush3Layer, bush2Layer, bush1Layer, startLayer, groundLayer);
+
     }
 
 
@@ -133,7 +192,7 @@ public class ObjectFactory {
         collision.collisionEntity = entity;
 
         //TextureComponent textComp = engine.createComponent(TextureComponent.class);
-        //textComp.region = texture;
+        //textComp.region = atlas.findRegion("shadow_orb");
 
         TransformComponent position = engine.createComponent(TransformComponent.class);
         position.position.set(0, 0, 0);

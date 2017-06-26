@@ -4,6 +4,7 @@ import com.badlogic.ashley.core.ComponentMapper;
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.Family;
 import com.badlogic.ashley.systems.IteratingSystem;
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import org.minimumcosmic.game.entity.components.B2dBodyComponent;
@@ -32,6 +33,10 @@ public class CameraSystem extends IteratingSystem {
         CameraComponent player = cm.get(entity);
 
         player.camera.position.y = b2Body.body.getPosition().y;
+
+        if (player.camera.position.y < RenderingSystem.WORLD_HEIGHT / 2) {
+            player.camera.position.y = RenderingSystem.WORLD_HEIGHT / 2;
+        }
     }
 
 }

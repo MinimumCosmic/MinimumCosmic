@@ -78,7 +78,7 @@ public class HangarScreen implements Screen {
         this.game = game;
         skin = game.AssetManager.assetManager.get("skin/uiskin.json");
         textureAtlas = game.AssetManager.assetManager.get("images/loading_screen.atlas");
-        rocketAtlas = game.AssetManager.assetManager.get("images/game_screen.atlas");
+        rocketAtlas = game.AssetManager.assetManager.get("images/rocket.atlas");
 
         backSprite = textureAtlas.createSprite("background");
         backSprite.setBounds(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());

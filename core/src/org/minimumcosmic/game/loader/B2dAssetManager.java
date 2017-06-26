@@ -11,7 +11,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 public class B2dAssetManager {
     public final AssetManager assetManager = new AssetManager();
 
-    public final String gameImages = "images/game_screen.atlas";
+    public final String gameImages = "images/rocket.atlas";
 
     public final String smokeEffect = "smoke.p";
 
