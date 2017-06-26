@@ -1,14 +1,8 @@
 <Rocket>
-    <Position x="15" y="5"/>
-
-    <Scale factor="1"/>
-
-    <HeadModule id="2"/>
-
-    <BodyModule id="2"/>
-
-    <FinsModule id="2"/>
-
-    <EngineModule id="2"/>
-
+	<Position x="15.0" y="5.0"/>
+	<Scale factor="1"/>
+	<HeadModule id="1"/>
+	<BodyModule id="3"/>
+	<FinsModule id="3"/>
+	<EngineModule id="2"/>
 </Rocket>

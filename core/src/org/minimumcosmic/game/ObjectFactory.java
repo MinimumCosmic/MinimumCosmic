@@ -156,13 +156,13 @@ public class ObjectFactory {
             // Empty texture to render the particle effect
             TextureComponent textureComponent = engine.createComponent(TextureComponent.class);
 
-            rocketComponent.headModule = createHeadModule(rocketPosition, atlas, root.getChildByName("HeadModule").getInt("id"));
+            rocketComponent.headModule = createHeadModule(rocketPosition, atlas, root.getChildByName("HeadModule").getInt("id"), true);
 
-            rocketComponent.bodyModule = createBodyModule(rocketPosition, atlas, root.getChildByName("BodyModule").getInt("id"));
+            rocketComponent.bodyModule = createBodyModule(rocketPosition, atlas, root.getChildByName("BodyModule").getInt("id"), true);
 
-            rocketComponent.finsModule = createFinsModule(rocketPosition, atlas, root.getChildByName("FinsModule").getInt("id"));
+            rocketComponent.finsModule = createFinsModule(rocketPosition, atlas, root.getChildByName("FinsModule").getInt("id"), true);
 
-            rocketComponent.engineModule = createEngineModule(rocketPosition, atlas, root.getChildByName("EngineModule").getInt("id"));
+            rocketComponent.engineModule = createEngineModule(rocketPosition, atlas, root.getChildByName("EngineModule").getInt("id"), true);
 
             player.camera = camera;
 
@@ -208,7 +208,7 @@ public class ObjectFactory {
         return null;
     }
 
-    public Entity createHeadModule(Vector2 position, TextureAtlas atlas, int id) {
+    public Entity createHeadModule(Vector2 position, TextureAtlas atlas, int id, boolean engineAdding) {
         XmlReader xmlReader = new XmlReader();
         try {
             XmlReader.Element root = xmlReader.parse(Gdx.files.internal("xml/modules.xml"));
@@ -219,7 +219,8 @@ public class ObjectFactory {
                     module.getChildByName("BasicProperties").getInt("cost"),
                     module.getChildByName("AdvancedProperties").getInt("hp"),
                     module.getChildByName("AdvancedProperties").getInt("power"),
-                    module.getChildByName("AdvancedProperties").getInt("fuel"));
+                    module.getChildByName("AdvancedProperties").getInt("fuel"),
+                    engineAdding);
 
             return headModule;
         }
@@ -229,7 +230,7 @@ public class ObjectFactory {
         return null;
     }
 
-    public Entity createHeadModule(float x, float y, TextureRegion texture, int weight, int cost, int hp, int power, int fuel)
+    public Entity createHeadModule(float x, float y, TextureRegion texture, int weight, int cost, int hp, int power, int fuel, boolean engineAdding)
     {
         Entity entity = engine.createEntity();
 
@@ -250,12 +251,14 @@ public class ObjectFactory {
         entity.add(headModuleComponent);
         entity.add(textureComponent);
 
-        engine.addEntity(entity);
+        if (engineAdding) {
+            engine.addEntity(entity);
+        }
 
         return entity;
     }
 
-    public Entity createBodyModule(Vector2 position, TextureAtlas atlas, int id) {
+    public Entity createBodyModule(Vector2 position, TextureAtlas atlas, int id, boolean engineAdding) {
         XmlReader xmlReader = new XmlReader();
         try {
             XmlReader.Element root = xmlReader.parse(Gdx.files.internal("xml/modules.xml"));
@@ -265,7 +268,8 @@ public class ObjectFactory {
                     module.getChildByName("BasicProperties").getInt("weight"),
                     module.getChildByName("BasicProperties").getInt("cost"),
                     module.getChildByName("AdvancedProperties").getInt("power"),
-                    module.getChildByName("AdvancedProperties").getInt("fuel"));
+                    module.getChildByName("AdvancedProperties").getInt("fuel"),
+                    engineAdding);
 
             return bodyModule;
         }
@@ -275,7 +279,7 @@ public class ObjectFactory {
         return null;
     }
 
-    public Entity createBodyModule(float x, float y, TextureRegion texture, int weight, int cost, int power, int fuel) {
+    public Entity createBodyModule(float x, float y, TextureRegion texture, int weight, int cost, int power, int fuel, boolean engineAdding) {
         Entity entity = engine.createEntity();
 
         TransformComponent position = engine.createComponent(TransformComponent.class);
@@ -294,12 +298,14 @@ public class ObjectFactory {
         entity.add(bodyModuleComponent);
         entity.add(textureComponent);
 
-        engine.addEntity(entity);
+        if (engineAdding) {
+            engine.addEntity(entity);
+        }
 
         return entity;
     }
 
-    public Entity createFinsModule(Vector2 position, TextureAtlas atlas, int id) {
+    public Entity createFinsModule(Vector2 position, TextureAtlas atlas, int id, boolean engineAdding) {
         XmlReader xmlReader = new XmlReader();
         try {
             XmlReader.Element root = xmlReader.parse(Gdx.files.internal("xml/modules.xml"));
@@ -308,7 +314,8 @@ public class ObjectFactory {
                     atlas.findRegion("fins_" + id),
                     module.getChildByName("BasicProperties").getInt("weight"),
                     module.getChildByName("BasicProperties").getInt("cost"),
-                    module.getChildByName("AdvancedProperties").getInt("maneuver"));
+                    module.getChildByName("AdvancedProperties").getInt("maneuver"),
+                    engineAdding);
 
             return finsModule;
         }
@@ -318,7 +325,7 @@ public class ObjectFactory {
         return null;
     }
 
-    public Entity createFinsModule(float x, float y, TextureRegion texture, int weight, int cost, int maneuver) {
+    public Entity createFinsModule(float x, float y, TextureRegion texture, int weight, int cost, int maneuver, boolean engineAdding) {
         Entity entity = engine.createEntity();
 
         TransformComponent position = engine.createComponent(TransformComponent.class);
@@ -336,12 +343,14 @@ public class ObjectFactory {
         entity.add(finsModuleComponent);
         entity.add(textureComponent);
 
-        engine.addEntity(entity);
+        if (engineAdding) {
+            engine.addEntity(entity);
+        }
 
         return entity;
     }
 
-    public Entity createEngineModule(Vector2 position, TextureAtlas atlas, int id) {
+    public Entity createEngineModule(Vector2 position, TextureAtlas atlas, int id, boolean engineAdding) {
         XmlReader xmlReader = new XmlReader();
         try {
             XmlReader.Element root = xmlReader.parse(Gdx.files.internal("xml/modules.xml"));
@@ -350,7 +359,8 @@ public class ObjectFactory {
                     atlas.findRegion("engine_" + id),
                     module.getChildByName("BasicProperties").getInt("weight"),
                     module.getChildByName("BasicProperties").getInt("cost"),
-                    module.getChildByName("AdvancedProperties").getInt("power"));
+                    module.getChildByName("AdvancedProperties").getInt("power"),
+                    engineAdding);
 
             return engineModule;
         }
@@ -360,7 +370,7 @@ public class ObjectFactory {
         return null;
     }
 
-    public Entity createEngineModule(float x, float y, TextureRegion texture, int weight, int cost, int power) {
+    public Entity createEngineModule(float x, float y, TextureRegion texture, int weight, int cost, int power, boolean engineAdding) {
         Entity entity = engine.createEntity();
 
         TransformComponent position = engine.createComponent(TransformComponent.class);
@@ -378,8 +388,9 @@ public class ObjectFactory {
         entity.add(engineModuleComponent);
         entity.add(textureComponent);
 
-        engine.addEntity(entity);
-
+        if (engineAdding) {
+            engine.addEntity(entity);
+        }
         return entity;
     }
 
@@ -409,13 +420,13 @@ public class ObjectFactory {
             // Empty texture to render the particle effect
             TextureComponent textureComponent = engine.createComponent(TextureComponent.class);
 
-            rocketComponent.headModule = createHeadModule(rocketPosition, atlas, root.getChildByName("HeadModule").getInt("id"));
+            rocketComponent.headModule = createHeadModule(rocketPosition, atlas, root.getChildByName("HeadModule").getInt("id"), true);
 
-            rocketComponent.bodyModule = createBodyModule(rocketPosition, atlas, root.getChildByName("BodyModule").getInt("id"));
+            rocketComponent.bodyModule = createBodyModule(rocketPosition, atlas, root.getChildByName("BodyModule").getInt("id"), true);
 
-            rocketComponent.finsModule = createFinsModule(rocketPosition, atlas, root.getChildByName("FinsModule").getInt("id"));
+            rocketComponent.finsModule = createFinsModule(rocketPosition, atlas, root.getChildByName("FinsModule").getInt("id"), true);
 
-            rocketComponent.engineModule = createEngineModule(rocketPosition, atlas, root.getChildByName("EngineModule").getInt("id"));
+            rocketComponent.engineModule = createEngineModule(rocketPosition, atlas, root.getChildByName("EngineModule").getInt("id"), true);
 
             player.camera = camera;
 

@@ -22,35 +22,38 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
+import com.badlogic.gdx.utils.XmlReader;
+import com.badlogic.gdx.utils.XmlWriter;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 
 import org.minimumcosmic.game.MinimumCosmic;
 import org.minimumcosmic.game.ObjectFactory;
+import org.minimumcosmic.game.entity.components.RocketComponent;
 import org.minimumcosmic.game.entity.components.TextureComponent;
+import org.minimumcosmic.game.entity.components.TransformComponent;
 import org.minimumcosmic.game.entity.components.modules.BodyModuleComponent;
 import org.minimumcosmic.game.entity.components.modules.EngineModuleComponent;
 import org.minimumcosmic.game.entity.components.modules.FinsModuleComponent;
 import org.minimumcosmic.game.entity.components.modules.HeadModuleComponent;
 import org.minimumcosmic.game.entity.systems.RenderingSystem;
 
+import java.io.BufferedWriter;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
+
 class MyActor extends Image{
     public Entity entity;
+    private final int id;
 
-
-    public MyActor(TextureAtlas.AtlasRegion atlasRegion, Entity entity){
+    public MyActor(TextureAtlas.AtlasRegion atlasRegion, Entity entity, int id){
         super(atlasRegion);
         this.entity = entity;
+        this.id = id;
     }
 
-    /*public void draw(Batch batch, float parentAlpha){
-        //super.draw(batch, parentAlpha);
-        batch.draw();
-
+    int getId(){
+        return this.id;
     }
-
-    public void act(float delta){
-        super.act(delta);
-    }*/
 
 }
 
@@ -80,7 +83,7 @@ public class HangarScreen implements Screen {
         textureAtlas = game.AssetManager.assetManager.get("images/loading_screen.atlas");
         rocketAtlas = game.AssetManager.assetManager.get("images/game_screen.atlas");
 
-        stage = new Stage(new ScreenViewport());
+
 
         backSprite = textureAtlas.createSprite("background");
         backSprite.setBounds(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
@@ -94,6 +97,7 @@ public class HangarScreen implements Screen {
         objectFactory = new ObjectFactory(engine);
         spriteBatch = new SpriteBatch();
 
+        stage = new Stage(new ScreenViewport());
 
 
         camera = new OrthographicCamera();
@@ -110,12 +114,11 @@ public class HangarScreen implements Screen {
 
         engine.addSystem(renderingSystem);
 
-        rocketPosition = new Vector2((Gdx.graphics.getWidth() * 0.6f) * RenderingSystem.PIXELS_TO_METRES, Gdx.graphics.getHeight() / 2 * RenderingSystem.PIXELS_TO_METRES);
+        rocketPosition = new Vector2((Gdx.graphics.getWidth() * 0.75f) * RenderingSystem.PIXELS_TO_METRES, Gdx.graphics.getHeight() / 2 * RenderingSystem.PIXELS_TO_METRES);
         pe = new ParticleEffect();
         pe = game.AssetManager.assetManager.get("smoke.p");
         rocket = objectFactory.createRocket(rocketAtlas, camera, pe, "xml/rocket.xml", rocketPosition);
-
-        engine.addSystem(renderingSystem);
+        scaleRocketSize(Gdx.graphics.getWidth() * 0.005f);
 
         Gdx.input.setInputProcessor(stage);
 
@@ -172,28 +175,7 @@ public class HangarScreen implements Screen {
                 tmpTable.clear();
                 listTable.clear();
 
-
                 createHeadTableArea(tmpTable);
-               /* Image image = new Image(rocketAtlas.findRegion("head_1"));
-                image.addListener(new InputListener() {
-                    public boolean touchDown (InputEvent event, float x, float y, int pointer, int button) {
-                        confirmChooseTable.clear();
-                        TextButton confirmButton = new TextButton("Confirm", skin);
-                        confirmButton.addListener(new ChangeListener() {
-                            @Override
-                            public void changed(ChangeEvent event, Actor actor) {
-                                System.out.println("It's confirmed");
-                            }
-                        });
-                        confirmChooseTable.add(new Image(rocketAtlas.findRegion("head_1"))).uniformX();
-                        confirmChooseTable.add(new Label("There \n will be \n something", skin)).uniformX();
-                        confirmChooseTable.add(confirmButton).uniformX();
-                        stage.addActor(confirmChooseTable);
-                        return false;
-                    }
-                });
-                tmpTable.add(image).uniformX();
-                tmpTable.add(new Label("x1", skin)).bottom().uniformX();*/
 
                 listTable.add(new ScrollPane(tmpTable)).uniformX();
 
@@ -222,26 +204,6 @@ public class HangarScreen implements Screen {
                 listTable.clear();
 
                 createFinsTableArea(tmpTable);
-                /*Image image = new Image(rocketAtlas.findRegion("fins_1"));
-                image.addListener(new InputListener() {
-                    public boolean touchDown (InputEvent event, float x, float y, int pointer, int button) {
-                        confirmChooseTable.clear();
-                        TextButton confirmButton = new TextButton("Confirm", skin);
-                        confirmButton.addListener(new ChangeListener() {
-                            @Override
-                            public void changed(ChangeEvent event, Actor actor) {
-                                System.out.println("It's confirmed");
-                            }
-                        });
-                        confirmChooseTable.add(new Image(rocketAtlas.findRegion("fins_1"))).uniformX();
-                        confirmChooseTable.add(new Label("There \n will be \n something", skin)).uniformX();
-                        confirmChooseTable.add(confirmButton).uniformX();
-                        stage.addActor(confirmChooseTable);
-                        return false;
-                    }
-                });
-                tmpTable.add(image).uniformX();
-                tmpTable.add(new Label("x1", skin)).bottom().uniformX();*/
 
                 listTable.add(new ScrollPane(tmpTable)).uniformX();
             }
@@ -256,35 +218,14 @@ public class HangarScreen implements Screen {
 
                 createEngineTableArea(tmpTable);
 
-                /*Image image = new Image(rocketAtlas.findRegion("engine_1"));
-                image.addListener(new InputListener() {
-                    public boolean touchDown (InputEvent event, float x, float y, int pointer, int button) {
-                        confirmChooseTable.clear();
-                        TextButton confirmButton = new TextButton("Confirm", skin);
-                        confirmButton.addListener(new ChangeListener() {
-                            @Override
-                            public void changed(ChangeEvent event, Actor actor) {
-                                System.out.println("It's confirmed");
-                            }
-                        });
-                        confirmChooseTable.add(new Image(rocketAtlas.findRegion("engine_1"))).uniformX();
-                        confirmChooseTable.add(new Label("There \n will be \n something", skin)).uniformX();
-                        confirmChooseTable.add(confirmButton).uniformX();
-                        stage.addActor(confirmChooseTable);
-                        return false;
-                    }
-                });
-                tmpTable.add(image);
-                tmpTable.add(new Label("x1", skin)).bottom().uniformX();*/
-
                 listTable.add(new ScrollPane(tmpTable)).uniformX();
             }
         });
 
-        modules.add(headButton).fillX().uniformX();
-        modules.add(bodyButton).fillX().uniformX();
-        modules.add(finsButton).fillX().uniformX();
-        modules.add(engineButton).fillX().uniformX();
+        modules.add(headButton).width(Gdx.graphics.getWidth() / 4).height(Gdx.graphics.getHeight() * 0.05f);
+        modules.add(bodyButton).width(Gdx.graphics.getWidth() / 4).height(Gdx.graphics.getHeight() * 0.05f);
+        modules.add(finsButton).width(Gdx.graphics.getWidth() / 4).height(Gdx.graphics.getHeight() * 0.05f);
+        modules.add(engineButton).width(Gdx.graphics.getWidth() / 4).height(Gdx.graphics.getHeight() * 0.05f);
         modules.row();
 
         //adding actors
@@ -297,72 +238,48 @@ public class HangarScreen implements Screen {
         pe.start();
     }
 
-    public void createEngineTableArea(Table table){
+    public void createHeadTableArea(final Table table){
         for(int i = 1; i <= moduleNumbers; ++i){
             if(i != 1 && i % 2 == 1){
                 table.row();
             }
 
-            final MyActor engineModule = new MyActor(rocketAtlas.findRegion("engine_" + i), objectFactory.createEngineModule(rocketPosition, rocketAtlas, i));
-            engineModule.addListener(new InputListener(){
+            Entity head = objectFactory.createHeadModule(rocketPosition, rocketAtlas, i, false);
+            //engine.removeEntity(head);
+
+            final MyActor headModule = new MyActor(rocketAtlas.findRegion("head_" + i), head, i);
+            headModule.addListener(new InputListener(){
                 public boolean touchDown (InputEvent event, float x, float y, int pointer, int button) {
                     confirmChooseTable.clear();
                     TextButton confirmButton = new TextButton("Confirm", skin);
                     confirmButton.addListener(new ChangeListener() {
                         @Override
                         public void changed(ChangeEvent event, Actor actor) {
+                            saveRocket(1, headModule.getId());
+
+                            engine.removeEntity(rocket.getComponent(RocketComponent.class).bodyModule);
+                            engine.removeEntity(rocket.getComponent(RocketComponent.class).headModule);
+                            engine.removeEntity(rocket.getComponent(RocketComponent.class).finsModule);
+                            engine.removeEntity(rocket.getComponent(RocketComponent.class).engineModule);
+                            rocket = objectFactory.createRocket(rocketAtlas, camera, pe, "xml/rocket.xml", rocketPosition);
+
                             System.out.println("It's confirmed");
                         }
                     });
-                    confirmChooseTable.add(new Image((engineModule.entity.getComponent(TextureComponent.class).region)));
+                    Image img = new Image((headModule.entity.getComponent(TextureComponent.class).region));
+                    confirmChooseTable.add(img);
                     confirmChooseTable.add(new Label(
-                            "cost: " + engineModule.entity.getComponent(EngineModuleComponent.class).cost + "\n" +
-                                    "weight: " + engineModule.entity.getComponent(EngineModuleComponent.class).weight + "\n" +
-                                    "power: " + engineModule.entity.getComponent(EngineModuleComponent.class).power
+                            "cost: " + headModule.entity.getComponent(HeadModuleComponent.class).cost + "\n" +
+                            "weight: " + headModule.entity.getComponent(HeadModuleComponent.class).weight + "\n" +
+                                    "power: " + headModule.entity.getComponent(HeadModuleComponent.class).power
                             , skin)).width(Gdx.graphics.getWidth() / 2);
-                    confirmChooseTable.add(confirmButton).width(Gdx.graphics.getWidth() / 3);
+                    confirmChooseTable.add(confirmButton).uniformX().height(confirmChooseTable.getHeight() / 2);
                     stage.addActor(confirmChooseTable);
                     return false;
                 }
             });
 
-            table.add(engineModule).uniformX();
-            table.add(new Label("x1", skin)).bottom().uniformX();
-
-
-        }
-    }
-
-    public void createFinsTableArea(Table table){
-        for(int i = 1; i <= moduleNumbers; ++i){
-            if(i != 1 && i % 2 == 1){
-                table.row();
-            }
-
-            final MyActor finsModule = new MyActor(rocketAtlas.findRegion("fins_" + i), objectFactory.createFinsModule(rocketPosition, rocketAtlas, i));
-            finsModule.addListener(new InputListener(){
-                public boolean touchDown (InputEvent event, float x, float y, int pointer, int button) {
-                    confirmChooseTable.clear();
-                    TextButton confirmButton = new TextButton("Confirm", skin);
-                    confirmButton.addListener(new ChangeListener() {
-                        @Override
-                        public void changed(ChangeEvent event, Actor actor) {
-                            System.out.println("It's confirmed");
-                        }
-                    });
-                    confirmChooseTable.add(new Image((finsModule.entity.getComponent(TextureComponent.class).region)));
-                    confirmChooseTable.add(new Label(
-                            "cost: " + finsModule.entity.getComponent(FinsModuleComponent.class).cost + "\n" +
-                                    "weight: " + finsModule.entity.getComponent(FinsModuleComponent.class).weight + "\n" +
-                                    "maneuver: " + finsModule.entity.getComponent(FinsModuleComponent.class).maneuver
-                            , skin)).width(Gdx.graphics.getWidth() / 2);
-                    confirmChooseTable.add(confirmButton).width(Gdx.graphics.getWidth() / 3);
-                    stage.addActor(confirmChooseTable);
-                    return false;
-                }
-            });
-
-            table.add(finsModule).uniformX();
+            table.add(headModule).width(Gdx.graphics.getWidth() * 0.2f).height(Gdx.graphics.getHeight() * 0.2f);
             table.add(new Label("x1", skin)).bottom().uniformX();
 
 
@@ -375,7 +292,10 @@ public class HangarScreen implements Screen {
                 table.row();
             }
 
-            final MyActor bodyModule = new MyActor(rocketAtlas.findRegion("body_" + i), objectFactory.createBodyModule(rocketPosition, rocketAtlas, i));
+            Entity body = objectFactory.createBodyModule(rocketPosition, rocketAtlas, i, false);
+            //engine.removeEntity(body);
+
+            final MyActor bodyModule = new MyActor(rocketAtlas.findRegion("body_" + i), body, i);
             bodyModule.addListener(new InputListener(){
                 public boolean touchDown (InputEvent event, float x, float y, int pointer, int button) {
                     confirmChooseTable.clear();
@@ -383,6 +303,11 @@ public class HangarScreen implements Screen {
                     confirmButton.addListener(new ChangeListener() {
                         @Override
                         public void changed(ChangeEvent event, Actor actor) {
+                            saveRocket(2, bodyModule.getId());
+
+                            engine.removeEntity(rocket);
+                            rocket = objectFactory.createRocket(rocketAtlas, camera, pe, "xml/rocket.xml", rocketPosition);
+
                             System.out.println("It's confirmed");
                         }
                     });
@@ -392,55 +317,177 @@ public class HangarScreen implements Screen {
                                     "weight: " + bodyModule.entity.getComponent(BodyModuleComponent.class).weight + "\n" +
                                     "power: " + bodyModule.entity.getComponent(BodyModuleComponent.class).power
                             , skin)).width(Gdx.graphics.getWidth() / 2);
-                    confirmChooseTable.add(confirmButton).width(Gdx.graphics.getWidth() / 3);
+                    confirmChooseTable.add(confirmButton).uniformX().height(confirmChooseTable.getHeight() / 2);
                     stage.addActor(confirmChooseTable);
                     return false;
                 }
             });
 
-            table.add(bodyModule).uniformX();
+            table.add(bodyModule).width(Gdx.graphics.getWidth() * 0.2f).height(Gdx.graphics.getHeight() * 0.2f);
             table.add(new Label("x1", skin)).bottom().uniformX();
 
 
         }
     }
 
-    public void createHeadTableArea(Table table){
+    public void createFinsTableArea(Table table){
         for(int i = 1; i <= moduleNumbers; ++i){
             if(i != 1 && i % 2 == 1){
                 table.row();
             }
 
-            final MyActor headModule = new MyActor(rocketAtlas.findRegion("head_" + i), objectFactory.createHeadModule(rocketPosition, rocketAtlas, i));
-            headModule.addListener(new InputListener(){
+            Entity fins = objectFactory.createFinsModule(rocketPosition, rocketAtlas, i, false);
+            //engine.removeEntity(fins);
+
+            final MyActor finsModule = new MyActor(rocketAtlas.findRegion("fins_" + i), fins, i);
+            finsModule.addListener(new InputListener(){
                 public boolean touchDown (InputEvent event, float x, float y, int pointer, int button) {
                     confirmChooseTable.clear();
                     TextButton confirmButton = new TextButton("Confirm", skin);
                     confirmButton.addListener(new ChangeListener() {
                         @Override
                         public void changed(ChangeEvent event, Actor actor) {
+                            saveRocket(3, finsModule.getId());
+
+                            engine.removeEntity(rocket);
+                            rocket = objectFactory.createRocket(rocketAtlas, camera, pe, "xml/rocket.xml", rocketPosition);
+
                             System.out.println("It's confirmed");
                         }
                     });
-                    confirmChooseTable.add(new Image((headModule.entity.getComponent(TextureComponent.class).region)));
+                    confirmChooseTable.add(new Image((finsModule.entity.getComponent(TextureComponent.class).region)));
                     confirmChooseTable.add(new Label(
-                            "cost: " + headModule.entity.getComponent(HeadModuleComponent.class).cost + "\n" +
-                            "weight: " + headModule.entity.getComponent(HeadModuleComponent.class).weight + "\n" +
-                                    "power: " + headModule.entity.getComponent(HeadModuleComponent.class).power
+                            "cost: " + finsModule.entity.getComponent(FinsModuleComponent.class).cost + "\n" +
+                                    "weight: " + finsModule.entity.getComponent(FinsModuleComponent.class).weight + "\n" +
+                                    "maneuver: " + finsModule.entity.getComponent(FinsModuleComponent.class).maneuver
                             , skin)).width(Gdx.graphics.getWidth() / 2);
-                    confirmChooseTable.add(confirmButton).width(Gdx.graphics.getWidth() / 3);
+                    confirmChooseTable.add(confirmButton).uniformX().height(confirmChooseTable.getHeight() / 2);
                     stage.addActor(confirmChooseTable);
                     return false;
                 }
             });
 
-            table.add(headModule).uniformX();
+            table.add(finsModule).width(Gdx.graphics.getWidth() * 0.2f).height(Gdx.graphics.getHeight() * 0.2f);
             table.add(new Label("x1", skin)).bottom().uniformX();
 
 
         }
     }
 
+    public void createEngineTableArea(Table table){
+        for(int i = 1; i <= moduleNumbers; ++i){
+            if(i != 1 && i % 2 == 1){
+                table.row();
+            }
+
+            Entity eng = objectFactory.createEngineModule(rocketPosition, rocketAtlas, i, false);
+            //engine.removeEntity(eng);
+
+            final MyActor engineModule = new MyActor(rocketAtlas.findRegion("engine_" + i), eng, i);
+            engineModule.addListener(new InputListener(){
+                public boolean touchDown (InputEvent event, float x, float y, int pointer, int button) {
+                    confirmChooseTable.clear();
+                    TextButton confirmButton = new TextButton("Confirm", skin);
+                    confirmButton.addListener(new ChangeListener() {
+                        @Override
+                        public void changed(ChangeEvent event, Actor actor) {
+                            saveRocket(4, engineModule.getId());
+
+                            engine.removeEntity(rocket);
+
+                            rocket = objectFactory.createRocket(rocketAtlas, camera, pe, "xml/rocket.xml", rocketPosition);
+
+                            System.out.println("It's confirmed");
+                        }
+                    });
+                    confirmChooseTable.add(new Image((engineModule.entity.getComponent(TextureComponent.class).region)));
+                    confirmChooseTable.add(new Label(
+                            "cost: " + engineModule.entity.getComponent(EngineModuleComponent.class).cost + "\n" +
+                                    "weight: " + engineModule.entity.getComponent(EngineModuleComponent.class).weight + "\n" +
+                                    "power: " + engineModule.entity.getComponent(EngineModuleComponent.class).power
+                            , skin)).width(Gdx.graphics.getWidth() / 2);
+                    confirmChooseTable.add(confirmButton).uniformX().height(confirmChooseTable.getHeight() / 2);
+                    stage.addActor(confirmChooseTable);
+                    return false;
+                }
+            });
+
+            table.add(engineModule).width(Gdx.graphics.getWidth() * 0.2f).height(Gdx.graphics.getHeight() * 0.2f);
+            table.add(new Label("x1", skin)).bottom().uniformX();
+
+
+        }
+    }
+
+
+    public void scaleRocketSize(float scale){
+        rocket.getComponent(RocketComponent.class).headModule.getComponent(TransformComponent.class).scale.x = scale;
+        rocket.getComponent(RocketComponent.class).headModule.getComponent(TransformComponent.class).scale.y = scale;
+
+        rocket.getComponent(RocketComponent.class).engineModule.getComponent(TransformComponent.class).scale.x = scale;
+        rocket.getComponent(RocketComponent.class).engineModule.getComponent(TransformComponent.class).scale.y = scale;
+
+        rocket.getComponent(RocketComponent.class).finsModule.getComponent(TransformComponent.class).scale.x = scale;
+        rocket.getComponent(RocketComponent.class).finsModule.getComponent(TransformComponent.class).scale.y = scale;
+
+        rocket.getComponent(RocketComponent.class).bodyModule.getComponent(TransformComponent.class).scale.x = scale;
+        rocket.getComponent(RocketComponent.class).bodyModule.getComponent(TransformComponent.class).scale.y = scale;
+    }
+
+    public void saveRocket(int moduleNumber, int idOfModule){
+        XmlReader xmlReader = new XmlReader();
+        BufferedWriter out = null;
+        try{
+            XmlReader.Element root = xmlReader.parse(Gdx.files.internal("xml/rocket.xml"));
+            out = new BufferedWriter(new OutputStreamWriter(Gdx.files.local("xml/rocket.xml").write(false)));
+            XmlWriter xmlWriter = new XmlWriter(out);
+
+
+            xmlWriter.element("Rocket");
+            xmlWriter.element("Position").attribute("x", root.getChildByName("Position").getFloat("x"))
+                    .attribute("y", root.getChildByName("Position").getFloat("y")).pop();
+            xmlWriter.element("Scale").attribute("factor", root.getChildByName("Scale").getInt("factor")).pop();
+            switch(moduleNumber){
+                case 1:
+                    xmlWriter.element("HeadModule").attribute("id", idOfModule).pop();
+                    xmlWriter.element("BodyModule").attribute("id", root.getChildByName("BodyModule").getInt("id")).pop();
+                    xmlWriter.element("FinsModule").attribute("id", root.getChildByName("FinsModule").getInt("id")).pop();
+                    xmlWriter.element("EngineModule").attribute("id", root.getChildByName("EngineModule").getInt("id")).pop();
+                    break;
+                case 2:
+                    xmlWriter.element("HeadModule").attribute("id", root.getChildByName("HeadModule").getInt("id")).pop();
+                    xmlWriter.element("BodyModule").attribute("id", idOfModule).pop();
+                    xmlWriter.element("FinsModule").attribute("id", root.getChildByName("FinsModule").getInt("id")).pop();
+                    xmlWriter.element("EngineModule").attribute("id", root.getChildByName("EngineModule").getInt("id")).pop();
+                    break;
+                case 3:
+                    xmlWriter.element("HeadModule").attribute("id", root.getChildByName("HeadModule").getInt("id")).pop();
+                    xmlWriter.element("BodyModule").attribute("id", root.getChildByName("BodyModule").getInt("id")).pop();
+                    xmlWriter.element("FinsModule").attribute("id", idOfModule).pop();
+                    xmlWriter.element("EngineModule").attribute("id", root.getChildByName("EngineModule").getInt("id")).pop();
+                    break;
+                case 4:
+                    xmlWriter.element("HeadModule").attribute("id", root.getChildByName("HeadModule").getInt("id")).pop();
+                    xmlWriter.element("BodyModule").attribute("id", root.getChildByName("BodyModule").getInt("id")).pop();
+                    xmlWriter.element("FinsModule").attribute("id", root.getChildByName("FinsModule").getInt("id")).pop();
+                    xmlWriter.element("EngineModule").attribute("id", idOfModule).pop();
+                    break;
+            }
+            xmlWriter.flush();
+            xmlWriter.close();
+
+        }catch(IOException e){
+            e.printStackTrace();
+        }finally{
+            if(out != null){
+                try {
+                    out.close();
+                }catch(IOException e){
+
+                }
+            }
+        }
+    }
 
     @Override
     public void render(float delta) {
@@ -491,5 +538,6 @@ public class HangarScreen implements Screen {
     @Override
     public void dispose() {
         stage.dispose();
+        objectFactory.dispose();
     }
 }
