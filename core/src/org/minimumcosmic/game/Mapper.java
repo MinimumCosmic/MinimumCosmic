@@ -10,6 +10,6 @@ import org.minimumcosmic.game.entity.components.TransformComponent;
  */
 
 public class Mapper {
-    public static final ComponentMapper<RocketComponent> rocketComponentMapper = ComponentMapper.getFor(RocketComponent.class);
-    public static final ComponentMapper<TransformComponent> transformComponentMapper = ComponentMapper.getFor(TransformComponent.class);
+    public static ComponentMapper<RocketComponent> rocketComponentMapper = ComponentMapper.getFor(RocketComponent.class);
+    public static ComponentMapper<TransformComponent> transformComponentMapper = ComponentMapper.getFor(TransformComponent.class);
 }

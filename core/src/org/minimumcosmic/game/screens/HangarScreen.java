@@ -273,15 +273,7 @@ public class HangarScreen implements Screen {
 
                             rocketComponent.headModule =
                                     objectFactory.createHeadModule(rocketPosition,rocketAtlas, headModule.getId(), true);
-
-                            engine.removeEntity(rocket.getComponent(RocketComponent.class).bodyModule);
-                            engine.removeEntity(rocket.getComponent(RocketComponent.class).headModule);
-                            engine.removeEntity(rocket.getComponent(RocketComponent.class).finsModule);
-                            engine.removeEntity(rocket.getComponent(RocketComponent.class).engineModule);
-                            rocket.removeAll();
-
-                            rocket = objectFactory.createRocket(rocketAtlas, camera,
-                                    pe, "xml/rocket.xml", rocketPosition);
+                            Mapper.rocketComponentMapper = ComponentMapper.getFor(RocketComponent.class);
 
                             System.out.println("It's confirmed");
                         }
@@ -331,6 +323,7 @@ public class HangarScreen implements Screen {
 
                             rocketComponent.bodyModule =
                                     objectFactory.createBodyModule(rocketPosition,rocketAtlas, bodyModule.getId(), true);
+                            Mapper.rocketComponentMapper = ComponentMapper.getFor(RocketComponent.class);
 
                             System.out.println("It's confirmed");
                         }
@@ -379,6 +372,8 @@ public class HangarScreen implements Screen {
 
                             rocketComponent.finsModule =
                                     objectFactory.createFinsModule(rocketPosition,rocketAtlas, finsModule.getId(), true);
+                            Mapper.rocketComponentMapper = ComponentMapper.getFor(RocketComponent.class);
+
 
                             System.out.println("It's confirmed");
                         }
@@ -427,6 +422,8 @@ public class HangarScreen implements Screen {
 
                             rocketComponent.engineModule =
                                     objectFactory.createEngineModule(rocketPosition,rocketAtlas, engineModule.getId(), true);
+                            Mapper.rocketComponentMapper = ComponentMapper.getFor(RocketComponent.class);
+
 
                             System.out.println("It's confirmed");
                         }
