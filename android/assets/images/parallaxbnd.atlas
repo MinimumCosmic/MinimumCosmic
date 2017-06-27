@@ -72,5 +72,41 @@ gradient1
   orig: 240, 400
   offset: 0, 0
   index: -1
+cloud1
+  rotate: false
+  xy: 960, 400
+  size: 128, 32
+  orig: 128, 32
+  offset: 0, 0
+  index: -1
+cloud2
+  rotate: false
+  xy: 960, 432
+  size: 128, 32
+  orig: 128, 32
+  offset: 0, 0
+  index: -1
+cloud3
+  rotate: false
+  xy: 960, 464
+  size: 128, 32
+  orig: 128, 32
+  offset: 0, 0
+  index: -1
+cloud4
+  rotate: false
+  xy: 960, 496
+  size: 128, 32
+  orig: 128, 32
+  offset: 0, 0
+  index: -1
+gradient2
+  rotate: false
+  xy: 1200, 400
+  size: 240, 400
+  orig: 240, 400
+  offset: 0, 0
+  index: -1
+
 
 

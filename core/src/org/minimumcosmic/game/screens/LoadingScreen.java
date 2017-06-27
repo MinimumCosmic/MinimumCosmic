@@ -10,6 +10,7 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.utils.Align;
 import org.minimumcosmic.game.MinimumCosmic;
@@ -43,6 +44,9 @@ public class LoadingScreen implements Screen {
     public LoadingScreen(MinimumCosmic game) {
         this.game = game;
         stage = new Stage();
+
+        stage.getRoot().getColor().a  = 0;
+        stage.getRoot().addAction(Actions.fadeIn(0.5f));
 
         loadAssets();
         game.AssetManager.queueAddImages();

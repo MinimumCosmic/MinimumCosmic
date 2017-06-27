@@ -1,10 +1,11 @@
 package org.minimumcosmic.game.entity.systems;
 
 import com.badlogic.ashley.core.ComponentMapper;
+import com.badlogic.ashley.core.Engine;
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.Family;
 import com.badlogic.ashley.systems.IteratingSystem;
-import org.minimumcosmic.game.BodyFactory;
+
 import org.minimumcosmic.game.ObjectFactory;
 import org.minimumcosmic.game.entity.components.B2dBodyComponent;
 import org.minimumcosmic.game.entity.components.CameraComponent;
@@ -15,14 +16,16 @@ public class CollisionSystem extends IteratingSystem {
     ComponentMapper<CollisionComponent> cm;
     ComponentMapper<CameraComponent> pm;
     ObjectFactory objectFactory;
+    Engine engine;
 
     @SuppressWarnings("unchecked")
-    public CollisionSystem(ObjectFactory objectFactory) {
+    public CollisionSystem(ObjectFactory objectFactory, Engine engine) {
         super(Family.all(CollisionComponent.class, CameraComponent.class).get());
 
         cm = ComponentMapper.getFor(CollisionComponent.class);
         pm = ComponentMapper.getFor(CameraComponent.class);
         this.objectFactory = objectFactory;
+        this.engine = engine;
     }
 
 
@@ -44,6 +47,7 @@ public class CollisionSystem extends IteratingSystem {
                         break;
                     case TypeComponent.PICKUP:
                         objectFactory.deleteBody(collidedEntity.getComponent(B2dBodyComponent.class).body);
+                        engine.removeEntity(collidedEntity);
                         System.out.println("player hit pickup");
                         break;
                     case TypeComponent.OTHER:

@@ -29,6 +29,7 @@ import org.minimumcosmic.game.entity.components.modules.FinsModuleComponent;
 import org.minimumcosmic.game.entity.components.modules.HeadModuleComponent;
 import org.minimumcosmic.game.entity.systems.RenderingSystem;
 import org.minimumcosmic.game.parallax.Parallax;
+import org.minimumcosmic.game.parallax.ParallaxLayer;
 import org.minimumcosmic.game.parallax.TexturedParallaxLayer;
 
 import java.io.IOException;
@@ -73,11 +74,6 @@ public class ObjectFactory {
     }
 
     public void generateParallaxBackground(TextureAtlas atlas, Parallax parallax) {
-        TextureRegion groundRegion = atlas.findRegion("ground");
-        TexturedParallaxLayer groundLayer =
-                new TexturedParallaxLayer(groundRegion, WORLD_WIDTH,
-                        new Vector2(.6f, .6f), TexturedParallaxLayer.WH.width);
-
         TextureRegion startRegion = atlas.findRegion("startingplace");
         TexturedParallaxLayer startLayer =
                 new TexturedParallaxLayer(startRegion, WORLD_WIDTH,
@@ -113,6 +109,56 @@ public class ObjectFactory {
                 new TexturedParallaxLayer(bush6Region, WORLD_WIDTH,
                         new Vector2(.25f, .25f), TexturedParallaxLayer.WH.width);
 
+        TextureRegion cloud1Region = atlas.findRegion("cloud1");
+
+
+        TexturedParallaxLayer cloud1Layer1 =
+                new TexturedParallaxLayer(cloud1Region, WORLD_WIDTH / 2,
+                        new Vector2(.15f, .15f), TexturedParallaxLayer.WH.width);
+        cloud1Layer1.setPadBottom(RenderingSystem.WORLD_HEIGHT * 0.467f);
+        cloud1Layer1.setPadLeft(WORLD_WIDTH * 0.267f);
+        cloud1Layer1.setTileModeY(ParallaxLayer.TileMode.repeat);
+
+        TexturedParallaxLayer cloud1Layer2 =
+                new TexturedParallaxLayer(cloud1Region, WORLD_WIDTH / 2,
+                        new Vector2(.075f, .075f), TexturedParallaxLayer.WH.width);
+        cloud1Layer2.setPadBottom(RenderingSystem.WORLD_HEIGHT * 0.667f);
+        cloud1Layer2.setPadLeft(WORLD_WIDTH * -0.167f);
+        cloud1Layer2.setTileModeY(ParallaxLayer.TileMode.repeat);
+
+        TexturedParallaxLayer cloud1Layer3 =
+                new TexturedParallaxLayer(cloud1Region, WORLD_WIDTH / 2,
+                        new Vector2(.125f, .125f), TexturedParallaxLayer.WH.width);
+        cloud1Layer3.setPadBottom(RenderingSystem.WORLD_HEIGHT * 0.767f);
+        cloud1Layer3.setPadLeft(WORLD_WIDTH * 0.767f);
+        cloud1Layer3.setTileModeY(ParallaxLayer.TileMode.repeat);
+
+
+        TextureRegion cloud2Region = atlas.findRegion("cloud2");
+
+        TexturedParallaxLayer cloud2Layer1 =
+                new TexturedParallaxLayer(cloud2Region, WORLD_WIDTH / 2,
+                        new Vector2(.1f, .1f), TexturedParallaxLayer.WH.width);
+        cloud2Layer1.setPadBottom(RenderingSystem.WORLD_HEIGHT * 0.267f);
+        cloud2Layer1.setTileModeY(ParallaxLayer.TileMode.repeat);
+
+        TexturedParallaxLayer cloud2Layer2 =
+                new TexturedParallaxLayer(cloud2Region, WORLD_WIDTH / 2,
+                        new Vector2(.15f, .15f), TexturedParallaxLayer.WH.width);
+        cloud2Layer2.setPadBottom(RenderingSystem.WORLD_HEIGHT * 0.717f);
+        cloud1Layer3.setPadLeft(WORLD_WIDTH * 0.717f);
+        cloud2Layer2.setTileModeY(ParallaxLayer.TileMode.repeat);
+
+        TextureRegion cloud3Region = atlas.findRegion("cloud3");
+
+        TexturedParallaxLayer cloud3Layer =
+                new TexturedParallaxLayer(cloud3Region, WORLD_WIDTH / 2,
+                        new Vector2(.175f, .175f), TexturedParallaxLayer.WH.width);
+        cloud3Layer.setPadBottom(RenderingSystem.WORLD_HEIGHT * 0.367f);
+        cloud3Layer.setPadLeft(WORLD_WIDTH * 0.667f);
+        cloud3Layer.setTileModeY(ParallaxLayer.TileMode.repeat);
+
+
         TextureRegion bush7Region = atlas.findRegion("bush7");
         TexturedParallaxLayer bush7Layer =
                 new TexturedParallaxLayer(bush7Region, WORLD_WIDTH,
@@ -123,12 +169,27 @@ public class ObjectFactory {
                 new TexturedParallaxLayer(gradient1Region, WORLD_WIDTH,
                         new Vector2(.025f, .025f), TexturedParallaxLayer.WH.width);
 
-        parallax.addLayers(gradient1Layer, bush7Layer, bush6Layer, bush5Layer, bush4Layer,
-                bush3Layer, bush2Layer, bush1Layer, startLayer, groundLayer);
+        TextureRegion gradient2Region = atlas.findRegion("gradient2");
+        TexturedParallaxLayer gradient2Layer =
+                new TexturedParallaxLayer(gradient2Region, WORLD_WIDTH,
+                        new Vector2(.025f, .025f), TexturedParallaxLayer.WH.width);
+        gradient2Layer.setPadBottom(RenderingSystem.WORLD_HEIGHT);
+
+        parallax.addLayers(gradient2Layer, gradient1Layer, bush7Layer,
+                cloud1Layer1, cloud1Layer2, cloud1Layer3, cloud2Layer1, cloud2Layer2, cloud3Layer,
+                bush6Layer, bush5Layer, bush4Layer, bush3Layer, bush2Layer, bush1Layer,
+                startLayer);
 
     }
 
+    public void generateParallaxForeground(TextureAtlas atlas, Parallax parallax) {
+        TextureRegion groundRegion = atlas.findRegion("ground");
+        TexturedParallaxLayer groundLayer =
+                new TexturedParallaxLayer(groundRegion, WORLD_WIDTH,
+                        new Vector2(.6f, .6f), TexturedParallaxLayer.WH.width);
+        parallax.addLayers(groundLayer);
 
+    }
     // Create a platform
     public void createPlatform(float x, float y, TextureRegion texture) {
         Entity entity = engine.createEntity();
@@ -190,8 +251,8 @@ public class ObjectFactory {
         CollisionComponent collision = engine.createComponent(CollisionComponent.class);
         collision.collisionEntity = entity;
 
-        //TextureComponent textComp = engine.createComponent(TextureComponent.class);
-        //textComp.region = atlas.findRegion("shadow_orb");
+        TextureComponent textComp = engine.createComponent(TextureComponent.class);
+        textComp.region = atlas.findRegion("icon");
 
         TransformComponent position = engine.createComponent(TransformComponent.class);
         position.position.set(0, 0, 0);
@@ -200,7 +261,7 @@ public class ObjectFactory {
 
         entity.add(b2dBody);
         entity.add(position);
-        //entity.add(textComp);
+        entity.add(textComp);
         entity.add(type);
         entity.add(collision);
 
