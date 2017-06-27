@@ -29,7 +29,6 @@ import org.minimumcosmic.game.entity.components.modules.FinsModuleComponent;
 import org.minimumcosmic.game.entity.components.modules.HeadModuleComponent;
 import org.minimumcosmic.game.entity.systems.RenderingSystem;
 import org.minimumcosmic.game.parallax.Parallax;
-import org.minimumcosmic.game.parallax.ParallaxLayer;
 import org.minimumcosmic.game.parallax.TexturedParallaxLayer;
 
 import java.io.IOException;
@@ -302,6 +301,7 @@ public class ObjectFactory {
                     module.getChildByName("AdvancedProperties").getInt("power"),
                     module.getChildByName("AdvancedProperties").getInt("fuel"),
                     engineAdding);
+            headModule.getComponent(HeadModuleComponent.class).id = id;
 
             return headModule;
         }
@@ -351,6 +351,7 @@ public class ObjectFactory {
                     module.getChildByName("AdvancedProperties").getInt("power"),
                     module.getChildByName("AdvancedProperties").getInt("fuel"),
                     engineAdding);
+            bodyModule.getComponent(BodyModuleComponent.class).id = id;
 
             return bodyModule;
         }
@@ -397,6 +398,7 @@ public class ObjectFactory {
                     module.getChildByName("BasicProperties").getInt("cost"),
                     module.getChildByName("AdvancedProperties").getInt("maneuver"),
                     engineAdding);
+            finsModule.getComponent(FinsModuleComponent.class).id = id;
 
             return finsModule;
         }
@@ -442,6 +444,7 @@ public class ObjectFactory {
                     module.getChildByName("BasicProperties").getInt("cost"),
                     module.getChildByName("AdvancedProperties").getInt("power"),
                     engineAdding);
+            engineModule.getComponent(EngineModuleComponent.class).id = id;
 
             return engineModule;
         }
