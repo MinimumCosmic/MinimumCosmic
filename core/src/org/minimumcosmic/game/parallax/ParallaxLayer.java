@@ -13,7 +13,7 @@ public abstract class ParallaxLayer {
 
 
     protected Vector2 parallaxRatio;
-    protected TileMode tileModeX = TileMode.repeat;
+    protected TileMode tileModeX = TileMode.single;
     protected TileMode tileModeY = TileMode.single;
 
     public abstract float getWidth();

@@ -41,17 +41,17 @@ import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 
-class MyActor extends Image{
+class MyActor extends Image {
     public Entity entity;
     private final int id;
 
-    public MyActor(TextureAtlas.AtlasRegion atlasRegion, Entity entity, int id){
+    public MyActor(TextureAtlas.AtlasRegion atlasRegion, Entity entity, int id) {
         super(atlasRegion);
         this.entity = entity;
         this.id = id;
     }
 
-    int getId(){
+    int getId() {
         return this.id;
     }
 
@@ -89,7 +89,7 @@ public class HangarScreen implements Screen {
     }
 
     @Override
-    public void show(){
+    public void show() {
         engine = new PooledEngine();
         objectFactory = new ObjectFactory(engine);
         spriteBatch = new SpriteBatch();
@@ -234,9 +234,9 @@ public class HangarScreen implements Screen {
         pe.start();
     }
 
-    public void createHeadTableArea(final Table table){
-        for(int i = 1; i <= moduleNumbers; ++i){
-            if(i != 1 && i % 2 == 1){
+    public void createHeadTableArea(final Table table) {
+        for (int i = 1; i <= moduleNumbers; ++i) {
+            if (i != 1 && i % 2 == 1) {
                 table.row();
             }
 
@@ -244,8 +244,8 @@ public class HangarScreen implements Screen {
             //engine.removeEntity(head);
 
             final MyActor headModule = new MyActor(rocketAtlas.findRegion("head_" + i), head, i);
-            headModule.addListener(new InputListener(){
-                public boolean touchDown (InputEvent event, float x, float y, int pointer, int button) {
+            headModule.addListener(new InputListener() {
+                public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
                     confirmChooseTable.clear();
                     TextButton confirmButton = new TextButton("Confirm", skin);
                     confirmButton.addListener(new ChangeListener() {
@@ -257,7 +257,10 @@ public class HangarScreen implements Screen {
                             engine.removeEntity(rocket.getComponent(RocketComponent.class).headModule);
                             engine.removeEntity(rocket.getComponent(RocketComponent.class).finsModule);
                             engine.removeEntity(rocket.getComponent(RocketComponent.class).engineModule);
-                            rocket = objectFactory.createRocket(rocketAtlas, camera, pe, "xml/rocket.xml", rocketPosition);
+                            rocket.removeAll();
+
+                            rocket = objectFactory.createRocket(rocketAtlas, camera,
+                                    pe, "xml/rocket.xml", rocketPosition);
 
                             System.out.println("It's confirmed");
                         }
@@ -266,7 +269,7 @@ public class HangarScreen implements Screen {
                     confirmChooseTable.add(img);
                     confirmChooseTable.add(new Label(
                             "cost: " + headModule.entity.getComponent(HeadModuleComponent.class).cost + "\n" +
-                            "weight: " + headModule.entity.getComponent(HeadModuleComponent.class).weight + "\n" +
+                                    "weight: " + headModule.entity.getComponent(HeadModuleComponent.class).weight + "\n" +
                                     "power: " + headModule.entity.getComponent(HeadModuleComponent.class).power
                             , skin)).width(Gdx.graphics.getWidth() / 2);
                     confirmChooseTable.add(confirmButton).uniformX().height(confirmChooseTable.getHeight() / 2);
@@ -282,9 +285,9 @@ public class HangarScreen implements Screen {
         }
     }
 
-    public void createBodyTableArea(Table table){
-        for(int i = 1; i <= moduleNumbers; ++i){
-            if(i != 1 && i % 2 == 1){
+    public void createBodyTableArea(Table table) {
+        for (int i = 1; i <= moduleNumbers; ++i) {
+            if (i != 1 && i % 2 == 1) {
                 table.row();
             }
 
@@ -292,8 +295,8 @@ public class HangarScreen implements Screen {
             //engine.removeEntity(body);
 
             final MyActor bodyModule = new MyActor(rocketAtlas.findRegion("body_" + i), body, i);
-            bodyModule.addListener(new InputListener(){
-                public boolean touchDown (InputEvent event, float x, float y, int pointer, int button) {
+            bodyModule.addListener(new InputListener() {
+                public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
                     confirmChooseTable.clear();
                     TextButton confirmButton = new TextButton("Confirm", skin);
                     confirmButton.addListener(new ChangeListener() {
@@ -326,9 +329,9 @@ public class HangarScreen implements Screen {
         }
     }
 
-    public void createFinsTableArea(Table table){
-        for(int i = 1; i <= moduleNumbers; ++i){
-            if(i != 1 && i % 2 == 1){
+    public void createFinsTableArea(Table table) {
+        for (int i = 1; i <= moduleNumbers; ++i) {
+            if (i != 1 && i % 2 == 1) {
                 table.row();
             }
 
@@ -336,8 +339,8 @@ public class HangarScreen implements Screen {
             //engine.removeEntity(fins);
 
             final MyActor finsModule = new MyActor(rocketAtlas.findRegion("fins_" + i), fins, i);
-            finsModule.addListener(new InputListener(){
-                public boolean touchDown (InputEvent event, float x, float y, int pointer, int button) {
+            finsModule.addListener(new InputListener() {
+                public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
                     confirmChooseTable.clear();
                     TextButton confirmButton = new TextButton("Confirm", skin);
                     confirmButton.addListener(new ChangeListener() {
@@ -370,9 +373,9 @@ public class HangarScreen implements Screen {
         }
     }
 
-    public void createEngineTableArea(Table table){
-        for(int i = 1; i <= moduleNumbers; ++i){
-            if(i != 1 && i % 2 == 1){
+    public void createEngineTableArea(Table table) {
+        for (int i = 1; i <= moduleNumbers; ++i) {
+            if (i != 1 && i % 2 == 1) {
                 table.row();
             }
 
@@ -380,8 +383,8 @@ public class HangarScreen implements Screen {
             //engine.removeEntity(eng);
 
             final MyActor engineModule = new MyActor(rocketAtlas.findRegion("engine_" + i), eng, i);
-            engineModule.addListener(new InputListener(){
-                public boolean touchDown (InputEvent event, float x, float y, int pointer, int button) {
+            engineModule.addListener(new InputListener() {
+                public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
                     confirmChooseTable.clear();
                     TextButton confirmButton = new TextButton("Confirm", skin);
                     confirmButton.addListener(new ChangeListener() {
@@ -416,8 +419,7 @@ public class HangarScreen implements Screen {
     }
 
 
-
-    public void scaleRocketSize(float scale){
+    public void scaleRocketSize(float scale) {
         rocket.getComponent(RocketComponent.class).headModule.getComponent(TransformComponent.class).scale.x = scale;
         rocket.getComponent(RocketComponent.class).headModule.getComponent(TransformComponent.class).scale.y = scale;
 
@@ -431,11 +433,11 @@ public class HangarScreen implements Screen {
         rocket.getComponent(RocketComponent.class).bodyModule.getComponent(TransformComponent.class).scale.y = scale;
     }
 
-    public void saveRocket(int moduleNumber, int idOfModule){
+    public void saveRocket(int moduleNumber, int idOfModule) {
         XmlReader xmlReader = new XmlReader();
         BufferedWriter out = null;
-        try{
-            XmlReader.Element root = xmlReader.parse(Gdx.files.internal("xml/rocket.xml"));
+        try {
+            XmlReader.Element root = xmlReader.parse(Gdx.files.local("xml/rocket.xml"));
             out = new BufferedWriter(new OutputStreamWriter(Gdx.files.local("xml/rocket.xml").write(false)));
             XmlWriter xmlWriter = new XmlWriter(out);
 
@@ -444,7 +446,7 @@ public class HangarScreen implements Screen {
             xmlWriter.element("Position").attribute("x", root.getChildByName("Position").getFloat("x"))
                     .attribute("y", root.getChildByName("Position").getFloat("y")).pop();
             xmlWriter.element("Scale").attribute("factor", root.getChildByName("Scale").getInt("factor")).pop();
-            switch(moduleNumber){
+            switch (moduleNumber) {
                 case 1:
                     xmlWriter.element("HeadModule").attribute("id", idOfModule).pop();
                     xmlWriter.element("BodyModule").attribute("id", root.getChildByName("BodyModule").getInt("id")).pop();
@@ -473,13 +475,13 @@ public class HangarScreen implements Screen {
             xmlWriter.flush();
             xmlWriter.close();
 
-        }catch(IOException e){
+        } catch (IOException e) {
             e.printStackTrace();
-        }finally{
-            if(out != null){
+        } finally {
+            if (out != null) {
                 try {
                     out.close();
-                }catch(IOException e){
+                } catch (IOException e) {
 
                 }
             }

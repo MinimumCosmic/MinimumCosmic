@@ -6,8 +6,10 @@ import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+import com.badlogic.gdx.scenes.scene2d.Action;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
@@ -27,6 +29,8 @@ public class MenuScreen implements Screen {
         this.game = game;
 
         stage = new Stage(new ScreenViewport());
+        stage.getRoot().getColor().a  = 0;
+        stage.getRoot().addAction(Actions.fadeIn(0.5f));
 
         skin = game.AssetManager.assetManager.get("skin/uiskin.json");
         textureAtlas = game.AssetManager.assetManager.get("images/loading_screen.atlas");

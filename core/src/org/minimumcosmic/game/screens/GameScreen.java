@@ -44,7 +44,8 @@ public class GameScreen implements Screen {
     private TextureAtlas textureAtlas;
     private Skin skin;
     private Label speedLabel;
-    private Parallax parallax;
+    private Parallax parallaxBackground;
+    private Parallax parallaxForeground;
 
 
 
@@ -66,7 +67,8 @@ public class GameScreen implements Screen {
         engine = new PooledEngine();
         objectFactory = new ObjectFactory(engine);
         spriteBatch = new SpriteBatch();
-        parallax = new Parallax();
+        parallaxBackground = new Parallax();
+        parallaxForeground = new Parallax();
         RenderingSystem renderingSystem = new RenderingSystem(spriteBatch);
 
         camera = renderingSystem.getCamera();
@@ -76,7 +78,7 @@ public class GameScreen implements Screen {
         engine.addSystem(new PhysicsSystem(BodyFactory.getInstance(objectFactory.world).world));
         engine.addSystem(renderingSystem);
         engine.addSystem(new PhysicsDebugSystem(BodyFactory.getInstance(objectFactory.world).world, camera));
-        engine.addSystem(new CollisionSystem(objectFactory));
+        engine.addSystem(new CollisionSystem(objectFactory, engine));
         engine.addSystem(new RocketSystem(controller));
         engine.addSystem(new CameraSystem());
         engine.addSystem(new BoundsSystem());
@@ -85,8 +87,9 @@ public class GameScreen implements Screen {
                 (ParticleEffect) game.AssetManager.assetManager.get("smoke.p"),
                 "xml/rocket.xml");
         objectFactory.createFloor(textureAtlas.findRegion("player"));
-        objectFactory.generateWorld(textureAtlas);
-        objectFactory.generateParallaxBackground(new TextureAtlas("images/parallaxbnd.atlas"), parallax);
+        objectFactory.generateWorld(new TextureAtlas("images/items.atlas"));
+        objectFactory.generateParallaxBackground(new TextureAtlas("images/parallaxbnd.atlas"), parallaxBackground);
+        objectFactory.generateParallaxForeground(new TextureAtlas("images/parallaxbnd.atlas"), parallaxForeground);
 
         Gdx.input.setInputProcessor(controller);
 
@@ -113,10 +116,14 @@ public class GameScreen implements Screen {
         stage.act();
 
         spriteBatch.begin();
-        parallax.draw(camera, spriteBatch);
+        parallaxBackground.draw(camera, spriteBatch);
         spriteBatch.end();
 
         engine.update(delta);
+
+        spriteBatch.begin();
+        parallaxForeground.draw(camera, spriteBatch);
+        spriteBatch.end();
 
         stage.draw();
 
