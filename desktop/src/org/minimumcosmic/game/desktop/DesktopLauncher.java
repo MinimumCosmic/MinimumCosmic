@@ -10,6 +10,8 @@ public class DesktopLauncher {
 		config.title = "MINIMUM COSMIC";
 		config.width = 480;
 		config.height = 800;
+		config.foregroundFPS = 3000;
+
 		new LwjglApplication(new MinimumCosmic(), config);
 	}
 }

@@ -38,7 +38,7 @@ import java.util.Random;
 public class ObjectFactory {
 
     public static final float WORLD_WIDTH = RenderingSystem.WORLD_WIDTH;
-    public static final float WORLD_HEIGHT = RenderingSystem.WORLD_HEIGHT * 100;
+    public static final float WORLD_HEIGHT = RenderingSystem.WORLD_HEIGHT * 30;
 
     private BodyFactory bodyFactory;
     public World world;
@@ -59,17 +59,18 @@ public class ObjectFactory {
         bodyFactory.deleteAllBodies();
     }
 
-    public void deleteBody(Body body) {bodyFactory.deleteBody(body);}
-
+    public void deleteBody(Body body) {
+        bodyFactory.deleteBody(body);
+    }
 
     public void generateWorld(TextureAtlas atlas) {
         int y = 0;
         while (y < WORLD_HEIGHT) {
             float x = rand.nextFloat() * WORLD_WIDTH;
-            if (rand.nextFloat() > 0.6f) {
+            if (rand.nextFloat() > 0.8f) {
                 createMoney(x + MathUtils.random(-0.5f, 0.5f), y + rand.nextFloat() * 3, atlas);
             }
-            y += rand.nextFloat() * 10 ;
+            y += rand.nextFloat() * (10 * (Gdx.graphics.getHeight() / 800));
         }
     }
 
@@ -173,7 +174,7 @@ public class ObjectFactory {
         TexturedParallaxLayer gradient2Layer =
                 new TexturedParallaxLayer(gradient2Region, WORLD_WIDTH,
                         new Vector2(.025f, .025f), TexturedParallaxLayer.WH.width);
-        gradient2Layer.setPadBottom(RenderingSystem.WORLD_HEIGHT);
+        gradient2Layer.setPadBottom(RenderingSystem.WORLD_HEIGHT * 0.9f);
 
         parallax.addLayers(gradient2Layer, gradient1Layer, bush7Layer,
                 cloud1Layer1, cloud1Layer2, cloud1Layer3, cloud2Layer1, cloud2Layer2, cloud3Layer,
@@ -243,7 +244,7 @@ public class ObjectFactory {
     public Entity createMoney(float x, float y, TextureAtlas atlas) {
         Entity entity = engine.createEntity();
         B2dBodyComponent b2dBody = engine.createComponent(B2dBodyComponent.class);
-        b2dBody.body = bodyFactory.makeSensorBody(x, y, 1, BodyDef.BodyType.StaticBody, true);
+        b2dBody.body = bodyFactory.makeSensorBody(x, y, Gdx.graphics.getWidth() / 480.0f, BodyDef.BodyType.StaticBody, true);
 
         TypeComponent type = engine.createComponent(TypeComponent.class);
         type.type = TypeComponent.PICKUP;
@@ -256,6 +257,8 @@ public class ObjectFactory {
 
         TransformComponent position = engine.createComponent(TransformComponent.class);
         position.position.set(0, 0, 0);
+        position.scale.x = Gdx.graphics.getWidth() / 480.0f;
+        position.scale.y = Gdx.graphics.getHeight() / 800.0f;
 
         b2dBody.body.setUserData(entity);
 
@@ -271,12 +274,20 @@ public class ObjectFactory {
     }
 
     public Entity createRocket(TextureAtlas atlas, OrthographicCamera camera, ParticleEffect pe, String filePath) {
+        return createRocket(atlas, camera, pe, filePath, null);
+    }
+
+    public Entity createRocket(TextureAtlas atlas, OrthographicCamera camera, ParticleEffect pe, String filePath, Vector2 rp) {
         XmlReader xmlReader = new XmlReader();
         try {
             XmlReader.Element root = xmlReader.parse(Gdx.files.internal(filePath));
-
-            Vector2 rocketPosition = new Vector2(root.getChildByName("Position").getFloat("x"),
-                    root.getChildByName("Position").getFloat("y"));
+            Vector2 rocketPosition = new Vector2();
+            if (rp != null) {
+                rocketPosition = rp;
+            } else {
+                rocketPosition.x = root.getChildByName("Position").getFloat("x");
+                rocketPosition.y = root.getChildByName("Position").getFloat("y");
+            }
 
             // Create an empty entity
             Entity entity = engine.createEntity();
@@ -297,28 +308,39 @@ public class ObjectFactory {
             // Empty texture to render the particle effect
             TextureComponent textureComponent = engine.createComponent(TextureComponent.class);
 
-            rocketComponent.headModule = createHeadModule(rocketPosition, atlas, root.getChildByName("HeadModule").getInt("id"), true);
+            rocketComponent.headModule =
+                    createHeadModule(rocketPosition, atlas,
+                            root.getChildByName("HeadModule").getInt("id"), true);
 
-            rocketComponent.bodyModule = createBodyModule(rocketPosition, atlas, root.getChildByName("BodyModule").getInt("id"), true);
+            rocketComponent.bodyModule =
+                    createBodyModule(rocketPosition, atlas,
+                            root.getChildByName("BodyModule").getInt("id"), true);
 
-            rocketComponent.finsModule = createFinsModule(rocketPosition, atlas, root.getChildByName("FinsModule").getInt("id"), true);
+            rocketComponent.finsModule =
+                    createFinsModule(rocketPosition, atlas,
+                            root.getChildByName("FinsModule").getInt("id"), true);
 
-            rocketComponent.engineModule = createEngineModule(rocketPosition, atlas, root.getChildByName("EngineModule").getInt("id"), true);
+            rocketComponent.engineModule =
+                    createEngineModule(rocketPosition, atlas,
+                            root.getChildByName("EngineModule").getInt("id"), true);
 
             player.camera = camera;
 
-            float scale = root.getChildByName("Scale").getInt("factor");
+            float scaleX = root.getChildByName("Scale").getInt("factor") * Gdx.graphics.getWidth() / 480;
+            float scaleY = root.getChildByName("Scale").getInt("factor") * Gdx.graphics.getHeight() / 800;
 
             partEffComponent.particleEffect = pe;
-            pe.getEmitters().first().setPosition(rocketPosition.x, rocketPosition.y - 3 * scale);
+            pe.getEmitters().first().setPosition(rocketPosition.x,
+                    rocketPosition.y - 3 * root.getChildByName("Scale").getInt("factor"));
+
             pe.scaleEffect(0.025f);
             partEffComponent.particleEffect.start();
 
             Vector2[] vertices = new Vector2[4];
-            vertices[0] = new Vector2(-2 * scale, -3 * scale);
-            vertices[1] = new Vector2(2 * scale, -3 * scale);
-            vertices[2] = new Vector2(1 * scale, 2 * scale);
-            vertices[3] = new Vector2(-1 * scale, 2 * scale);
+            vertices[0] = new Vector2(-2 * scaleX, -3 * scaleY);
+            vertices[1] = new Vector2(2 * scaleX, -3 * scaleY);
+            vertices[2] = new Vector2(1 * scaleX, 2 * scaleY);
+            vertices[3] = new Vector2(-1 * scaleX, 2 * scaleY);
 
             b2dBody.body = bodyFactory.makePolygonBody(
                     rocketPosition.x,
@@ -342,8 +364,7 @@ public class ObjectFactory {
             //add entity to engine
             engine.addEntity(entity);
             return entity;
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             e.printStackTrace();
         }
         return null;
@@ -353,7 +374,7 @@ public class ObjectFactory {
         XmlReader xmlReader = new XmlReader();
         try {
             XmlReader.Element root = xmlReader.parse(Gdx.files.internal("xml/modules.xml"));
-            XmlReader.Element module =  root.getChildByName("HeadModules").getChild(id - 1);
+            XmlReader.Element module = root.getChildByName("HeadModules").getChild(id - 1);
             Entity headModule = createHeadModule(position.x, position.y,
                     atlas.findRegion("head_" + id),
                     module.getChildByName("BasicProperties").getInt("weight"),
@@ -365,15 +386,13 @@ public class ObjectFactory {
             headModule.getComponent(HeadModuleComponent.class).id = id;
 
             return headModule;
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             e.printStackTrace();
         }
         return null;
     }
 
-    public Entity createHeadModule(float x, float y, TextureRegion texture, int weight, int cost, int hp, int power, int fuel, boolean engineAdding)
-    {
+    public Entity createHeadModule(float x, float y, TextureRegion texture, int weight, int cost, int hp, int power, int fuel, boolean engineAdding) {
         Entity entity = engine.createEntity();
 
         TransformComponent position = engine.createComponent(TransformComponent.class);
@@ -387,6 +406,8 @@ public class ObjectFactory {
         headModuleComponent.power = power;
 
         position.position.set(x, y, 0);
+        position.scale.x = Gdx.graphics.getWidth() / 480.0f;
+        position.scale.y = Gdx.graphics.getHeight() / 800.0f;
         textureComponent.region = texture;
 
         entity.add(position);
@@ -404,7 +425,7 @@ public class ObjectFactory {
         XmlReader xmlReader = new XmlReader();
         try {
             XmlReader.Element root = xmlReader.parse(Gdx.files.internal("xml/modules.xml"));
-            XmlReader.Element module =  root.getChildByName("BodyModules").getChild(id - 1);
+            XmlReader.Element module = root.getChildByName("BodyModules").getChild(id - 1);
             Entity bodyModule = createBodyModule(position.x, position.y,
                     atlas.findRegion("body_" + id),
                     module.getChildByName("BasicProperties").getInt("weight"),
@@ -415,8 +436,7 @@ public class ObjectFactory {
             bodyModule.getComponent(BodyModuleComponent.class).id = id;
 
             return bodyModule;
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             e.printStackTrace();
         }
         return null;
@@ -436,6 +456,8 @@ public class ObjectFactory {
 
         position.position.set(x, y, 0);
         textureComponent.region = texture;
+        position.scale.x = Gdx.graphics.getWidth() / 480.0f;
+        position.scale.y = Gdx.graphics.getHeight() / 800.0f;
 
         entity.add(position);
         entity.add(bodyModuleComponent);
@@ -452,7 +474,7 @@ public class ObjectFactory {
         XmlReader xmlReader = new XmlReader();
         try {
             XmlReader.Element root = xmlReader.parse(Gdx.files.internal("xml/modules.xml"));
-            XmlReader.Element module =  root.getChildByName("FinsModules").getChild(id - 1);
+            XmlReader.Element module = root.getChildByName("FinsModules").getChild(id - 1);
             Entity finsModule = createFinsModule(position.x, position.y,
                     atlas.findRegion("fins_" + id),
                     module.getChildByName("BasicProperties").getInt("weight"),
@@ -462,8 +484,7 @@ public class ObjectFactory {
             finsModule.getComponent(FinsModuleComponent.class).id = id;
 
             return finsModule;
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             e.printStackTrace();
         }
         return null;
@@ -480,8 +501,10 @@ public class ObjectFactory {
         finsModuleComponent.cost = cost;
         finsModuleComponent.maneuver = maneuver;
 
-        position.position.set(x, y, 0);
+        position.position.set(x, y, 1);
         textureComponent.region = texture;
+        position.scale.x = Gdx.graphics.getWidth() / 480.0f;
+        position.scale.y = Gdx.graphics.getHeight() / 800.0f;
 
         entity.add(position);
         entity.add(finsModuleComponent);
@@ -498,7 +521,7 @@ public class ObjectFactory {
         XmlReader xmlReader = new XmlReader();
         try {
             XmlReader.Element root = xmlReader.parse(Gdx.files.internal("xml/modules.xml"));
-            XmlReader.Element module =  root.getChildByName("EngineModules").getChild(id - 1);
+            XmlReader.Element module = root.getChildByName("EngineModules").getChild(id - 1);
             Entity engineModule = createEngineModule(position.x, position.y,
                     atlas.findRegion("engine_" + id),
                     module.getChildByName("BasicProperties").getInt("weight"),
@@ -508,8 +531,7 @@ public class ObjectFactory {
             engineModule.getComponent(EngineModuleComponent.class).id = id;
 
             return engineModule;
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             e.printStackTrace();
         }
         return null;
@@ -526,8 +548,10 @@ public class ObjectFactory {
         engineModuleComponent.cost = cost;
         engineModuleComponent.power = power;
 
-        position.position.set(x, y, 0);
+        position.position.set(x, y, 2);
         textureComponent.region = texture;
+        position.scale.x = Gdx.graphics.getWidth() / 480.0f;
+        position.scale.y = Gdx.graphics.getHeight() / 800.0f;
 
         entity.add(position);
         entity.add(engineModuleComponent);
@@ -539,81 +563,7 @@ public class ObjectFactory {
         return entity;
     }
 
-    public Entity createRocket(TextureAtlas atlas, OrthographicCamera camera, ParticleEffect pe, String filePath, Vector2 rp) {
-        XmlReader xmlReader = new XmlReader();
-        try {
-            XmlReader.Element root = xmlReader.parse(Gdx.files.internal(filePath));
-
-            Vector2 rocketPosition = rp;
-
-            // Create an empty entity
-            Entity entity = engine.createEntity();
-
-            // Add components
-            B2dBodyComponent b2dBody = engine.createComponent(B2dBodyComponent.class);
-            TransformComponent position = engine.createComponent(TransformComponent.class);
-            CameraComponent player = engine.createComponent(CameraComponent.class);
-            RocketComponent rocketComponent = engine.createComponent(RocketComponent.class);
-            ParticleEffectComponent partEffComponent = engine.createComponent(ParticleEffectComponent.class);
-            BoundsComponent boundsComponent = engine.createComponent(BoundsComponent.class);
-            CollisionComponent collision = engine.createComponent(CollisionComponent.class);
-            TypeComponent type = engine.createComponent(TypeComponent.class);
-
-            type.type = TypeComponent.PLAYER;
-            collision.collisionEntity = entity;
-
-            // Empty texture to render the particle effect
-            TextureComponent textureComponent = engine.createComponent(TextureComponent.class);
-
-            rocketComponent.headModule = createHeadModule(rocketPosition, atlas, root.getChildByName("HeadModule").getInt("id"), true);
-
-            rocketComponent.bodyModule = createBodyModule(rocketPosition, atlas, root.getChildByName("BodyModule").getInt("id"), true);
-
-            rocketComponent.finsModule = createFinsModule(rocketPosition, atlas, root.getChildByName("FinsModule").getInt("id"), true);
-
-            rocketComponent.engineModule = createEngineModule(rocketPosition, atlas, root.getChildByName("EngineModule").getInt("id"), true);
-
-            player.camera = camera;
-
-            float scale = 2;//root.getChildByName("Scale").getInt("factor");
-
-            partEffComponent.particleEffect = pe;
-            pe.getEmitters().first().setPosition(rocketPosition.x, rocketPosition.y - 3 * scale);
-            pe.scaleEffect(0.025f);
-            partEffComponent.particleEffect.start();
-
-            Vector2[] vertices = new Vector2[4];
-            vertices[0] = new Vector2(-2 * scale, -3 * scale);
-            vertices[1] = new Vector2(2 * scale, -3 * scale);
-            vertices[2] = new Vector2(1 * scale, 2 * scale);
-            vertices[3] = new Vector2(-1 * scale, 2 * scale);
-
-            b2dBody.body = bodyFactory.makePolygonBody(
-                    rocketPosition.x,
-                    rocketPosition.y,
-                    vertices,
-                    BodyFactory.STEEL,
-                    BodyDef.BodyType.DynamicBody,
-                    false);
-            b2dBody.body.setUserData(entity);
-
-            entity.add(b2dBody);
-            entity.add(position);
-            entity.add(player);
-            entity.add(rocketComponent);
-            entity.add(partEffComponent);
-            entity.add(textureComponent);
-            entity.add(boundsComponent);
-            entity.add(collision);
-            entity.add(type);
-
-            //add entity to engine
-            engine.addEntity(entity);
-            return entity;
-        }
-        catch (IOException e) {
-            e.printStackTrace();
-        }
-        return null;
+    public int getBodyCount() {
+        return bodyFactory.world.getBodyCount();
     }
 }

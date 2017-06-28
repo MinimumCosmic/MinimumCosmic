@@ -15,6 +15,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.ProgressBar;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 
+import com.badlogic.gdx.utils.Align;
 import org.minimumcosmic.game.BodyFactory;
 import org.minimumcosmic.game.MinimumCosmic;
 import org.minimumcosmic.game.ObjectFactory;
@@ -44,6 +45,8 @@ public class GameScreen implements Screen {
     private TextureAtlas textureAtlas;
     private Skin skin;
     private Label speedLabel;
+    private Label fpsLabel;
+    private Label bodyCountLabel;
     private Parallax parallaxBackground;
     private Parallax parallaxForeground;
 
@@ -100,7 +103,13 @@ public class GameScreen implements Screen {
         fuelMeter.setPosition(Gdx.graphics.getWidth() * 0.95f, Gdx.graphics.getHeight() * 0.1f);
         stage.addActor(fuelMeter);
         speedLabel = new Label(100 + "m/s", skin);
+        fpsLabel = new Label(60 + " fps", skin);
+        bodyCountLabel = new Label(0 + " bodies", skin);
+        fpsLabel.setY(Gdx.graphics.getHeight() * 0.95f);
+        bodyCountLabel.setY(Gdx.graphics.getHeight() * 0.9f);
         stage.addActor(speedLabel);
+        stage.addActor(fpsLabel);
+        stage.addActor(bodyCountLabel);
 
     }
     @Override
@@ -112,6 +121,8 @@ public class GameScreen implements Screen {
 
         fuelMeter.setValue(rocket.getComponent(RocketComponent.class).bodyModule.getComponent(BodyModuleComponent.class).fuel);
         speedLabel.setText(rocket.getComponent(B2dBodyComponent.class).body.getLinearVelocity().y + "m/s");
+        fpsLabel.setText(Gdx.graphics.getFramesPerSecond() + " fps");
+        bodyCountLabel.setText(objectFactory.getBodyCount() + " bodies");
 
         stage.act();
 
