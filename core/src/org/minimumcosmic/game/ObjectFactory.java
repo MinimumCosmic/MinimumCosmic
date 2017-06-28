@@ -70,7 +70,7 @@ public class ObjectFactory {
             if (rand.nextFloat() > 0.8f) {
                 createMoney(x + MathUtils.random(-0.5f, 0.5f), y + rand.nextFloat() * 3, atlas);
             }
-            y += rand.nextFloat() * (10 * (Gdx.graphics.getHeight() / 800));
+            y += rand.nextFloat() * (10 * (Gdx.graphics.getHeight() / 800f));
         }
     }
 
@@ -280,7 +280,7 @@ public class ObjectFactory {
     public Entity createRocket(TextureAtlas atlas, OrthographicCamera camera, ParticleEffect pe, String filePath, Vector2 rp) {
         XmlReader xmlReader = new XmlReader();
         try {
-            XmlReader.Element root = xmlReader.parse(Gdx.files.internal(filePath));
+            XmlReader.Element root = xmlReader.parse(Gdx.files.local(filePath));
             Vector2 rocketPosition = new Vector2();
             if (rp != null) {
                 rocketPosition = rp;
@@ -326,8 +326,9 @@ public class ObjectFactory {
 
             player.camera = camera;
 
-            float scaleX = root.getChildByName("Scale").getInt("factor") * Gdx.graphics.getWidth() / 480;
-            float scaleY = root.getChildByName("Scale").getInt("factor") * Gdx.graphics.getHeight() / 800;
+            float scaleX = root.getChildByName("Scale").getInt("factor") * Gdx.graphics.getWidth() / 480f;
+            float scaleY = root.getChildByName("Scale").getInt("factor") * Gdx.graphics.getHeight() / 800f;
+
 
             partEffComponent.particleEffect = pe;
             pe.getEmitters().first().setPosition(rocketPosition.x,

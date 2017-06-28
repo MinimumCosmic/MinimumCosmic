@@ -15,7 +15,6 @@ import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.ProgressBar;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 
-import com.badlogic.gdx.utils.Align;
 import org.minimumcosmic.game.BodyFactory;
 import org.minimumcosmic.game.MinimumCosmic;
 import org.minimumcosmic.game.ObjectFactory;

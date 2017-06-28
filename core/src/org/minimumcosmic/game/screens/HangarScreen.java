@@ -23,7 +23,6 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
-import com.badlogic.gdx.utils.XmlReader;
 import com.badlogic.gdx.utils.XmlWriter;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 
@@ -43,8 +42,6 @@ import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 
-import static com.badlogic.gdx.Gdx.files;
-
 class MyActor extends Image {
     public Entity entity;
     private final int id;
@@ -63,6 +60,7 @@ class MyActor extends Image {
 
 public class HangarScreen implements Screen {
     final static int moduleNumbers = 3;
+    final static float rocketScale = Gdx.graphics.getWidth() * 0.005f;
 
     private MinimumCosmic game;
     private SpriteBatch spriteBatch;
@@ -131,7 +129,7 @@ public class HangarScreen implements Screen {
         rocket = objectFactory.createRocket(rocketAtlas, camera, pe, "xml/rocket.xml", rocketPosition);
 
         initMappers();
-        scaleRocketSize(Gdx.graphics.getWidth() * 0.005f);
+        scaleRocketSize(rocketScale);
 
         Gdx.input.setInputProcessor(stage);
 
@@ -275,6 +273,8 @@ public class HangarScreen implements Screen {
 
                             rocketComponent.headModule =
                                     objectFactory.createHeadModule(rocketPosition,rocketAtlas, headModule.getId(), true);
+                            headTransformComponent.scale.x = rocketScale;
+                            headTransformComponent.scale.y = rocketScale;
                             Mapper.rocketComponentMapper = ComponentMapper.getFor(RocketComponent.class);
 
                             System.out.println("It's confirmed");
@@ -325,6 +325,8 @@ public class HangarScreen implements Screen {
 
                             rocketComponent.bodyModule =
                                     objectFactory.createBodyModule(rocketPosition,rocketAtlas, bodyModule.getId(), true);
+                            bodyTransformComponent.scale.x = rocketScale;
+                            bodyTransformComponent.scale.y = rocketScale;
                             Mapper.rocketComponentMapper = ComponentMapper.getFor(RocketComponent.class);
 
                             System.out.println("It's confirmed");
@@ -374,6 +376,8 @@ public class HangarScreen implements Screen {
 
                             rocketComponent.finsModule =
                                     objectFactory.createFinsModule(rocketPosition,rocketAtlas, finsModule.getId(), true);
+                            finsTransformComponent.scale.x = rocketScale;
+                            finsTransformComponent.scale.y = rocketScale;
                             Mapper.rocketComponentMapper = ComponentMapper.getFor(RocketComponent.class);
 
 
@@ -424,6 +428,8 @@ public class HangarScreen implements Screen {
 
                             rocketComponent.engineModule =
                                     objectFactory.createEngineModule(rocketPosition,rocketAtlas, engineModule.getId(), true);
+                            engineTransformComponent.scale.x = rocketScale;
+                            engineTransformComponent.scale.y = rocketScale;
                             Mapper.rocketComponentMapper = ComponentMapper.getFor(RocketComponent.class);
 
 
@@ -478,7 +484,7 @@ public class HangarScreen implements Screen {
             XmlWriter xmlWriter = new XmlWriter(out);
 
             xmlWriter.element("Rocket");
-            xmlWriter.element("Position").attribute("x", 15.0).attribute("y", 5.0).pop();
+            xmlWriter.element("Position").attribute("x", 15f).attribute("y", 5f).pop();
             xmlWriter.element("Scale").attribute("factor", 1).pop();
             xmlWriter.element("HeadModule").attribute("id", saveRocketComponent.headModule.getComponent(HeadModuleComponent.class).id).pop();
             xmlWriter.element("BodyModule").attribute("id", saveRocketComponent.bodyModule.getComponent(BodyModuleComponent.class).id).pop();
@@ -487,67 +493,13 @@ public class HangarScreen implements Screen {
 
             xmlWriter.flush();
             xmlWriter.close();
-        }catch(IOException e){
+        }catch(Exception e){
             e.printStackTrace();
         }finally{
             if(out != null){
                 try {
                     out.close();
                 }catch(IOException e){
-
-                }
-            }
-        }
-    }
-
-    public void saveRocket(int moduleNumber, int idOfModule) {
-        XmlReader xmlReader = new XmlReader();
-        BufferedWriter out = null;
-        try{
-            XmlReader.Element root = xmlReader.parse(files.local("xml/rocket.xml"));
-            out = new BufferedWriter(new OutputStreamWriter(files.local("xml/rocket.xml").write(false)));
-            XmlWriter xmlWriter = new XmlWriter(out);
-
-            xmlWriter.element("Rocket");
-            xmlWriter.element("Position").attribute("x", root.getChildByName("Position").getFloat("x"))
-                    .attribute("y", root.getChildByName("Position").getFloat("y")).pop();
-            xmlWriter.element("Scale").attribute("factor", root.getChildByName("Scale").getInt("factor")).pop();
-            switch (moduleNumber) {
-                case 1:
-                    xmlWriter.element("HeadModule").attribute("id", idOfModule).pop();
-                    xmlWriter.element("BodyModule").attribute("id", root.getChildByName("BodyModule").getInt("id")).pop();
-                    xmlWriter.element("FinsModule").attribute("id", root.getChildByName("FinsModule").getInt("id")).pop();
-                    xmlWriter.element("EngineModule").attribute("id", root.getChildByName("EngineModule").getInt("id")).pop();
-                    break;
-                case 2:
-                    xmlWriter.element("HeadModule").attribute("id", root.getChildByName("HeadModule").getInt("id")).pop();
-                    xmlWriter.element("BodyModule").attribute("id", idOfModule).pop();
-                    xmlWriter.element("FinsModule").attribute("id", root.getChildByName("FinsModule").getInt("id")).pop();
-                    xmlWriter.element("EngineModule").attribute("id", root.getChildByName("EngineModule").getInt("id")).pop();
-                    break;
-                case 3:
-                    xmlWriter.element("HeadModule").attribute("id", root.getChildByName("HeadModule").getInt("id")).pop();
-                    xmlWriter.element("BodyModule").attribute("id", root.getChildByName("BodyModule").getInt("id")).pop();
-                    xmlWriter.element("FinsModule").attribute("id", idOfModule).pop();
-                    xmlWriter.element("EngineModule").attribute("id", root.getChildByName("EngineModule").getInt("id")).pop();
-                    break;
-                case 4:
-                    xmlWriter.element("HeadModule").attribute("id", root.getChildByName("HeadModule").getInt("id")).pop();
-                    xmlWriter.element("BodyModule").attribute("id", root.getChildByName("BodyModule").getInt("id")).pop();
-                    xmlWriter.element("FinsModule").attribute("id", root.getChildByName("FinsModule").getInt("id")).pop();
-                    xmlWriter.element("EngineModule").attribute("id", idOfModule).pop();
-                    break;
-            }
-            xmlWriter.flush();
-            xmlWriter.close();
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        } finally {
-            if (out != null) {
-                try {
-                    out.close();
-                } catch (IOException e) {
 
                 }
             }

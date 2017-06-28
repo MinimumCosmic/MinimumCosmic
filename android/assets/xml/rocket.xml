@@ -2,7 +2,7 @@
 	<Position x="15.0" y="5.0"/>
 	<Scale factor="1"/>
 	<HeadModule id="3"/>
-	<BodyModule id="1"/>
+	<BodyModule id="3"/>
 	<FinsModule id="3"/>
-	<EngineModule id="2"/>
+	<EngineModule id="3"/>
 </Rocket>
