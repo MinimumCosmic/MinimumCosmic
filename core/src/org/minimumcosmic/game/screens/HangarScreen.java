@@ -43,6 +43,8 @@ import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 
+import static com.badlogic.gdx.Gdx.files;
+
 class MyActor extends Image {
     public Entity entity;
     private final int id;
@@ -471,6 +473,7 @@ public class HangarScreen implements Screen {
             ComponentMapper<RocketComponent> rc = ComponentMapper.getFor(RocketComponent.class);
             RocketComponent saveRocketComponent = rc.get(entity);
 
+
             out = new BufferedWriter(new OutputStreamWriter(Gdx.files.local("xml/rocket.xml").write(false)));
             XmlWriter xmlWriter = new XmlWriter(out);
 
@@ -501,8 +504,8 @@ public class HangarScreen implements Screen {
         XmlReader xmlReader = new XmlReader();
         BufferedWriter out = null;
         try{
-            XmlReader.Element root = xmlReader.parse(Gdx.files.local("xml/rocket.xml"));
-            out = new BufferedWriter(new OutputStreamWriter(Gdx.files.local("xml/rocket.xml").write(false)));
+            XmlReader.Element root = xmlReader.parse(files.local("xml/rocket.xml"));
+            out = new BufferedWriter(new OutputStreamWriter(files.local("xml/rocket.xml").write(false)));
             XmlWriter xmlWriter = new XmlWriter(out);
 
             xmlWriter.element("Rocket");
