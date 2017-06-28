@@ -64,7 +64,7 @@ public class RocketSystem extends IteratingSystem {
 
         if ((controller.up || controller.isMouse1Down) && bodyModule.fuel > 0) {
             smoke.particleEffect.start();
-            bodyModule.fuel -= 0.25;
+            bodyModule.fuel -= 0.25 * deltaTime;
             float velocityX = b2Body.body.getMass() * (bodyModule.power + engineModule.power) * -MathUtils.sin(b2Body.body.getAngle());
             float velocityY = b2Body.body.getMass() * (bodyModule.power + engineModule.power) * MathUtils.cos(b2Body.body.getAngle());
             b2Body.body.applyForceToCenter(new Vector2(velocityX, velocityY), true);

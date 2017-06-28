@@ -480,8 +480,8 @@ public class HangarScreen implements Screen {
             xmlWriter.element("Rocket");
             xmlWriter.element("Position").attribute("x", 15.0).attribute("y", 5.0).pop();
             xmlWriter.element("Scale").attribute("factor", 1).pop();
-            xmlWriter.element("HeadModule").attribute("id", saveRocketComponent.bodyModule.getComponent(BodyModuleComponent.class).id).pop();
-            xmlWriter.element("BodyModule").attribute("id", saveRocketComponent.headModule.getComponent(HeadModuleComponent.class).id).pop();
+            xmlWriter.element("HeadModule").attribute("id", saveRocketComponent.headModule.getComponent(HeadModuleComponent.class).id).pop();
+            xmlWriter.element("BodyModule").attribute("id", saveRocketComponent.bodyModule.getComponent(BodyModuleComponent.class).id).pop();
             xmlWriter.element("FinsModule").attribute("id", saveRocketComponent.finsModule.getComponent(FinsModuleComponent.class).id).pop();
             xmlWriter.element("EngineModule").attribute("id", saveRocketComponent.engineModule.getComponent(EngineModuleComponent.class).id).pop();
 
