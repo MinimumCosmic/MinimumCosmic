@@ -19,6 +19,8 @@ public class MinimumCosmic extends Game {
 	public final static int HANGAR = 1;
 	public final static int APPLICATION = 2;
 
+	public final static int NUMBEROFMODULES = 4;
+
 	@Override
 	public void create() {
 		loadingScreen = new LoadingScreen(this);

@@ -60,6 +60,8 @@ public class GameScreen implements Screen {
 
         textureAtlas = game.AssetManager.assetManager.get("images/rocket.atlas");
         skin = game.AssetManager.assetManager.get("skin/uiskin.json");
+
+        Gdx.input.setCatchBackKey(true);
     }
 
     @Override
@@ -137,7 +139,7 @@ public class GameScreen implements Screen {
 
         stage.draw();
 
-        if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE) || Gdx.input.isCatchBackKey()) {
+        if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE) || Gdx.input.isKeyJustPressed(Input.Keys.BACK)) {
             game.changeScreen(MinimumCosmic.MENU);
         }
 

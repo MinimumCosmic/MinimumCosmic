@@ -1,0 +1,41 @@
+<Inventory>
+	<HeadModules>
+		<Module id="1">
+		</Module>
+		<Module id="2">
+		</Module>
+		<Module id="3">
+		</Module>
+	</HeadModules>
+	
+	<BodyModules>
+		<Module id="1">
+		</Module>
+		<Module id="2">
+		</Module>
+		<Module id="3">
+		</Module>
+	</BodyModules>
+	
+	<FinsModules>
+		<Module id="1">
+		</Module>
+		<Module id="2">
+		</Module>
+		<Module id="3">
+		</Module>
+	</FinsModules>
+	
+	<EngineModules>
+		<Module id="1">
+		</Module>
+		<Module id="2">
+		</Module>
+		<Module id="3">
+		</Module>
+	</EngineModules>
+
+	<ResearchPoint point="100">
+	</ResearchPoint>
+	
+</Inventory>

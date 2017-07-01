@@ -3,6 +3,7 @@ package org.minimumcosmic.game;
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.PooledEngine;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.ParticleEffect;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
@@ -280,7 +281,14 @@ public class ObjectFactory {
     public Entity createRocket(TextureAtlas atlas, OrthographicCamera camera, ParticleEffect pe, String filePath, Vector2 rp) {
         XmlReader xmlReader = new XmlReader();
         try {
-            XmlReader.Element root = xmlReader.parse(Gdx.files.local(filePath));
+            FileHandle fileHandle = Gdx.files.local(filePath);
+            XmlReader.Element root;
+            if(fileHandle.exists()){
+                root = xmlReader.parse(Gdx.files.local(filePath));
+            }
+            else {
+                root = xmlReader.parse(Gdx.files.internal(filePath));
+            }
             Vector2 rocketPosition = new Vector2();
             if (rp != null) {
                 rocketPosition = rp;
