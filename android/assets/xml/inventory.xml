@@ -1,37 +1,37 @@
 <Inventory>
 	<HeadModules>
-		<Module id="1">
+		<Module id="1" amount="1">
 		</Module>
-		<Module id="2">
+		<Module id="2" amount="1">
 		</Module>
-		<Module id="3">
+		<Module id="3" amount="1">
 		</Module>
 	</HeadModules>
 	
 	<BodyModules>
-		<Module id="1">
+		<Module id="1" amount="1">
 		</Module>
-		<Module id="2">
+		<Module id="2" amount="1">
 		</Module>
-		<Module id="3">
+		<Module id="3" amount="1">
 		</Module>
 	</BodyModules>
 	
 	<FinsModules>
-		<Module id="1">
+		<Module id="1" amount="1">
 		</Module>
-		<Module id="2">
+		<Module id="2" amount="1">
 		</Module>
-		<Module id="3">
+		<Module id="3" amount="1">
 		</Module>
 	</FinsModules>
 	
 	<EngineModules>
-		<Module id="1">
+		<Module id="1" amount="1">
 		</Module>
-		<Module id="2">
+		<Module id="2" amount="1">
 		</Module>
-		<Module id="3">
+		<Module id="3" amount="1">
 		</Module>
 	</EngineModules>
 

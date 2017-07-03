@@ -2,7 +2,6 @@ package org.minimumcosmic.game.screens;
 
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.Sprite;
@@ -51,12 +50,16 @@ public class MenuScreen implements Screen {
         TextButton newGame = new TextButton("New Game", skin);
         TextButton hangar = new TextButton("Hangar", skin);
         TextButton exit = new TextButton("Exit", skin);
+        TextButton shop = new TextButton("Shop", skin);
 
         table.bottom().defaults();
         table.add(newGame).fillX().uniformX().padBottom(Gdx.graphics.getHeight() * 0.025f)
                 .width(Gdx.graphics.getWidth() * 0.4f).height(Gdx.graphics.getHeight() * 0.05f);
         table.row();
         table.add(hangar).fillX().uniformX().padBottom(Gdx.graphics.getHeight() * 0.025f)
+                .width(Gdx.graphics.getWidth() * 0.4f).height(Gdx.graphics.getHeight() * 0.05f);
+        table.row();
+        table.add(shop).fillX().uniformX().padBottom(Gdx.graphics.getHeight() * 0.025f)
                 .width(Gdx.graphics.getWidth() * 0.4f).height(Gdx.graphics.getHeight() * 0.05f);
         table.row();
         table.add(exit).fillX().uniformX().padBottom(Gdx.graphics.getHeight() * 0.1f)
@@ -81,6 +84,13 @@ public class MenuScreen implements Screen {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
                 game.changeScreen(MinimumCosmic.HANGAR);
+            }
+        });
+
+        shop.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                game.changeScreen(MinimumCosmic.SHOP);
             }
         });
     }

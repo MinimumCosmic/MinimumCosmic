@@ -6,6 +6,7 @@ import org.minimumcosmic.game.screens.GameScreen;
 import org.minimumcosmic.game.screens.HangarScreen;
 import org.minimumcosmic.game.screens.LoadingScreen;
 import org.minimumcosmic.game.screens.MenuScreen;
+import org.minimumcosmic.game.screens.ShopScreen;
 
 public class MinimumCosmic extends Game {
 	public B2dAssetManager AssetManager = new B2dAssetManager();
@@ -14,10 +15,12 @@ public class MinimumCosmic extends Game {
 	private LoadingScreen loadingScreen;
 	private MenuScreen menuScreen;
 	private HangarScreen hangarScreen;
+	private ShopScreen shopScreen;
 
 	public final static int MENU = 0;
 	public final static int HANGAR = 1;
 	public final static int APPLICATION = 2;
+	public final static int SHOP = 3;
 
 	public final static int NUMBEROFMODULES = 4;
 
@@ -40,6 +43,10 @@ public class MinimumCosmic extends Game {
 			case HANGAR:
 				if(hangarScreen == null) hangarScreen = new HangarScreen(this);
 				this.setScreen(hangarScreen);
+				break;
+			case SHOP:
+				if(shopScreen == null) shopScreen = new ShopScreen(this);
+				this.setScreen(shopScreen);
 				break;
 		}
 	}

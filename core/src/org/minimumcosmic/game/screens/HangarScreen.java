@@ -5,6 +5,7 @@ import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.PooledEngine;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.GL20;
@@ -30,9 +31,12 @@ import com.badlogic.gdx.utils.XmlReader;
 import com.badlogic.gdx.utils.XmlWriter;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 
+import org.minimumcosmic.game.InventoryCell;
 import org.minimumcosmic.game.Mapper;
 import org.minimumcosmic.game.MinimumCosmic;
+import org.minimumcosmic.game.MyActor;
 import org.minimumcosmic.game.ObjectFactory;
+import org.minimumcosmic.game.controller.TouchscreenController;
 import org.minimumcosmic.game.entity.components.RocketComponent;
 import org.minimumcosmic.game.entity.components.TextureComponent;
 import org.minimumcosmic.game.entity.components.TransformComponent;
@@ -45,22 +49,6 @@ import org.minimumcosmic.game.entity.systems.RenderingSystem;
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
-
-class MyActor extends Image {
-    public Entity entity;
-    private final int id;
-
-    public MyActor(TextureAtlas.AtlasRegion atlasRegion, Entity entity, int id) {
-        super(atlasRegion);
-        this.entity = entity;
-        this.id = id;
-    }
-
-    int getId() {
-        return this.id;
-    }
-
-}
 
 public class HangarScreen implements Screen {
     final static int moduleNumbers = 3;
@@ -84,8 +72,9 @@ public class HangarScreen implements Screen {
     private TransformComponent bodyTransformComponent;
     private TransformComponent finsTransformComponent;
     private TransformComponent engineTransformComponent;
+    private TouchscreenController touchscreenController;
 
-    private Array<Array<Integer>> inventory;
+    private Array<Array<InventoryCell>> inventory;
 
     Vector2 rocketPosition = new Vector2(120, 120);
 
@@ -119,7 +108,9 @@ public class HangarScreen implements Screen {
 
         engine.addSystem(renderingSystem);
 
-        inventory = new Array<Array<Integer>>();
+        inventory = new Array<Array<InventoryCell>>();
+
+        touchscreenController = new TouchscreenController();
     }
 
     private void initMappers(){
@@ -141,11 +132,16 @@ public class HangarScreen implements Screen {
         rocket = objectFactory.createRocket(rocketAtlas, camera, pe, "xml/rocket.xml", rocketPosition);
 
         initMappers();
-        loadInventory();
+        inventory = loadInventory();
 
         scaleRocketSize(rocketScale);
 
-        Gdx.input.setInputProcessor(stage);
+        //provide to catch keys and stage action
+        InputMultiplexer inputMultiplexer = new InputMultiplexer();
+        inputMultiplexer.addProcessor(stage);
+        inputMultiplexer.addProcessor(touchscreenController);
+
+        Gdx.input.setInputProcessor(inputMultiplexer);
 
         final Table table = new Table(skin);
         table.setFillParent(true);
@@ -269,10 +265,12 @@ public class HangarScreen implements Screen {
             if (i != 0 && i % 2 == 0) {
                 table.row();
             }
+            InventoryCell currentInventoryCell = inventory.get(0).get(i);
 
-            final Entity head = objectFactory.createHeadModule(rocketPosition, rocketAtlas, inventory.get(0).get(i), false);
+            final Entity head = objectFactory.createHeadModule(rocketPosition, rocketAtlas, currentInventoryCell.id, false);
 
-            final MyActor headModule = new MyActor(rocketAtlas.findRegion("head_" + inventory.get(0).get(i)), head, inventory.get(0).get(i));
+            final MyActor headModule = new MyActor(rocketAtlas.findRegion("head_" + currentInventoryCell.id),
+                    head, currentInventoryCell.id);
 
             headModule.addListener(new InputListener() {
                 public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
@@ -312,7 +310,7 @@ public class HangarScreen implements Screen {
             });
 
             table.add(headModule).width(Gdx.graphics.getWidth() * 0.2f).height(Gdx.graphics.getHeight() * 0.2f);
-            table.add(new Label("x1", skin)).bottom().uniformX();
+            table.add(new Label("x" + currentInventoryCell.amount, skin)).bottom().uniformX();
 
 
         }
@@ -323,10 +321,12 @@ public class HangarScreen implements Screen {
             if (i != 0 && i % 2 == 0) {
                 table.row();
             }
+            InventoryCell currentInventoryCell = inventory.get(1).get(i);
 
-            Entity body = objectFactory.createBodyModule(rocketPosition, rocketAtlas, inventory.get(1).get(i), false);
+            Entity body = objectFactory.createBodyModule(rocketPosition, rocketAtlas, currentInventoryCell.id, false);
 
-            final MyActor bodyModule = new MyActor(rocketAtlas.findRegion("body_" + inventory.get(1).get(i)), body, inventory.get(1).get(i));
+            final MyActor bodyModule = new MyActor(rocketAtlas.findRegion("body_" + currentInventoryCell.id),
+                    body, currentInventoryCell.id);
             bodyModule.addListener(new InputListener() {
                 public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
                     confirmChooseTable.clear();
@@ -363,7 +363,7 @@ public class HangarScreen implements Screen {
             });
 
             table.add(bodyModule).width(Gdx.graphics.getWidth() * 0.2f).height(Gdx.graphics.getHeight() * 0.2f);
-            table.add(new Label("x1", skin)).bottom().uniformX();
+            table.add(new Label("x" + currentInventoryCell.amount, skin)).bottom().uniformX();
 
 
         }
@@ -374,10 +374,12 @@ public class HangarScreen implements Screen {
             if (i != 0 && i % 2 == 0) {
                 table.row();
             }
+            InventoryCell currentInventoryCell = inventory.get(2).get(i);
 
-            Entity fins = objectFactory.createFinsModule(rocketPosition, rocketAtlas, inventory.get(2).get(i), false);
+            Entity fins = objectFactory.createFinsModule(rocketPosition, rocketAtlas, currentInventoryCell.id, false);
 
-            final MyActor finsModule = new MyActor(rocketAtlas.findRegion("fins_" + inventory.get(2).get(i)), fins, inventory.get(2).get(i));
+            final MyActor finsModule = new MyActor(rocketAtlas.findRegion("fins_" + currentInventoryCell.id),
+                    fins, currentInventoryCell.id);
             finsModule.addListener(new InputListener() {
                 public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
                     confirmChooseTable.clear();
@@ -415,7 +417,7 @@ public class HangarScreen implements Screen {
             });
 
             table.add(finsModule).width(Gdx.graphics.getWidth() * 0.2f).height(Gdx.graphics.getHeight() * 0.2f);
-            table.add(new Label("x1", skin)).bottom().uniformX();
+            table.add(new Label("x" + currentInventoryCell.amount, skin)).bottom().uniformX();
 
 
         }
@@ -426,10 +428,12 @@ public class HangarScreen implements Screen {
             if (i != 0 && i % 2 == 0) {
                 table.row();
             }
+            InventoryCell currentInventoryCell = inventory.get(3).get(i);
 
-            Entity eng = objectFactory.createEngineModule(rocketPosition, rocketAtlas, inventory.get(3).get(i), false);
+            Entity eng = objectFactory.createEngineModule(rocketPosition, rocketAtlas, currentInventoryCell.id, false);
 
-            final MyActor engineModule = new MyActor(rocketAtlas.findRegion("engine_" + inventory.get(3).get(i)), eng, inventory.get(3).get(i));
+            final MyActor engineModule = new MyActor(rocketAtlas.findRegion("engine_" + currentInventoryCell.id),
+                    eng, currentInventoryCell.id);
             engineModule.addListener(new InputListener() {
                 public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
                     confirmChooseTable.clear();
@@ -467,7 +471,7 @@ public class HangarScreen implements Screen {
             });
 
             table.add(engineModule).width(Gdx.graphics.getWidth() * 0.2f).height(Gdx.graphics.getHeight() * 0.2f);
-            table.add(new Label("x1", skin)).bottom().uniformX();
+            table.add(new Label("x" + currentInventoryCell.amount, skin)).bottom().uniformX();
 
 
         }
@@ -487,9 +491,10 @@ public class HangarScreen implements Screen {
         engineTransformComponent.scale.y = scale;
     }
 
-    public void loadInventory(){
+    public static Array<Array<InventoryCell>> loadInventory(){
+        Array<Array<InventoryCell>> inventory = new Array<Array<InventoryCell>>();
         for(int i = 0; i < MinimumCosmic.NUMBEROFMODULES; ++i){
-            Array<Integer> tmp = new Array<Integer>();
+            Array<InventoryCell> tmp = new Array<InventoryCell>();
             inventory.add(tmp);
         }
         try{
@@ -505,27 +510,41 @@ public class HangarScreen implements Screen {
 
             XmlReader.Element elements = root.getChildByName("HeadModules");
             for(XmlReader.Element modules : elements.getChildrenByName("Module")){
-                   inventory.get(0).add(modules.getInt("id"));
+                InventoryCell tmp = new InventoryCell();
+                tmp.id = modules.getInt("id");
+                tmp.amount = modules.getInt("amount");
+                inventory.get(0).add(tmp);
             }
 
             elements = root.getChildByName("BodyModules");
             for(XmlReader.Element modules : elements.getChildrenByName("Module")){
-                inventory.get(1).add(modules.getInt("id"));
+                InventoryCell tmp = new InventoryCell();
+                tmp.id = modules.getInt("id");
+                tmp.amount = modules.getInt("amount");
+                inventory.get(1).add(tmp);
             }
 
             elements = root.getChildByName("FinsModules");
             for(XmlReader.Element modules : elements.getChildrenByName("Module")){
-                inventory.get(2).add(modules.getInt("id"));
+                InventoryCell tmp = new InventoryCell();
+                tmp.id = modules.getInt("id");
+                tmp.amount = modules.getInt("amount");
+                inventory.get(2).add(tmp);
             }
 
             elements = root.getChildByName("EngineModules");
             for(XmlReader.Element modules : elements.getChildrenByName("Module")){
-                inventory.get(3).add(modules.getInt("id"));
+                InventoryCell tmp = new InventoryCell();
+                tmp.id = modules.getInt("id");
+                tmp.amount = modules.getInt("amount");
+                inventory.get(3).add(tmp);
             }
+            return inventory;
         }
         catch (IOException e){
             e.printStackTrace();
         }
+        return null;
     }
 
     public void saveRocket(Entity entity){
@@ -586,7 +605,8 @@ public class HangarScreen implements Screen {
 
         engine.update(delta);
 
-        if (stage.keyDown(Input.Keys.BACK)) {
+        if (Gdx.input.isKeyJustPressed(Input.Keys.BACK) || Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
+            saveRocket(rocket);
             game.changeScreen(MinimumCosmic.MENU);
         }
 

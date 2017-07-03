@@ -1,8 +1,6 @@
 package org.minimumcosmic.game.screens;
 
 
-import aurelienribon.tweenengine.Tween;
-import aurelienribon.tweenengine.TweenManager;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
@@ -11,9 +9,16 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
-import com.badlogic.gdx.scenes.scene2d.ui.*;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.scenes.scene2d.ui.ProgressBar;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.utils.Align;
+
 import org.minimumcosmic.game.MinimumCosmic;
+
+import aurelienribon.tweenengine.Tween;
+import aurelienribon.tweenengine.TweenManager;
 
 public class LoadingScreen implements Screen {
 
@@ -55,6 +60,9 @@ public class LoadingScreen implements Screen {
     private void loadAssets() {
         // Load LoadingScreen images and wait until it's finished
         game.AssetManager.queueAddLoadingImages();
+        game.AssetManager.assetManager.finishLoading();
+
+        game.AssetManager.queueAddLoadingBoxImages();
         game.AssetManager.assetManager.finishLoading();
 
         game.AssetManager.queueAddSkin();

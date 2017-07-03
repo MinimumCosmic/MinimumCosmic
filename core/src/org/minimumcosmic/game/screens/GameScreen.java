@@ -50,8 +50,6 @@ public class GameScreen implements Screen {
     private Parallax parallaxForeground;
 
 
-
-
     public GameScreen(MinimumCosmic game) {
         this.game = game;
 

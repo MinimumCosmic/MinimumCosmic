@@ -15,6 +15,8 @@ public class B2dAssetManager {
 
     public final String loadingImages = "images/loading_screen.atlas";
 
+    public final String boxImages = "boxes2/box.atlas";
+
     public final String skin = "skin/uiskin.json";
 
     public void queueAddImages() {
@@ -24,6 +26,8 @@ public class B2dAssetManager {
     public void queueAddLoadingImages() {
         assetManager.load(loadingImages, TextureAtlas.class);
     }
+
+    public void queueAddLoadingBoxImages(){ assetManager.load(boxImages, TextureAtlas.class);}
 
     public void queueAddFonts() {
 
