@@ -20,6 +20,7 @@ import org.minimumcosmic.game.entity.components.BoundsComponent;
 import org.minimumcosmic.game.entity.components.CameraComponent;
 import org.minimumcosmic.game.entity.components.CollisionComponent;
 import org.minimumcosmic.game.entity.components.ParticleEffectComponent;
+import org.minimumcosmic.game.entity.components.PickupComponent;
 import org.minimumcosmic.game.entity.components.RocketComponent;
 import org.minimumcosmic.game.entity.components.TextureComponent;
 import org.minimumcosmic.game.entity.components.TransformComponent;
@@ -309,6 +310,7 @@ public class ObjectFactory {
             BoundsComponent boundsComponent = engine.createComponent(BoundsComponent.class);
             CollisionComponent collision = engine.createComponent(CollisionComponent.class);
             TypeComponent type = engine.createComponent(TypeComponent.class);
+            PickupComponent pickup = engine.createComponent(PickupComponent.class);
 
             type.type = TypeComponent.PLAYER;
             collision.collisionEntity = entity;
@@ -369,6 +371,7 @@ public class ObjectFactory {
             entity.add(boundsComponent);
             entity.add(collision);
             entity.add(type);
+            entity.add(pickup);
 
             //add entity to engine
             engine.addEntity(entity);

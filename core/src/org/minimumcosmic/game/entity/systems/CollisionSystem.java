@@ -10,6 +10,7 @@ import org.minimumcosmic.game.ObjectFactory;
 import org.minimumcosmic.game.entity.components.B2dBodyComponent;
 import org.minimumcosmic.game.entity.components.CameraComponent;
 import org.minimumcosmic.game.entity.components.CollisionComponent;
+import org.minimumcosmic.game.entity.components.PickupComponent;
 import org.minimumcosmic.game.entity.components.TypeComponent;
 
 public class CollisionSystem extends IteratingSystem {
@@ -48,6 +49,7 @@ public class CollisionSystem extends IteratingSystem {
                     case TypeComponent.PICKUP:
                         objectFactory.deleteBody(collidedEntity.getComponent(B2dBodyComponent.class).body);
                         engine.removeEntity(collidedEntity);
+                        entity.getComponent(PickupComponent.class).count++;
                         System.out.println("player hit pickup");
                         break;
                     case TypeComponent.OTHER:

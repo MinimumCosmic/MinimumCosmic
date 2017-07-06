@@ -18,8 +18,10 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import org.minimumcosmic.game.BodyFactory;
 import org.minimumcosmic.game.MinimumCosmic;
 import org.minimumcosmic.game.ObjectFactory;
+import org.minimumcosmic.game.SettingsSaver;
 import org.minimumcosmic.game.controller.KeyboardController;
 import org.minimumcosmic.game.entity.components.B2dBodyComponent;
+import org.minimumcosmic.game.entity.components.PickupComponent;
 import org.minimumcosmic.game.entity.components.RocketComponent;
 import org.minimumcosmic.game.entity.components.modules.BodyModuleComponent;
 import org.minimumcosmic.game.entity.systems.BoundsSystem;
@@ -46,6 +48,7 @@ public class GameScreen implements Screen {
     private Label speedLabel;
     private Label fpsLabel;
     private Label bodyCountLabel;
+    private Label pickUpLabel;
     private Parallax parallaxBackground;
     private Parallax parallaxForeground;
 
@@ -104,12 +107,14 @@ public class GameScreen implements Screen {
         speedLabel = new Label(100 + "m/s", skin);
         fpsLabel = new Label(60 + " fps", skin);
         bodyCountLabel = new Label(0 + " bodies", skin);
+        pickUpLabel = new Label(0 + " money", skin);
         fpsLabel.setY(Gdx.graphics.getHeight() * 0.95f);
         bodyCountLabel.setY(Gdx.graphics.getHeight() * 0.9f);
+        pickUpLabel.setY(Gdx.graphics.getHeight() * 0.85f);
         stage.addActor(speedLabel);
         stage.addActor(fpsLabel);
         stage.addActor(bodyCountLabel);
-
+        stage.addActor(pickUpLabel);
     }
     @Override
     public void render(float delta) {
@@ -122,6 +127,7 @@ public class GameScreen implements Screen {
         speedLabel.setText(rocket.getComponent(B2dBodyComponent.class).body.getLinearVelocity().y + "m/s");
         fpsLabel.setText(Gdx.graphics.getFramesPerSecond() + " fps");
         bodyCountLabel.setText(objectFactory.getBodyCount() + " bodies");
+        pickUpLabel.setText(rocket.getComponent(PickupComponent.class).count + " money");
 
         stage.act();
 
@@ -138,6 +144,7 @@ public class GameScreen implements Screen {
         stage.draw();
 
         if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE) || Gdx.input.isKeyJustPressed(Input.Keys.BACK)) {
+            SettingsSaver.saveResearchPoint(rocket);
             game.changeScreen(MinimumCosmic.MENU);
         }
 

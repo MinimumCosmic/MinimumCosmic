@@ -7,7 +7,6 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.Screen;
-import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.ParticleEffect;
@@ -27,8 +26,6 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.utils.Array;
-import com.badlogic.gdx.utils.XmlReader;
-import com.badlogic.gdx.utils.XmlWriter;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 
 import org.minimumcosmic.game.InventoryCell;
@@ -36,6 +33,8 @@ import org.minimumcosmic.game.Mapper;
 import org.minimumcosmic.game.MinimumCosmic;
 import org.minimumcosmic.game.MyActor;
 import org.minimumcosmic.game.ObjectFactory;
+import org.minimumcosmic.game.SettingsLoader;
+import org.minimumcosmic.game.SettingsSaver;
 import org.minimumcosmic.game.controller.TouchscreenController;
 import org.minimumcosmic.game.entity.components.RocketComponent;
 import org.minimumcosmic.game.entity.components.TextureComponent;
@@ -46,9 +45,7 @@ import org.minimumcosmic.game.entity.components.modules.FinsModuleComponent;
 import org.minimumcosmic.game.entity.components.modules.HeadModuleComponent;
 import org.minimumcosmic.game.entity.systems.RenderingSystem;
 
-import java.io.BufferedWriter;
-import java.io.IOException;
-import java.io.OutputStreamWriter;
+import static org.minimumcosmic.game.SettingsSaver.saveRocket;
 
 public class HangarScreen implements Screen {
     final static int moduleNumbers = 3;
@@ -132,7 +129,7 @@ public class HangarScreen implements Screen {
         rocket = objectFactory.createRocket(rocketAtlas, camera, pe, "xml/rocket.xml", rocketPosition);
 
         initMappers();
-        inventory = loadInventory();
+        inventory = SettingsLoader.loadInventory();
 
         scaleRocketSize(rocketScale);
 
@@ -491,94 +488,9 @@ public class HangarScreen implements Screen {
         engineTransformComponent.scale.y = scale;
     }
 
-    public static Array<Array<InventoryCell>> loadInventory(){
-        Array<Array<InventoryCell>> inventory = new Array<Array<InventoryCell>>();
-        for(int i = 0; i < MinimumCosmic.NUMBEROFMODULES; ++i){
-            Array<InventoryCell> tmp = new Array<InventoryCell>();
-            inventory.add(tmp);
-        }
-        try{
-            XmlReader xmlReader = new XmlReader();
-            XmlReader.Element root;
-            FileHandle fileHandle = Gdx.files.local("xml/inventory.xml");
-            if(fileHandle.exists()){
-                root = xmlReader.parse(Gdx.files.local("xml/inventory.xml"));
-            }
-            else{
-                root = xmlReader.parse(Gdx.files.internal("xml/inventory.xml"));
-            }
-
-            XmlReader.Element elements = root.getChildByName("HeadModules");
-            for(XmlReader.Element modules : elements.getChildrenByName("Module")){
-                InventoryCell tmp = new InventoryCell();
-                tmp.id = modules.getInt("id");
-                tmp.amount = modules.getInt("amount");
-                inventory.get(0).add(tmp);
-            }
-
-            elements = root.getChildByName("BodyModules");
-            for(XmlReader.Element modules : elements.getChildrenByName("Module")){
-                InventoryCell tmp = new InventoryCell();
-                tmp.id = modules.getInt("id");
-                tmp.amount = modules.getInt("amount");
-                inventory.get(1).add(tmp);
-            }
-
-            elements = root.getChildByName("FinsModules");
-            for(XmlReader.Element modules : elements.getChildrenByName("Module")){
-                InventoryCell tmp = new InventoryCell();
-                tmp.id = modules.getInt("id");
-                tmp.amount = modules.getInt("amount");
-                inventory.get(2).add(tmp);
-            }
-
-            elements = root.getChildByName("EngineModules");
-            for(XmlReader.Element modules : elements.getChildrenByName("Module")){
-                InventoryCell tmp = new InventoryCell();
-                tmp.id = modules.getInt("id");
-                tmp.amount = modules.getInt("amount");
-                inventory.get(3).add(tmp);
-            }
-            return inventory;
-        }
-        catch (IOException e){
-            e.printStackTrace();
-        }
-        return null;
-    }
-
-    public void saveRocket(Entity entity){
-        BufferedWriter out = null;
-        try{
-            ComponentMapper<RocketComponent> rc = ComponentMapper.getFor(RocketComponent.class);
-            RocketComponent saveRocketComponent = rc.get(entity);
 
 
-            out = new BufferedWriter(new OutputStreamWriter(Gdx.files.local("xml/rocket.xml").write(false)));
-            XmlWriter xmlWriter = new XmlWriter(out);
 
-            xmlWriter.element("Rocket");
-            xmlWriter.element("Position").attribute("x", 15f).attribute("y", 5f).pop();
-            xmlWriter.element("Scale").attribute("factor", 1).pop();
-            xmlWriter.element("HeadModule").attribute("id", saveRocketComponent.headModule.getComponent(HeadModuleComponent.class).id).pop();
-            xmlWriter.element("BodyModule").attribute("id", saveRocketComponent.bodyModule.getComponent(BodyModuleComponent.class).id).pop();
-            xmlWriter.element("FinsModule").attribute("id", saveRocketComponent.finsModule.getComponent(FinsModuleComponent.class).id).pop();
-            xmlWriter.element("EngineModule").attribute("id", saveRocketComponent.engineModule.getComponent(EngineModuleComponent.class).id).pop();
-
-            xmlWriter.flush();
-            xmlWriter.close();
-        }catch(Exception e){
-            e.printStackTrace();
-        }finally{
-            if(out != null){
-                try {
-                    out.close();
-                }catch(IOException e){
-
-                }
-            }
-        }
-    }
 
     @Override
     public void render(float delta) {
@@ -606,7 +518,7 @@ public class HangarScreen implements Screen {
         engine.update(delta);
 
         if (Gdx.input.isKeyJustPressed(Input.Keys.BACK) || Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
-            saveRocket(rocket);
+            SettingsSaver.saveRocket(rocket);
             game.changeScreen(MinimumCosmic.MENU);
         }
 

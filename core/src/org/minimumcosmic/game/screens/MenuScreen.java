@@ -28,10 +28,6 @@ public class MenuScreen implements Screen {
     public MenuScreen(MinimumCosmic game) {
         this.game = game;
 
-        stage = new Stage(new ScreenViewport());
-        stage.getRoot().getColor().a  = 0;
-        stage.getRoot().addAction(Actions.fadeIn(0.5f));
-
         skin = game.AssetManager.assetManager.get("skin/uiskin.json");
         textureAtlas = game.AssetManager.assetManager.get("images/loading_screen.atlas");
 
@@ -40,6 +36,10 @@ public class MenuScreen implements Screen {
     }
     @Override
     public void show() {
+        stage = new Stage(new ScreenViewport());
+        stage.getRoot().getColor().a  = 0;
+        stage.getRoot().addAction(Actions.fadeIn(0.5f));
+
         Gdx.input.setInputProcessor(stage);
 
         Table table = new Table();
@@ -130,7 +130,7 @@ public class MenuScreen implements Screen {
 
     @Override
     public void hide() {
-
+        stage.dispose();
     }
 
     @Override
