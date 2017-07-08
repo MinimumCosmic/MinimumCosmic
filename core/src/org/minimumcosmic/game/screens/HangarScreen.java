@@ -45,9 +45,16 @@ import org.minimumcosmic.game.entity.components.modules.FinsModuleComponent;
 import org.minimumcosmic.game.entity.components.modules.HeadModuleComponent;
 import org.minimumcosmic.game.entity.systems.RenderingSystem;
 
+import java.util.ArrayList;
+
 import static org.minimumcosmic.game.SettingsSaver.saveRocket;
 
 public class HangarScreen implements Screen {
+    private final int HEAD = 0;
+    private final int BODY = 1;
+    private final int FINS = 2;
+    private final int ENGINE = 3;
+
     final static int moduleNumbers = 3;
     final static float rocketScale = Gdx.graphics.getWidth() * 0.005f;
 
@@ -71,7 +78,7 @@ public class HangarScreen implements Screen {
     private TransformComponent engineTransformComponent;
     private TouchscreenController touchscreenController;
 
-    private Array<Array<InventoryCell>> inventory;
+    private Array<ArrayList<InventoryCell>> inventory;
 
     Vector2 rocketPosition = new Vector2(120, 120);
 
@@ -105,7 +112,7 @@ public class HangarScreen implements Screen {
 
         engine.addSystem(renderingSystem);
 
-        inventory = new Array<Array<InventoryCell>>();
+        inventory = new Array<ArrayList<InventoryCell>>();
 
         touchscreenController = new TouchscreenController();
     }
@@ -258,7 +265,7 @@ public class HangarScreen implements Screen {
     }
 
     public void createHeadTableArea(final Table table) {
-        for (int i = 0; i < inventory.get(0).size; ++i) {
+        for (int i = 0; i < inventory.get(0).size(); ++i) {
             if (i != 0 && i % 2 == 0) {
                 table.row();
             }
@@ -267,7 +274,7 @@ public class HangarScreen implements Screen {
             final Entity head = objectFactory.createHeadModule(rocketPosition, rocketAtlas, currentInventoryCell.id, false);
 
             final MyActor headModule = new MyActor(rocketAtlas.findRegion("head_" + currentInventoryCell.id),
-                    head, currentInventoryCell.id);
+                    head, currentInventoryCell.id, HEAD);
 
             headModule.addListener(new InputListener() {
                 public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
@@ -314,7 +321,7 @@ public class HangarScreen implements Screen {
     }
 
     public void createBodyTableArea(Table table) {
-        for (int i = 0; i < inventory.get(1).size; ++i) {
+        for (int i = 0; i < inventory.get(1).size(); ++i) {
             if (i != 0 && i % 2 == 0) {
                 table.row();
             }
@@ -323,7 +330,7 @@ public class HangarScreen implements Screen {
             Entity body = objectFactory.createBodyModule(rocketPosition, rocketAtlas, currentInventoryCell.id, false);
 
             final MyActor bodyModule = new MyActor(rocketAtlas.findRegion("body_" + currentInventoryCell.id),
-                    body, currentInventoryCell.id);
+                    body, currentInventoryCell.id, BODY);
             bodyModule.addListener(new InputListener() {
                 public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
                     confirmChooseTable.clear();
@@ -367,7 +374,7 @@ public class HangarScreen implements Screen {
     }
 
     public void createFinsTableArea(Table table) {
-        for (int i = 0; i < inventory.get(2).size; ++i) {
+        for (int i = 0; i < inventory.get(2).size(); ++i) {
             if (i != 0 && i % 2 == 0) {
                 table.row();
             }
@@ -376,7 +383,7 @@ public class HangarScreen implements Screen {
             Entity fins = objectFactory.createFinsModule(rocketPosition, rocketAtlas, currentInventoryCell.id, false);
 
             final MyActor finsModule = new MyActor(rocketAtlas.findRegion("fins_" + currentInventoryCell.id),
-                    fins, currentInventoryCell.id);
+                    fins, currentInventoryCell.id, FINS);
             finsModule.addListener(new InputListener() {
                 public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
                     confirmChooseTable.clear();
@@ -421,7 +428,7 @@ public class HangarScreen implements Screen {
     }
 
     public void createEngineTableArea(Table table) {
-        for (int i = 0; i < inventory.get(3).size; ++i) {
+        for (int i = 0; i < inventory.get(3).size(); ++i) {
             if (i != 0 && i % 2 == 0) {
                 table.row();
             }
@@ -430,7 +437,7 @@ public class HangarScreen implements Screen {
             Entity eng = objectFactory.createEngineModule(rocketPosition, rocketAtlas, currentInventoryCell.id, false);
 
             final MyActor engineModule = new MyActor(rocketAtlas.findRegion("engine_" + currentInventoryCell.id),
-                    eng, currentInventoryCell.id);
+                    eng, currentInventoryCell.id, ENGINE);
             engineModule.addListener(new InputListener() {
                 public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
                     confirmChooseTable.clear();

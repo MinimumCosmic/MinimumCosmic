@@ -6,6 +6,7 @@ import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.XmlReader;
 
 import java.io.IOException;
+import java.util.ArrayList;
 
 /**
  * Created by Kostin on 06.07.2017.
@@ -76,10 +77,10 @@ public class SettingsLoader {
         return characteristics;
     }
 
-    public static Array<Array<InventoryCell>> loadInventory(){
-        Array<Array<InventoryCell>> inventory = new Array<Array<InventoryCell>>();
+    public static Array<ArrayList<InventoryCell>> loadInventory(){
+        Array<ArrayList<InventoryCell>> inventory = new Array<ArrayList<InventoryCell>>();
         for(int i = 0; i < MinimumCosmic.NUMBEROFMODULES; ++i){
-            Array<InventoryCell> tmp = new Array<InventoryCell>();
+            ArrayList<InventoryCell> tmp = new ArrayList<InventoryCell>();
             inventory.add(tmp);
         }
         try{

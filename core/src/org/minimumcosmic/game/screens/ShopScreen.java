@@ -31,9 +31,12 @@ import org.minimumcosmic.game.MinimumCosmic;
 import org.minimumcosmic.game.MyActor;
 import org.minimumcosmic.game.ObjectFactory;
 import org.minimumcosmic.game.SettingsLoader;
+import org.minimumcosmic.game.SettingsSaver;
 import org.minimumcosmic.game.controller.TouchscreenController;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Random;
 
 public class ShopScreen implements Screen {
@@ -45,6 +48,8 @@ public class ShopScreen implements Screen {
     private final int SIMPLEBOXCOST = 50;
     private final int MEDIUMBOXCOST = 200;
     private final int SUPERBOXCOST = 1000;
+
+    private int researchPoint;
 
     private MinimumCosmic game;
     private Stage stage;
@@ -61,10 +66,11 @@ public class ShopScreen implements Screen {
     private Table superBoxTable;
     private Table costTable;
     private Table currentMoney;
+    private Label currentMoneyLabel;
     private PooledEngine engine;
     private ObjectFactory objectFactory;
     private Image moneyIcon;
-    private Array<Array<InventoryCell>> inventory;
+    private Array<ArrayList<InventoryCell>> inventory;
     private TouchscreenController touchscreenController;
     Sprite backSprite;
 
@@ -100,6 +106,9 @@ public class ShopScreen implements Screen {
 
         moneyIcon = new Image(new Texture(Gdx.files.internal("images/money_icon.png")));
 
+        researchPoint = SettingsLoader.loadResearchPoint();
+        currentMoneyLabel = new Label("" + researchPoint, skin);
+
         itemTable = new Table();
         itemTable.setBounds( Gdx.graphics.getWidth() * 0.1f, Gdx.graphics.getHeight() * 0.5f,
                 Gdx.graphics.getWidth() * 0.8f, Gdx.graphics.getHeight() * 0.4f);
@@ -130,7 +139,6 @@ public class ShopScreen implements Screen {
                 Gdx.graphics.getWidth() * 0.8f, Gdx.graphics.getHeight() * 0.05f);
         costTable.debug();
 
-
         final Table table = new Table(skin);
         table.setFillParent(true);
         stage.addActor(table);
@@ -138,7 +146,7 @@ public class ShopScreen implements Screen {
         currentMoney.debug();
         currentMoney.pad(10f);
         currentMoney.add(new Image(money.findRegion("icon"))).width(boxTable.getHeight() / 6f).height(boxTable.getHeight() / 6f);
-        currentMoney.add(new Label("" + SettingsLoader.loadResearchPoint(), skin));
+        currentMoney.add(currentMoneyLabel);
         table.top().defaults();
         table.right().defaults();
         table.add(currentMoney);
@@ -240,9 +248,9 @@ public class ShopScreen implements Screen {
                     case HEAD:
                         Entity head = objectFactory.createHeadModule(rocketPosition, rocketAtlas, tmp.getKey(), false);
                         final MyActor headModule = new MyActor(rocketAtlas.findRegion("head_" + tmp.getKey()),
-                                head, tmp.getKey());
+                                head, tmp.getKey(), HEAD);
                         final MyActor tmpHeadActor = new MyActor(rocketAtlas.findRegion("head_" + tmp.getKey()),
-                            head, tmp.getKey());
+                            head, tmp.getKey(), HEAD);
                         headModule.addListener(new InputListener(){
                             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button){
                                 System.out.println("HEAD");
@@ -257,9 +265,9 @@ public class ShopScreen implements Screen {
                     case BODY:
                         Entity body = objectFactory.createBodyModule(rocketPosition, rocketAtlas, tmp.getKey(), false);
                         MyActor bodyModule = new MyActor(rocketAtlas.findRegion("body_" + tmp.getKey()),
-                                body, tmp.getKey());
+                                body, tmp.getKey(), BODY);
                         final MyActor tmpBodyActor = new MyActor(rocketAtlas.findRegion("body_" + tmp.getKey()),
-                                body, tmp.getKey());
+                                body, tmp.getKey(), BODY);
                         bodyModule.addListener(new InputListener(){
                             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button){
                                 System.out.println("BODY");
@@ -273,9 +281,9 @@ public class ShopScreen implements Screen {
                     case FINS:
                         Entity fins = objectFactory.createFinsModule(rocketPosition, rocketAtlas, tmp.getKey(), false);
                         MyActor finsModule = new MyActor(rocketAtlas.findRegion("fins_" + tmp.getKey()),
-                                fins, tmp.getKey());
+                                fins, tmp.getKey(), FINS);
                         final MyActor tmpFinsActor = new MyActor(rocketAtlas.findRegion("fins_" + tmp.getKey()),
-                                fins, tmp.getKey());
+                                fins, tmp.getKey(), FINS);
                         finsModule.addListener(new InputListener(){
                             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button){
                                 System.out.println("FINS");
@@ -289,9 +297,9 @@ public class ShopScreen implements Screen {
                     case ENGINE:
                         Entity engine = objectFactory.createEngineModule(rocketPosition, rocketAtlas, tmp.getKey(), false);
                         MyActor engineModule = new MyActor(rocketAtlas.findRegion("engine_" + tmp.getKey()),
-                                engine, tmp.getKey());
+                                engine, tmp.getKey(), ENGINE);
                         final MyActor tmpEngineActor = new MyActor(rocketAtlas.findRegion("engine_" + tmp.getKey()),
-                                engine, tmp.getKey());
+                                engine, tmp.getKey(), ENGINE);
                         engineModule.addListener(new InputListener(){
                             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button){
                                 System.out.println("ENGINE");
@@ -310,23 +318,65 @@ public class ShopScreen implements Screen {
         }
     }
 
-    public void createConfirmDialog(MyActor actor, int module){
+    public void createConfirmDialog(final MyActor actor, int module){
         final Dialog dialog = new Dialog("Confirm", skin);
         Table moduleTable = new Table();
         Table tmpTable = new Table();
         Table buttonTable = new Table();
         Table costTable = new Table();
+        Table settingTable = new Table(skin);
+
+        actor.getModule();
+        final Array<String> characteristics = SettingsLoader.loadModuleCharacteristics(module, actor.getId());
+
         costTable.add(new Label("Buy for : ", skin));
         costTable.add(new Image(money.findRegion("icon")));
         buttonTable.center();
         TextButton yes = new TextButton("Yes", skin);
+        yes.pad(15f);
         yes.addListener(new ChangeListener() {
             @Override
-            public void changed(ChangeEvent event, Actor actor) {
+            public void changed(ChangeEvent event, Actor actor_) {
+                int cost = Integer.parseInt(characteristics.get(1));
+                if(researchPoint >= cost){
+                    researchPoint -= cost;
+                    currentMoneyLabel.setText("" + researchPoint);
+                    InventoryCell insetCell = new InventoryCell();
+                    insetCell.id = actor.getId();
+                    insetCell.amount = 1;
+                    Iterator itr = inventory.get(actor.getModule()).iterator();
+                    while(itr.hasNext()){
+                        InventoryCell tmp = (InventoryCell) itr.next();
+                        if(tmp.id == actor.getId()){
+                            inventory.get(actor.getModule()).remove(tmp);
+                            tmp.amount++;
+                            insetCell = tmp;
+                            break;
+                        }
+                    }
+                    inventory.get(actor.getModule()).add(insetCell);
+                }
+                else{
+                    final Dialog dialog = new Dialog("", skin);
+                    Table tmpTable = new Table();
+                    tmpTable.add(new Label("Soryy, haven't \nenough point :(", skin)).pad(20f);
+                    TextButton ok = new TextButton("ok", skin);
+                    ok.addListener(new ChangeListener() {
+                        @Override
+                        public void changed(ChangeEvent event, Actor actor) {
+                            dialog.hide();
+                        }
+                    });
+                    tmpTable.row();
+                    tmpTable.add(ok).pad(15f);
+                    dialog.add(tmpTable);
+                    dialog.show(stage);
+                }
                 dialog.hide();
             }
         });
         TextButton no = new TextButton("No", skin);
+        no.pad(15f);
         no.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
@@ -334,8 +384,7 @@ public class ShopScreen implements Screen {
             }
         });
 
-        Table settingTable = new Table(skin);
-        Array<String> characteristics = SettingsLoader.loadModuleCharacteristics(module, actor.getId());
+
         switch(module){
             case HEAD:
                 settingTable.add("weight : " + characteristics.get(0));
@@ -440,6 +489,8 @@ public class ShopScreen implements Screen {
         stage.draw();
 
         if (Gdx.input.isKeyJustPressed(Input.Keys.BACK) || Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
+            SettingsSaver.saveInventory(inventory);
+            SettingsSaver.saveResearchPoint(researchPoint);
             game.changeScreen(MinimumCosmic.MENU);
         }
 

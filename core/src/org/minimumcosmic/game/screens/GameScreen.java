@@ -18,6 +18,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import org.minimumcosmic.game.BodyFactory;
 import org.minimumcosmic.game.MinimumCosmic;
 import org.minimumcosmic.game.ObjectFactory;
+import org.minimumcosmic.game.SettingsLoader;
 import org.minimumcosmic.game.SettingsSaver;
 import org.minimumcosmic.game.controller.KeyboardController;
 import org.minimumcosmic.game.entity.components.B2dBodyComponent;
@@ -144,7 +145,8 @@ public class GameScreen implements Screen {
         stage.draw();
 
         if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE) || Gdx.input.isKeyJustPressed(Input.Keys.BACK)) {
-            SettingsSaver.saveResearchPoint(rocket);
+            SettingsSaver.saveResearchPoint(rocket.getComponent(PickupComponent.class).count
+                                + SettingsLoader.loadResearchPoint());
             game.changeScreen(MinimumCosmic.MENU);
         }
 
