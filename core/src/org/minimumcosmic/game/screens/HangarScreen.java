@@ -31,10 +31,10 @@ import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import org.minimumcosmic.game.InventoryCell;
 import org.minimumcosmic.game.Mapper;
 import org.minimumcosmic.game.MinimumCosmic;
-import org.minimumcosmic.game.MyActor;
+import org.minimumcosmic.game.actors.MyActor;
 import org.minimumcosmic.game.ObjectFactory;
-import org.minimumcosmic.game.SettingsLoader;
-import org.minimumcosmic.game.SettingsSaver;
+import org.minimumcosmic.game.loader.SettingsLoader;
+import org.minimumcosmic.game.saver.SettingsSaver;
 import org.minimumcosmic.game.controller.TouchscreenController;
 import org.minimumcosmic.game.entity.components.RocketComponent;
 import org.minimumcosmic.game.entity.components.TextureComponent;
@@ -47,7 +47,7 @@ import org.minimumcosmic.game.entity.systems.RenderingSystem;
 
 import java.util.ArrayList;
 
-import static org.minimumcosmic.game.SettingsSaver.saveRocket;
+import static org.minimumcosmic.game.saver.SettingsSaver.saveRocket;
 
 public class HangarScreen implements Screen {
     private final int HEAD = 0;

@@ -1,4 +1,4 @@
-package org.minimumcosmic.game;
+package org.minimumcosmic.game.saver;
 
 import com.badlogic.ashley.core.ComponentMapper;
 import com.badlogic.ashley.core.Entity;
@@ -6,6 +6,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.XmlWriter;
 
+import org.minimumcosmic.game.InventoryCell;
 import org.minimumcosmic.game.entity.components.RocketComponent;
 import org.minimumcosmic.game.entity.components.modules.BodyModuleComponent;
 import org.minimumcosmic.game.entity.components.modules.EngineModuleComponent;

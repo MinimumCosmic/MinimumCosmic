@@ -1,4 +1,4 @@
-package org.minimumcosmic.game;
+package org.minimumcosmic.game.actors;
 
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;

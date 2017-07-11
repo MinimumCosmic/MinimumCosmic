@@ -1,9 +1,12 @@
-package org.minimumcosmic.game;
+package org.minimumcosmic.game.loader;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.XmlReader;
+
+import org.minimumcosmic.game.InventoryCell;
+import org.minimumcosmic.game.MinimumCosmic;
 
 import java.io.IOException;
 import java.util.ArrayList;
