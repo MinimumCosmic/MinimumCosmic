@@ -7,11 +7,7 @@ import com.badlogic.ashley.core.Family;
 import com.badlogic.ashley.systems.IteratingSystem;
 
 import org.minimumcosmic.game.ObjectFactory;
-import org.minimumcosmic.game.entity.components.B2dBodyComponent;
-import org.minimumcosmic.game.entity.components.CameraComponent;
-import org.minimumcosmic.game.entity.components.CollisionComponent;
-import org.minimumcosmic.game.entity.components.PickupComponent;
-import org.minimumcosmic.game.entity.components.TypeComponent;
+import org.minimumcosmic.game.entity.components.*;
 
 public class CollisionSystem extends IteratingSystem {
     ComponentMapper<CollisionComponent> cm;
@@ -37,23 +33,31 @@ public class CollisionSystem extends IteratingSystem {
         Entity collidedEntity = cc.collisionEntity;
         if (collidedEntity != null) {
             TypeComponent type = collidedEntity.getComponent(TypeComponent.class);
+            float speed = cc.speed;
             if (type != null) {
                 switch (type.type) {
                     case TypeComponent.ENEMY:
-                        // Do player damage;
-                        System.out.println("player hit enemy");
+                        if (speed > 200.0f) {
+                        entity.getComponent(RocketComponent.class).health -= speed;
+                        System.out.println("Inertia: " + entity.getComponent(B2dBodyComponent.class).body.getInertia()
+                                + " Speed: " + speed
+                                + " Health left: " + entity.getComponent(RocketComponent.class).health);
+                        }
                         break;
                     case TypeComponent.SCENERY:
-                        System.out.println("player hit scenery");
+                        if (speed > 200.0f) {
+                            entity.getComponent(RocketComponent.class).health -= speed;
+                            System.out.println("Inertia: " + entity.getComponent(B2dBodyComponent.class).body.getInertia()
+                                    + " Speed: " + speed
+                                    + " Health left: " + entity.getComponent(RocketComponent.class).health);
+                        }
                         break;
                     case TypeComponent.PICKUP:
                         objectFactory.deleteBody(collidedEntity.getComponent(B2dBodyComponent.class).body);
                         engine.removeEntity(collidedEntity);
                         entity.getComponent(PickupComponent.class).count++;
-                        System.out.println("player hit pickup");
                         break;
                     case TypeComponent.OTHER:
-                        System.out.println("player hit other");
                         break;
 
                 }

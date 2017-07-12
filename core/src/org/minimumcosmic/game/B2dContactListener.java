@@ -3,6 +3,7 @@ package org.minimumcosmic.game;
 
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.gdx.physics.box2d.*;
+import org.minimumcosmic.game.entity.components.B2dBodyComponent;
 import org.minimumcosmic.game.entity.components.CollisionComponent;
 
 public class B2dContactListener implements ContactListener {
@@ -36,8 +37,10 @@ public class B2dContactListener implements ContactListener {
             // set the CollisionEntity of the component
             if (col != null) {
                 col.collisionEntity = colEnt;
+                col.speed = ent.getComponent(B2dBodyComponent.class).body.getLinearVelocity().len2();
             } else if (colb != null) {
                 colb.collisionEntity = ent;
+                colb.speed = ent.getComponent(B2dBodyComponent.class).body.getLinearVelocity().len2();
             }
         }
     }

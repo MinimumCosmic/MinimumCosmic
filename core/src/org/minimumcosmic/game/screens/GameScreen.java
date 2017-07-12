@@ -18,6 +18,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import org.minimumcosmic.game.BodyFactory;
 import org.minimumcosmic.game.MinimumCosmic;
 import org.minimumcosmic.game.ObjectFactory;
+import org.minimumcosmic.game.entity.systems.*;
 import org.minimumcosmic.game.loader.SettingsLoader;
 import org.minimumcosmic.game.saver.SettingsSaver;
 import org.minimumcosmic.game.controller.KeyboardController;
@@ -25,13 +26,6 @@ import org.minimumcosmic.game.entity.components.B2dBodyComponent;
 import org.minimumcosmic.game.entity.components.PickupComponent;
 import org.minimumcosmic.game.entity.components.RocketComponent;
 import org.minimumcosmic.game.entity.components.modules.BodyModuleComponent;
-import org.minimumcosmic.game.entity.systems.BoundsSystem;
-import org.minimumcosmic.game.entity.systems.CameraSystem;
-import org.minimumcosmic.game.entity.systems.CollisionSystem;
-import org.minimumcosmic.game.entity.systems.PhysicsDebugSystem;
-import org.minimumcosmic.game.entity.systems.PhysicsSystem;
-import org.minimumcosmic.game.entity.systems.RenderingSystem;
-import org.minimumcosmic.game.entity.systems.RocketSystem;
 import org.minimumcosmic.game.parallax.Parallax;
 
 public class GameScreen implements Screen {
@@ -50,6 +44,7 @@ public class GameScreen implements Screen {
     private Label fpsLabel;
     private Label bodyCountLabel;
     private Label pickUpLabel;
+    private Label healthLabel;
     private Parallax parallaxBackground;
     private Parallax parallaxForeground;
 
@@ -88,6 +83,7 @@ public class GameScreen implements Screen {
         engine.addSystem(new RocketSystem(controller));
         engine.addSystem(new CameraSystem());
         engine.addSystem(new BoundsSystem());
+        engine.addSystem(new EnemySystem());
 
         rocket = objectFactory.createRocket(textureAtlas, camera,
                 (ParticleEffect) game.AssetManager.assetManager.get("smoke.p"),
@@ -99,7 +95,7 @@ public class GameScreen implements Screen {
 
         Gdx.input.setInputProcessor(controller);
 
-        fuelMeter = new ProgressBar(0 ,
+        fuelMeter = new ProgressBar(0,
                 rocket.getComponent(RocketComponent.class).bodyModule.getComponent(BodyModuleComponent.class).fuel,
                 0.25f, true, skin);
         fuelMeter.setHeight(Gdx.graphics.getHeight() / 2);
@@ -109,26 +105,33 @@ public class GameScreen implements Screen {
         fpsLabel = new Label(60 + " fps", skin);
         bodyCountLabel = new Label(0 + " bodies", skin);
         pickUpLabel = new Label(0 + " money", skin);
+        healthLabel = new Label(10000 + " health", skin);
         fpsLabel.setY(Gdx.graphics.getHeight() * 0.95f);
         bodyCountLabel.setY(Gdx.graphics.getHeight() * 0.9f);
         pickUpLabel.setY(Gdx.graphics.getHeight() * 0.85f);
+        healthLabel.setY(Gdx.graphics.getHeight() * 0.8f);
         stage.addActor(speedLabel);
         stage.addActor(fpsLabel);
         stage.addActor(bodyCountLabel);
         stage.addActor(pickUpLabel);
+        stage.addActor(healthLabel);
     }
+
     @Override
     public void render(float delta) {
-        float red = 36f / 255f; float green = 34f / 255f; float blue = 56f / 255f;
+        float red = 36f / 255f;
+        float green = 34f / 255f;
+        float blue = 56f / 255f;
         Gdx.gl.glClearColor(red, green, blue, 1);
         Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
         fuelMeter.setValue(rocket.getComponent(RocketComponent.class).bodyModule.getComponent(BodyModuleComponent.class).fuel);
-        speedLabel.setText(rocket.getComponent(B2dBodyComponent.class).body.getLinearVelocity().y + "m/s");
+        speedLabel.setText(rocket.getComponent(B2dBodyComponent.class).body.getLinearVelocity().len2() + "m/s");
         fpsLabel.setText(Gdx.graphics.getFramesPerSecond() + " fps");
         bodyCountLabel.setText(objectFactory.getBodyCount() + " bodies");
         pickUpLabel.setText(rocket.getComponent(PickupComponent.class).count + " money");
+        healthLabel.setText(rocket.getComponent(RocketComponent.class).health + " health");
 
         stage.act();
 
@@ -146,7 +149,7 @@ public class GameScreen implements Screen {
 
         if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE) || Gdx.input.isKeyJustPressed(Input.Keys.BACK)) {
             SettingsSaver.saveResearchPoint(rocket.getComponent(PickupComponent.class).count
-                                + SettingsLoader.loadResearchPoint());
+                    + SettingsLoader.loadResearchPoint());
             game.changeScreen(MinimumCosmic.MENU);
         }
 

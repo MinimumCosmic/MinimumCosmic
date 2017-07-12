@@ -64,10 +64,10 @@ public class RocketSystem extends IteratingSystem {
 
         if ((controller.up || controller.isMouse1Down) && bodyModule.fuel > 0) {
             smoke.particleEffect.start();
-            bodyModule.fuel -= 0.25 * deltaTime;
-            float velocityX = b2Body.body.getMass() * (bodyModule.power + engineModule.power) * -MathUtils.sin(b2Body.body.getAngle());
-            float velocityY = b2Body.body.getMass() * (bodyModule.power + engineModule.power) * MathUtils.cos(b2Body.body.getAngle());
-            b2Body.body.applyForceToCenter(new Vector2(velocityX, velocityY), true);
+            bodyModule.fuel -= 4 * deltaTime;
+            float velocityX = 50 * b2Body.body.getMass() * (bodyModule.power + engineModule.power) * -MathUtils.sin(b2Body.body.getAngle());
+            float velocityY = 50 * b2Body.body.getMass() * (bodyModule.power + engineModule.power) * MathUtils.cos(b2Body.body.getAngle());
+            b2Body.body.applyForceToCenter(new Vector2(velocityX * deltaTime, velocityY * deltaTime), true);
         } else {
 
             if (bodyModule.fuel <= 0) {
@@ -76,25 +76,26 @@ public class RocketSystem extends IteratingSystem {
                 smoke.particleEffect.reset();
             }
 
-            b2Body.body.setLinearVelocity(MathUtils.lerp(b2Body.body.getLinearVelocity().x, 0, 0.1f),
-                    MathUtils.lerp(b2Body.body.getLinearVelocity().y, -125, 0.01f));
+            b2Body.body.setLinearVelocity(MathUtils.lerp(b2Body.body.getLinearVelocity().x, 0, 2f * deltaTime),
+                    MathUtils.lerp(b2Body.body.getLinearVelocity().y, -125, 2.5f * deltaTime));
         }
 
         // Rotate CCW (left)
         if (controller.left) {
-            b2Body.body.applyTorque(finsModule.maneuver * b2Body.body.getMass(), true);
+            b2Body.body.applyTorque(finsModule.maneuver * 50 * b2Body.body.getMass() * deltaTime, true);
         }
+
         if (Gdx.input.getAccelerometerX() != 0) {
             b2Body.body.applyTorque(Gdx.input.getAccelerometerX() * finsModule.maneuver * b2Body.body.getMass(), true);
         }
 
         // Rotate CW (right)
         if (controller.right) {
-            b2Body.body.applyTorque(-finsModule.maneuver * b2Body.body.getMass(), true);
+            b2Body.body.applyTorque(-finsModule.maneuver * 50 * b2Body.body.getMass() * deltaTime, true);
         }
 
         if (!controller.left && !controller.right) {
-            b2Body.body.setAngularVelocity(MathUtils.lerp(b2Body.body.getAngularVelocity(), 0, 0.1f));
+            b2Body.body.setAngularVelocity(MathUtils.lerp(b2Body.body.getAngularVelocity(), 0, 2f * deltaTime));
         }
 
         Vector2 bodyPosition = new Vector2(b2Body.body.getPosition().x, b2Body.body.getPosition().y);

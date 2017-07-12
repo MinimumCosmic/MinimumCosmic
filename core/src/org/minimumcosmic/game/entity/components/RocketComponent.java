@@ -8,4 +8,5 @@ public class RocketComponent implements Component {
     public Entity bodyModule;
     public Entity finsModule;
     public Entity engineModule;
+    public int health = 10000;
 }

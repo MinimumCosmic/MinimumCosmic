@@ -15,16 +15,7 @@ import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.XmlReader;
 
-import org.minimumcosmic.game.entity.components.B2dBodyComponent;
-import org.minimumcosmic.game.entity.components.BoundsComponent;
-import org.minimumcosmic.game.entity.components.CameraComponent;
-import org.minimumcosmic.game.entity.components.CollisionComponent;
-import org.minimumcosmic.game.entity.components.ParticleEffectComponent;
-import org.minimumcosmic.game.entity.components.PickupComponent;
-import org.minimumcosmic.game.entity.components.RocketComponent;
-import org.minimumcosmic.game.entity.components.TextureComponent;
-import org.minimumcosmic.game.entity.components.TransformComponent;
-import org.minimumcosmic.game.entity.components.TypeComponent;
+import org.minimumcosmic.game.entity.components.*;
 import org.minimumcosmic.game.entity.components.modules.BodyModuleComponent;
 import org.minimumcosmic.game.entity.components.modules.EngineModuleComponent;
 import org.minimumcosmic.game.entity.components.modules.FinsModuleComponent;
@@ -72,10 +63,51 @@ public class ObjectFactory {
             if (rand.nextFloat() > 0.8f) {
                 createMoney(x + MathUtils.random(-0.5f, 0.5f), y + rand.nextFloat() * 3, atlas);
             }
+            if (rand.nextFloat() > 0.975f) {
+                createEnemy(x + MathUtils.random(-0.5f, 0.5f), y + rand.nextFloat() * 3, atlas);
+            }
             y += rand.nextFloat() * (10 * (Gdx.graphics.getHeight() / 800f));
+
         }
     }
 
+
+    public Entity createEnemy(float x, float y, TextureAtlas atlas) {
+        Entity entity = engine.createEntity();
+        B2dBodyComponent b2dBody = engine.createComponent(B2dBodyComponent.class);
+        b2dBody.body = bodyFactory.makeBoxBody(x, y, 5f, 2f, BodyFactory.STONE, BodyDef.BodyType.StaticBody);
+
+        TypeComponent type = engine.createComponent(TypeComponent.class);
+        type.type = TypeComponent.ENEMY;
+
+        CollisionComponent collision = engine.createComponent(CollisionComponent.class);
+        collision.collisionEntity = entity;
+
+        //TextureComponent textComp = engine.createComponent(TextureComponent.class);
+        //textComp.region = atlas.findRegion("icon");
+        EnemyComponent enemyComponent = engine.createComponent(EnemyComponent.class);
+
+        TransformComponent position = engine.createComponent(TransformComponent.class);
+        position.position.set(0, 0, 0);
+        position.scale.x = Gdx.graphics.getWidth() / 480.0f;
+        position.scale.y = Gdx.graphics.getHeight() / 800.0f;
+
+        BoundsComponent boundsComponent = engine.createComponent(BoundsComponent.class);
+
+        b2dBody.body.setUserData(entity);
+
+        entity.add(b2dBody);
+        entity.add(position);
+        //entity.add(textComp);
+        entity.add(enemyComponent);
+        entity.add(boundsComponent);
+        entity.add(type);
+        entity.add(collision);
+
+        engine.addEntity(entity);
+
+        return entity;
+    }
     public void generateParallaxBackground(TextureAtlas atlas, Parallax parallax) {
         TextureRegion startRegion = atlas.findRegion("startingplace");
         TexturedParallaxLayer startLayer =
