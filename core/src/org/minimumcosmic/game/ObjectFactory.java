@@ -376,7 +376,6 @@ public class ObjectFactory {
             pe.getEmitters().first().setPosition(rocketPosition.x,
                     rocketPosition.y - 3 * root.getChildByName("Scale").getInt("factor"));
 
-            pe.scaleEffect(0.025f);
             partEffComponent.particleEffect.start();
 
             Vector2[] vertices = new Vector2[4];

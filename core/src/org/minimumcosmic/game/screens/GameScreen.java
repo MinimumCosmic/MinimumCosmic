@@ -47,6 +47,7 @@ public class GameScreen implements Screen {
     private Label healthLabel;
     private Parallax parallaxBackground;
     private Parallax parallaxForeground;
+    private ParticleEffect smokeParticles;
 
 
     public GameScreen(MinimumCosmic game) {
@@ -57,6 +58,8 @@ public class GameScreen implements Screen {
 
         textureAtlas = game.AssetManager.assetManager.get("images/rocket.atlas");
         skin = game.AssetManager.assetManager.get("skin/uiskin.json");
+        smokeParticles = game.AssetManager.assetManager.get("smoke.p");
+        smokeParticles.scaleEffect(0.075f);
 
         Gdx.input.setCatchBackKey(true);
     }
@@ -86,8 +89,7 @@ public class GameScreen implements Screen {
         engine.addSystem(new EnemySystem());
 
         rocket = objectFactory.createRocket(textureAtlas, camera,
-                (ParticleEffect) game.AssetManager.assetManager.get("smoke.p"),
-                "xml/rocket.xml");
+                smokeParticles, "xml/rocket.xml");
         objectFactory.createFloor(textureAtlas.findRegion("player"));
         objectFactory.generateWorld(new TextureAtlas("images/items.atlas"));
         objectFactory.generateParallaxBackground(new TextureAtlas("images/parallaxbnd.atlas"), parallaxBackground);
