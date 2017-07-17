@@ -2,6 +2,7 @@ package org.minimumcosmic.game.desktop;
 
 import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
+
 import org.minimumcosmic.game.MinimumCosmic;
 
 public class DesktopLauncher {
