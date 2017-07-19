@@ -26,14 +26,15 @@ import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 
-import org.minimumcosmic.game.actors.BoxActor;
 import org.minimumcosmic.game.InventoryCell;
 import org.minimumcosmic.game.MinimumCosmic;
-import org.minimumcosmic.game.actors.MyActor;
 import org.minimumcosmic.game.ObjectFactory;
+import org.minimumcosmic.game.actors.BoxActor;
+import org.minimumcosmic.game.actors.MyActor;
+import org.minimumcosmic.game.controller.TouchscreenController;
+import org.minimumcosmic.game.exception.XmlLoadException;
 import org.minimumcosmic.game.loader.SettingsLoader;
 import org.minimumcosmic.game.saver.SettingsSaver;
-import org.minimumcosmic.game.controller.TouchscreenController;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -118,11 +119,20 @@ public class ShopScreen implements Screen {
         engine = new PooledEngine();
         objectFactory = new ObjectFactory(engine);
 
-        inventory = SettingsLoader.loadInventory();
+        try{
+            inventory = SettingsLoader.loadInventory();
+        }catch (XmlLoadException e){
+            e.getException();
+        }
 
+        try {
+            researchPoint = new Label("" + SettingsLoader.loadResearchPoint(), skin);
+        }catch (XmlLoadException e){
+            e.getException();
+        }
         moneyIcon = new Image(new Texture(Gdx.files.internal("images/money_icon.png")));
 
-        researchPoint = new Label("" + SettingsLoader.loadResearchPoint(), skin);
+
         currentMoneyLabel = new Label("" + researchPoint, skin);
 
         itemTable = new Table();
@@ -265,69 +275,103 @@ public class ShopScreen implements Screen {
             for(HashMap.Entry<Integer, Boolean> tmp : modules.get(i).entrySet()){
                 switch(i){
                     case HEAD:
-                        Entity head = objectFactory.createHeadModule(rocketPosition, rocketAtlas, tmp.getKey(), false);
-                        final MyActor headModule = new MyActor(rocketAtlas.findRegion("head_" + tmp.getKey()),
-                                head, tmp.getKey(), HEAD);
-                        final MyActor tmpHeadActor = new MyActor(rocketAtlas.findRegion("head_" + tmp.getKey()),
-                            head, tmp.getKey(), HEAD);
-                        headModule.addListener(new InputListener(){
-                            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button){
-                                System.out.println("HEAD");
+                        try {
+                            Entity head = objectFactory.createHeadModule(rocketPosition, rocketAtlas, tmp.getKey(), false);
+                            final MyActor headModule = new MyActor(rocketAtlas.findRegion("head_" + tmp.getKey()),
+                                    head, tmp.getKey(), HEAD);
+                            final MyActor tmpHeadActor = new MyActor(rocketAtlas.findRegion("head_" + tmp.getKey()),
+                                    head, tmp.getKey(), HEAD);
+                            headModule.addListener(new InputListener() {
+                                public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
+                                    System.out.println("HEAD");
 
-                                createConfirmDialog(tmpHeadActor, HEAD);
-                                return false;
-                            }
-                        });
-                        itemTable.add(headModule).width(itemTable.getWidth() * 0.25f).height(itemTable.getHeight() * 0.5f);
-                        count++;
+                                    try {
+                                        createConfirmDialog(tmpHeadActor, HEAD);
+                                    } catch (XmlLoadException e) {
+                                        createExceptionDialog(e);
+                                    }
+                                    return false;
+                                }
+                            });
+                            itemTable.add(headModule).width(itemTable.getWidth() * 0.25f).height(itemTable.getHeight() * 0.5f);
+                            count++;
+                        }catch (XmlLoadException e){
+                            createExceptionDialog(e);
+                        }
                         break;
                     case BODY:
-                        Entity body = objectFactory.createBodyModule(rocketPosition, rocketAtlas, tmp.getKey(), false);
-                        MyActor bodyModule = new MyActor(rocketAtlas.findRegion("body_" + tmp.getKey()),
-                                body, tmp.getKey(), BODY);
-                        final MyActor tmpBodyActor = new MyActor(rocketAtlas.findRegion("body_" + tmp.getKey()),
-                                body, tmp.getKey(), BODY);
-                        bodyModule.addListener(new InputListener(){
-                            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button){
-                                System.out.println("BODY");
-                                createConfirmDialog(tmpBodyActor, BODY);
-                                return false;
-                            }
-                        });
-                        itemTable.add(bodyModule).width(itemTable.getWidth() * 0.25f).height(itemTable.getHeight() * 0.5f);
-                        count++;
+                        try {
+                            Entity body = objectFactory.createBodyModule(rocketPosition, rocketAtlas, tmp.getKey(), false);
+                            MyActor bodyModule = new MyActor(rocketAtlas.findRegion("body_" + tmp.getKey()),
+                                    body, tmp.getKey(), BODY);
+                            final MyActor tmpBodyActor = new MyActor(rocketAtlas.findRegion("body_" + tmp.getKey()),
+                                    body, tmp.getKey(), BODY);
+                            bodyModule.addListener(new InputListener() {
+                                public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
+                                    System.out.println("BODY");
+                                    try {
+                                        createConfirmDialog(tmpBodyActor, BODY);
+                                    } catch (XmlLoadException e) {
+                                        createExceptionDialog(e);
+                                    }
+                                    return false;
+                                }
+                            });
+                            itemTable.add(bodyModule).width(itemTable.getWidth() * 0.25f).height(itemTable.getHeight() * 0.5f);
+                            count++;
+                        }catch (XmlLoadException e){
+                            createExceptionDialog(e);
+                        }
                         break;
                     case FINS:
-                        Entity fins = objectFactory.createFinsModule(rocketPosition, rocketAtlas, tmp.getKey(), false);
-                        MyActor finsModule = new MyActor(rocketAtlas.findRegion("fins_" + tmp.getKey()),
-                                fins, tmp.getKey(), FINS);
-                        final MyActor tmpFinsActor = new MyActor(rocketAtlas.findRegion("fins_" + tmp.getKey()),
-                                fins, tmp.getKey(), FINS);
-                        finsModule.addListener(new InputListener(){
-                            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button){
-                                System.out.println("FINS");
-                                createConfirmDialog(tmpFinsActor, FINS);
-                                return false;
-                            }
-                        });
-                        itemTable.add(finsModule).width(itemTable.getWidth() * 0.25f).height(itemTable.getHeight() * 0.5f);
-                        count++;
+                        try {
+                            Entity fins = objectFactory.createFinsModule(rocketPosition, rocketAtlas, tmp.getKey(), false);
+                            MyActor finsModule = new MyActor(rocketAtlas.findRegion("fins_" + tmp.getKey()),
+                                    fins, tmp.getKey(), FINS);
+                            final MyActor tmpFinsActor = new MyActor(rocketAtlas.findRegion("fins_" + tmp.getKey()),
+                                    fins, tmp.getKey(), FINS);
+                            finsModule.addListener(new InputListener() {
+                                public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
+                                    System.out.println("FINS");
+
+                                    try {
+                                        createConfirmDialog(tmpFinsActor, FINS);
+                                    } catch (XmlLoadException e) {
+                                        createExceptionDialog(e);
+                                    }
+                                    return false;
+                                }
+                            });
+                            itemTable.add(finsModule).width(itemTable.getWidth() * 0.25f).height(itemTable.getHeight() * 0.5f);
+                            count++;
+                        }catch (XmlLoadException e){
+                            createExceptionDialog(e);
+                        }
                         break;
                     case ENGINE:
-                        Entity engine = objectFactory.createEngineModule(rocketPosition, rocketAtlas, tmp.getKey(), false);
-                        MyActor engineModule = new MyActor(rocketAtlas.findRegion("engine_" + tmp.getKey()),
-                                engine, tmp.getKey(), ENGINE);
-                        final MyActor tmpEngineActor = new MyActor(rocketAtlas.findRegion("engine_" + tmp.getKey()),
-                                engine, tmp.getKey(), ENGINE);
-                        engineModule.addListener(new InputListener(){
-                            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button){
-                                System.out.println("ENGINE");
-                                createConfirmDialog(tmpEngineActor, ENGINE);
-                                return false;
-                            }
-                        });
-                        itemTable.add(engineModule).width(itemTable.getWidth() * 0.25f).height(itemTable.getHeight() * 0.5f);
-                        count++;
+                        try {
+                            Entity engine = objectFactory.createEngineModule(rocketPosition, rocketAtlas, tmp.getKey(), false);
+                            MyActor engineModule = new MyActor(rocketAtlas.findRegion("engine_" + tmp.getKey()),
+                                    engine, tmp.getKey(), ENGINE);
+                            final MyActor tmpEngineActor = new MyActor(rocketAtlas.findRegion("engine_" + tmp.getKey()),
+                                    engine, tmp.getKey(), ENGINE);
+                            engineModule.addListener(new InputListener() {
+                                public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
+                                    System.out.println("ENGINE");
+
+                                    try {
+                                        createConfirmDialog(tmpEngineActor, ENGINE);
+                                    } catch (XmlLoadException e) {
+                                        createExceptionDialog(e);
+                                    }
+                                    return false;
+                                }
+                            });
+                            itemTable.add(engineModule).width(itemTable.getWidth() * 0.25f).height(itemTable.getHeight() * 0.5f);
+                            count++;
+                        }catch (XmlLoadException e){
+                            createExceptionDialog(e);
+                        }
                         break;
                 }
                 if(count == 4){
@@ -354,7 +398,7 @@ public class ShopScreen implements Screen {
         inventory.get(module).add(insetCell);
     }
 
-    public void createConfirmDialog(final MyActor actor, int module){
+    public void createConfirmDialog(final MyActor actor, int module) throws XmlLoadException{
         final Dialog dialog = new Dialog("Confirm", skin);
         Table moduleTable = new Table();
         Table tmpTable = new Table();
@@ -363,7 +407,12 @@ public class ShopScreen implements Screen {
         Table settingTable = new Table(skin);
 
         actor.getModule();
-        final Array<String> characteristics = SettingsLoader.loadModuleCharacteristics(module, actor.getId());
+        final Array<String> characteristics;
+        try{
+            characteristics = SettingsLoader.loadModuleCharacteristics(module, actor.getId());
+        }catch (XmlLoadException e){
+            throw new XmlLoadException(2);
+        }
 
         costTable.add(new Label("Buy for : ", skin));
         costTable.add(new Image(money.findRegion("icon")));
@@ -468,6 +517,21 @@ public class ShopScreen implements Screen {
         tmpTable.row();
         tmpTable.add(buttonTable);
         dialog.add(tmpTable);
+        dialog.show(stage);
+    }
+
+    public void createExceptionDialog(XmlLoadException e){
+        engine.removeAllEntities();
+        objectFactory.dispose();
+        Gdx.input.setInputProcessor(stage);
+        Dialog dialog = new Dialog("", skin);
+        dialog.add(e.getException()).center();
+        dialog.addListener(new InputListener(){
+            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button){
+                game.changeScreen(MinimumCosmic.MENU);
+                return false;
+            }
+        });
         dialog.show(stage);
     }
 
