@@ -10,7 +10,10 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.ParticleEffect;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+import com.badlogic.gdx.scenes.scene2d.InputEvent;
+import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Dialog;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.ProgressBar;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
@@ -20,6 +23,7 @@ import org.minimumcosmic.game.MinimumCosmic;
 import org.minimumcosmic.game.ObjectFactory;
 import org.minimumcosmic.game.entity.components.TransformComponent;
 import org.minimumcosmic.game.entity.systems.*;
+import org.minimumcosmic.game.exception.XmlLoadException;
 import org.minimumcosmic.game.loader.SettingsLoader;
 import org.minimumcosmic.game.saver.SettingsSaver;
 import org.minimumcosmic.game.controller.KeyboardController;
@@ -93,6 +97,7 @@ public class GameScreen implements Screen {
         engine.addSystem(new CameraSystem());
         engine.addSystem(new BoundsSystem());
         engine.addSystem(new EnemySystem());
+<<<<<<< HEAD
 
         rocket = objectFactory.createRocket(textureAtlas, camera, "xml/rocket.xml", smokeParticles);
         objectFactory.createFloor(textureAtlas.findRegion("player"));
@@ -122,6 +127,52 @@ public class GameScreen implements Screen {
         stage.addActor(bodyCountLabel);
         stage.addActor(pickUpLabel);
         stage.addActor(healthLabel);
+=======
+        try{
+            rocket = objectFactory.createRocket(textureAtlas, camera,
+                smokeParticles, "xml/rocket.xml");
+
+            objectFactory.createFloor(textureAtlas.findRegion("player"));
+            objectFactory.generateWorld(new TextureAtlas("images/items.atlas"));
+            objectFactory.generateParallaxBackground(new TextureAtlas("images/parallaxbnd.atlas"), parallaxBackground);
+            objectFactory.generateParallaxForeground(new TextureAtlas("images/parallaxbnd.atlas"), parallaxForeground);
+
+            Gdx.input.setInputProcessor(controller);
+
+            fuelMeter = new ProgressBar(0,
+                    rocket.getComponent(RocketComponent.class).bodyModule.getComponent(BodyModuleComponent.class).fuel,
+                    0.25f, true, skin);
+            fuelMeter.setHeight(Gdx.graphics.getHeight() / 2);
+            fuelMeter.setPosition(Gdx.graphics.getWidth() * 0.95f, Gdx.graphics.getHeight() * 0.1f);
+            stage.addActor(fuelMeter);
+            speedLabel = new Label(100 + "m/s", skin);
+            fpsLabel = new Label(60 + " fps", skin);
+            bodyCountLabel = new Label(0 + " bodies", skin);
+            pickUpLabel = new Label(0 + " money", skin);
+            healthLabel = new Label(10000 + " health", skin);
+            fpsLabel.setY(Gdx.graphics.getHeight() * 0.95f);
+            bodyCountLabel.setY(Gdx.graphics.getHeight() * 0.9f);
+            pickUpLabel.setY(Gdx.graphics.getHeight() * 0.85f);
+            healthLabel.setY(Gdx.graphics.getHeight() * 0.8f);
+            stage.addActor(speedLabel);
+            stage.addActor(fpsLabel);
+            stage.addActor(bodyCountLabel);
+            stage.addActor(pickUpLabel);
+            stage.addActor(healthLabel);
+        }catch (XmlLoadException e){
+            objectFactory.dispose();
+            Gdx.input.setInputProcessor(stage);
+            Dialog dialog = new Dialog("", skin);
+            dialog.add(e.getException()).center();
+            dialog.addListener(new InputListener(){
+                public boolean touchDown(InputEvent event, float x, float y, int pointer, int button){
+                    game.changeScreen(MinimumCosmic.MENU);
+                    return false;
+                }
+            });
+            dialog.show(stage);
+        }
+>>>>>>> a97c45b424b77760742a3fad0354033149ba4838
     }
 
     @Override
@@ -172,9 +223,25 @@ public class GameScreen implements Screen {
         }
 
         if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE) || Gdx.input.isKeyJustPressed(Input.Keys.BACK)) {
-            SettingsSaver.saveResearchPoint(rocket.getComponent(PickupComponent.class).count
-                    + SettingsLoader.loadResearchPoint());
-            game.changeScreen(MinimumCosmic.MENU);
+            int currentPoint;
+            try{
+                currentPoint = SettingsLoader.loadResearchPoint();
+                SettingsSaver.saveResearchPoint(rocket.getComponent(PickupComponent.class).count
+                        + currentPoint);
+                game.changeScreen(MinimumCosmic.MENU);
+            }catch (XmlLoadException e){
+                objectFactory.dispose();
+                Gdx.input.setInputProcessor(stage);
+                Dialog dialog = new Dialog("", skin);
+                dialog.add(e.getException()).center();
+                dialog.addListener(new InputListener(){
+                    public boolean touchDown(InputEvent event, float x, float y, int pointer, int button){
+                        game.changeScreen(MinimumCosmic.MENU);
+                        return false;
+                    }
+                });
+                dialog.show(stage);
+            }
         }
 
         if (Gdx.input.isKeyJustPressed(Input.Keys.R)) {

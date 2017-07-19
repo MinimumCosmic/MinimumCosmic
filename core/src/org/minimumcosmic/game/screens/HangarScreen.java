@@ -18,6 +18,7 @@ import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Dialog;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
@@ -31,10 +32,8 @@ import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import org.minimumcosmic.game.InventoryCell;
 import org.minimumcosmic.game.Mapper;
 import org.minimumcosmic.game.MinimumCosmic;
-import org.minimumcosmic.game.actors.MyActor;
 import org.minimumcosmic.game.ObjectFactory;
-import org.minimumcosmic.game.loader.SettingsLoader;
-import org.minimumcosmic.game.saver.SettingsSaver;
+import org.minimumcosmic.game.actors.MyActor;
 import org.minimumcosmic.game.controller.TouchscreenController;
 import org.minimumcosmic.game.entity.components.RocketComponent;
 import org.minimumcosmic.game.entity.components.TextureComponent;
@@ -44,6 +43,9 @@ import org.minimumcosmic.game.entity.components.modules.EngineModuleComponent;
 import org.minimumcosmic.game.entity.components.modules.FinsModuleComponent;
 import org.minimumcosmic.game.entity.components.modules.HeadModuleComponent;
 import org.minimumcosmic.game.entity.systems.RenderingSystem;
+import org.minimumcosmic.game.exception.XmlLoadException;
+import org.minimumcosmic.game.loader.SettingsLoader;
+import org.minimumcosmic.game.saver.SettingsSaver;
 
 import java.util.ArrayList;
 
@@ -87,11 +89,8 @@ public class HangarScreen implements Screen {
     public HangarScreen(MinimumCosmic game) {
         this.game = game;
         skin = game.AssetManager.assetManager.get("skin/uiskin.json");
-
         textureAtlas = game.AssetManager.assetManager.get("images/loading_screen.atlas");
-
         rocketAtlas = game.AssetManager.assetManager.get("images/rocket.atlas");
-
         backSprite = textureAtlas.createSprite("background");
         backSprite.setBounds(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 
@@ -127,123 +126,178 @@ public class HangarScreen implements Screen {
 
     @Override
     public void show(){
-        init();
+        try {
+            init();
 
+<<<<<<< HEAD
         rocketPosition = new Vector2((Gdx.graphics.getWidth() * 0.75f) * RenderingSystem.PIXELS_TO_METRES, Gdx.graphics.getHeight() / 2 * RenderingSystem.PIXELS_TO_METRES);
         rocket = objectFactory.createRocket(rocketAtlas, camera, "xml/rocket.xml", rocketPosition);
+=======
+            rocketPosition = new Vector2((Gdx.graphics.getWidth() * 0.75f) * RenderingSystem.PIXELS_TO_METRES, Gdx.graphics.getHeight() / 2 * RenderingSystem.PIXELS_TO_METRES);
+            pe = new ParticleEffect();
+            pe = game.AssetManager.assetManager.get("smoke.p");
+            rocket = objectFactory.createRocket(rocketAtlas, camera, pe, "xml/rocket.xml", rocketPosition);
 
-        initMappers();
-        inventory = SettingsLoader.loadInventory();
+            initMappers();
+            inventory = SettingsLoader.loadInventory();
+>>>>>>> a97c45b424b77760742a3fad0354033149ba4838
 
-        scaleRocketSize(rocketScale);
+            scaleRocketSize(rocketScale);
 
-        //provide to catch keys and stage action
-        InputMultiplexer inputMultiplexer = new InputMultiplexer();
-        inputMultiplexer.addProcessor(stage);
-        inputMultiplexer.addProcessor(touchscreenController);
+            //provide to catch keys and stage action
+            InputMultiplexer inputMultiplexer = new InputMultiplexer();
+            inputMultiplexer.addProcessor(stage);
+            inputMultiplexer.addProcessor(touchscreenController);
 
-        Gdx.input.setInputProcessor(inputMultiplexer);
+            Gdx.input.setInputProcessor(inputMultiplexer);
 
-        final Table table = new Table(skin);
-        table.setFillParent(true);
+            final Table table = new Table(skin);
+            table.setFillParent(true);
 
-        stage.addActor(table);
+            stage.addActor(table);
 
-        TextButton back = new TextButton("Back", skin);
-        table.top().defaults();
-        table.left().defaults();
-        table.add(back).fillX().uniformX().width(Gdx.graphics.getWidth() * 0.15f).height(Gdx.graphics.getHeight() * 0.07f);
+            TextButton back = new TextButton("Back", skin);
+            table.top().defaults();
+            table.left().defaults();
+            table.add(back).fillX().uniformX().width(Gdx.graphics.getWidth() * 0.15f).height(Gdx.graphics.getHeight() * 0.07f);
 
-        back.addListener(new ChangeListener() {
-            @Override
-            public void changed(ChangeEvent event, Actor actor) {
-                saveRocket(rocket);
+            back.addListener(new ChangeListener() {
+                @Override
+                public void changed(ChangeEvent event, Actor actor) {
+                    saveRocket(rocket);
+                    game.changeScreen(MinimumCosmic.MENU);
+                }
+            });
+
+            //Top buttons to switch module
+            Table modules = new Table();
+            TextButton headButton = new TextButton("Head modules", skin);
+            final Table tmpTable = new Table();
+            tmpTable.setBounds(0, Gdx.graphics.getHeight() * 0.2f, Gdx.graphics.getWidth() * 0.5f, Gdx.graphics.getHeight() * 0.6f);
+
+            final Table listTable = new Table(skin);
+            listTable.top();
+            listTable.left();
+            listTable.setBounds(0, Gdx.graphics.getHeight() * 0.2f, Gdx.graphics.getWidth() * 0.55f, Gdx.graphics.getHeight() * 0.6f);
+            listTable.debug();
+
+            confirmChooseTable.setBounds(0, Gdx.graphics.getHeight() * 0.05f, Gdx.graphics.getWidth(), Gdx.graphics.getHeight() * 0.15f);
+            confirmChooseTable.debug();
+
+            Table rocketTable = new Table();
+            rocketTable.setBounds(listTable.getWidth(), Gdx.graphics.getHeight() * 0.2f, Gdx.graphics.getWidth() * 0.5f, Gdx.graphics.getHeight() * 0.6f);
+            rocketTable.debug();
+
+            ScrollPane scrollPane = new ScrollPane(new Label("Test", skin), skin);
+            listTable.add(scrollPane);
+
+            //Top buttons to switch module
+            modules = new Table();
+            modules.setBounds(0, listTable.getHeight() + listTable.getY(), Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+            modules.bottom();
+
+            headButton = new TextButton("Head", skin);
+            headButton.addListener(new ChangeListener() {
+                @Override
+                public void changed(ChangeEvent event, Actor actor) {
+                    tmpTable.clear();
+                    listTable.clear();
+
+                    try {
+                        createHeadTableArea(tmpTable);
+                    }catch (XmlLoadException e){
+                        createExceptionDialog(e);
+                    }
+
+                    listTable.add(new ScrollPane(tmpTable)).uniformX();
+
+
+                }
+            });
+
+            TextButton bodyButton = new TextButton("Body", skin);
+            bodyButton.addListener(new ChangeListener() {
+                @Override
+                public void changed(ChangeEvent event, Actor actor) {
+                    tmpTable.clear();
+                    listTable.clear();
+
+                    try {
+                        createBodyTableArea(tmpTable);
+                    }catch (XmlLoadException e){
+                        createExceptionDialog(e);
+                    }
+
+                    listTable.add(new ScrollPane(tmpTable)).uniformX();
+                }
+            });
+
+            TextButton finsButton = new TextButton("Fins", skin);
+            finsButton.addListener(new ChangeListener() {
+                @Override
+                public void changed(ChangeEvent event, Actor actor) {
+                    tmpTable.clear();
+                    listTable.clear();
+
+                    try {
+                        createFinsTableArea(tmpTable);
+                    }catch (XmlLoadException e){
+                        createExceptionDialog(e);
+                    }
+
+                    listTable.add(new ScrollPane(tmpTable)).uniformX();
+                }
+            });
+
+            TextButton engineButton = new TextButton("Engine", skin);
+            engineButton.addListener(new ChangeListener() {
+                @Override
+                public void changed(ChangeEvent event, Actor actor) {
+                    tmpTable.clear();
+                    listTable.clear();
+
+                    try {
+                        createEngineTableArea(tmpTable);
+                    }catch (XmlLoadException e){
+                        createExceptionDialog(e);
+                    }
+
+                    listTable.add(new ScrollPane(tmpTable)).uniformX();
+                }
+            });
+
+            modules.add(headButton).width(Gdx.graphics.getWidth() / 4).height(Gdx.graphics.getHeight() * 0.05f);
+            modules.add(bodyButton).width(Gdx.graphics.getWidth() / 4).height(Gdx.graphics.getHeight() * 0.05f);
+            modules.add(finsButton).width(Gdx.graphics.getWidth() / 4).height(Gdx.graphics.getHeight() * 0.05f);
+            modules.add(engineButton).width(Gdx.graphics.getWidth() / 4).height(Gdx.graphics.getHeight() * 0.05f);
+            modules.row();
+
+            //adding actors
+            stage.addActor(listTable);
+            stage.addActor(rocketTable);
+            stage.addActor(modules);
+
+            pe.getEmitters().first().setPosition(Gdx.graphics.getWidth() / 2, Gdx.graphics.getHeight() / 2);
+            //pe.scaleEffect(0.25f);
+            pe.start();
+        }catch (XmlLoadException e){
+            createExceptionDialog(e);
+        }
+    }
+
+    public void createExceptionDialog(XmlLoadException e){
+        engine.removeAllEntities();
+        objectFactory.dispose();
+        Gdx.input.setInputProcessor(stage);
+        Dialog dialog = new Dialog("", skin);
+        dialog.add(e.getException()).center();
+        dialog.addListener(new InputListener(){
+            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button){
                 game.changeScreen(MinimumCosmic.MENU);
+                return false;
             }
         });
-
-        //Top buttons to switch module
-        Table modules = new Table();
-        TextButton headButton = new TextButton("Head modules", skin);
-        final Table tmpTable = new Table();
-        tmpTable.setBounds(0, Gdx.graphics.getHeight() * 0.2f, Gdx.graphics.getWidth() * 0.5f, Gdx.graphics.getHeight() * 0.6f);
-
-        final Table listTable = new Table(skin);
-        listTable.top();
-        listTable.left();
-        listTable.setBounds(0, Gdx.graphics.getHeight() * 0.2f, Gdx.graphics.getWidth() * 0.55f, Gdx.graphics.getHeight() * 0.6f);
-        listTable.debug();
-
-        confirmChooseTable.setBounds(0, Gdx.graphics.getHeight() * 0.05f, Gdx.graphics.getWidth(), Gdx.graphics.getHeight() * 0.15f);
-        confirmChooseTable.debug();
-
-        Table rocketTable = new Table();
-        rocketTable.setBounds(listTable.getWidth(), Gdx.graphics.getHeight() * 0.2f, Gdx.graphics.getWidth() * 0.5f, Gdx.graphics.getHeight() * 0.6f);
-        rocketTable.debug();
-
-        ScrollPane scrollPane = new ScrollPane(new Label("Test", skin), skin);
-        listTable.add(scrollPane);
-
-
-        //Top buttons to switch module
-        modules = new Table();
-        modules.setBounds(0, listTable.getHeight() + listTable.getY(), Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-        modules.bottom();
-
-
-        headButton = new TextButton("Head", skin);
-        headButton.addListener(new ChangeListener() {
-            @Override
-            public void changed(ChangeEvent event, Actor actor) {
-                tmpTable.clear();
-                listTable.clear();
-
-                createHeadTableArea(tmpTable);
-
-                listTable.add(new ScrollPane(tmpTable)).uniformX();
-
-
-            }
-        });
-
-        TextButton bodyButton = new TextButton("Body", skin);
-        bodyButton.addListener(new ChangeListener() {
-            @Override
-            public void changed(ChangeEvent event, Actor actor) {
-                tmpTable.clear();
-                listTable.clear();
-
-                createBodyTableArea(tmpTable);
-
-                listTable.add(new ScrollPane(tmpTable)).uniformX();
-            }
-        });
-
-        TextButton finsButton = new TextButton("Fins", skin);
-        finsButton.addListener(new ChangeListener() {
-            @Override
-            public void changed(ChangeEvent event, Actor actor) {
-                tmpTable.clear();
-                listTable.clear();
-
-                createFinsTableArea(tmpTable);
-
-                listTable.add(new ScrollPane(tmpTable)).uniformX();
-            }
-        });
-
-        TextButton engineButton = new TextButton("Engine", skin);
-        engineButton.addListener(new ChangeListener() {
-            @Override
-            public void changed(ChangeEvent event, Actor actor) {
-                tmpTable.clear();
-                listTable.clear();
-
-                createEngineTableArea(tmpTable);
-
-                listTable.add(new ScrollPane(tmpTable)).uniformX();
-            }
-        });
+<<<<<<< HEAD
 
         modules.add(headButton).width(Gdx.graphics.getWidth() / 4).height(Gdx.graphics.getHeight() * 0.05f);
         modules.add(bodyButton).width(Gdx.graphics.getWidth() / 4).height(Gdx.graphics.getHeight() * 0.05f);
@@ -255,222 +309,256 @@ public class HangarScreen implements Screen {
         stage.addActor(listTable);
         stage.addActor(rocketTable);
         stage.addActor(modules);
+=======
+        dialog.show(stage);
+>>>>>>> a97c45b424b77760742a3fad0354033149ba4838
     }
 
-    public void createHeadTableArea(final Table table) {
-        for (int i = 0; i < inventory.get(0).size(); ++i) {
-            if (i != 0 && i % 2 == 0) {
-                table.row();
-            }
-            InventoryCell currentInventoryCell = inventory.get(0).get(i);
-
-            final Entity head = objectFactory.createHeadModule(rocketPosition, rocketAtlas, currentInventoryCell.id, false);
-
-            final MyActor headModule = new MyActor(rocketAtlas.findRegion("head_" + currentInventoryCell.id),
-                    head, currentInventoryCell.id, HEAD);
-
-            headModule.addListener(new InputListener() {
-                public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-                    confirmChooseTable.clear();
-                    TextButton confirmButton = new TextButton("Confirm", skin);
-                    confirmButton.addListener(new ChangeListener() {
-                        @Override
-                        public void changed(ChangeEvent event, Actor actor) {
-
-
-                            engine.removeEntity(rocketComponent.headModule);
-
-                            rocketComponent.headModule =
-                                    objectFactory.createHeadModule(rocketPosition,rocketAtlas, headModule.getId(), true);
-                            headTransformComponent.scale.x = rocketScale;
-                            headTransformComponent.scale.y = rocketScale;
-                            Mapper.rocketComponentMapper = ComponentMapper.getFor(RocketComponent.class);
-
-                            System.out.println("It's confirmed");
-                        }
-                    });
-                    Image img = new Image((headModule.entity.getComponent(TextureComponent.class).region));
-                    confirmChooseTable.add(img);
-
-                    ComponentMapper<HeadModuleComponent> hc = ComponentMapper.getFor(HeadModuleComponent.class);
-                    HeadModuleComponent hmc = hc.get(headModule.entity);
-
-                    confirmChooseTable.add(new Label(
-                            "cost: " + hmc.cost + "\n" +
-                            "weight: " + hmc.weight + "\n" +
-                                    "power: " + hmc.power
-                            , skin)).width(Gdx.graphics.getWidth() / 2);
-                    confirmChooseTable.add(confirmButton).uniformX().height(confirmChooseTable.getHeight() / 2);
-                    stage.addActor(confirmChooseTable);
-                    return false;
+    public void createHeadTableArea(final Table table) throws XmlLoadException {
+        try {
+            for (int i = 0; i < inventory.get(0).size(); ++i) {
+                if (i != 0 && i % 2 == 0) {
+                    table.row();
                 }
-            });
+                InventoryCell currentInventoryCell = inventory.get(0).get(i);
 
-            table.add(headModule).width(Gdx.graphics.getWidth() * 0.2f).height(Gdx.graphics.getHeight() * 0.2f);
-            table.add(new Label("x" + currentInventoryCell.amount, skin)).bottom().uniformX();
+                final Entity head = objectFactory.createHeadModule(rocketPosition, rocketAtlas, currentInventoryCell.id, false);
+
+                final MyActor headModule = new MyActor(rocketAtlas.findRegion("head_" + currentInventoryCell.id),
+                        head, currentInventoryCell.id, HEAD);
+
+                headModule.addListener(new InputListener() {
+                    public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
+                        confirmChooseTable.clear();
+                        TextButton confirmButton = new TextButton("Confirm", skin);
+                        confirmButton.addListener(new ChangeListener() {
+                            @Override
+                            public void changed(ChangeEvent event, Actor actor) {
+
+                                engine.removeEntity(rocketComponent.headModule);
+
+                                try {
+                                    rocketComponent.headModule =
+                                            objectFactory.createHeadModule(rocketPosition, rocketAtlas, headModule.getId(), true);
+                                }catch (XmlLoadException e){
+                                    createExceptionDialog(e);
+                                }
+                                headTransformComponent.scale.x = rocketScale;
+                                headTransformComponent.scale.y = rocketScale;
+                                Mapper.rocketComponentMapper = ComponentMapper.getFor(RocketComponent.class);
+
+                                System.out.println("It's confirmed");
+                            }
+                        });
+                        Image img = new Image((headModule.entity.getComponent(TextureComponent.class).region));
+                        confirmChooseTable.add(img);
+
+                        ComponentMapper<HeadModuleComponent> hc = ComponentMapper.getFor(HeadModuleComponent.class);
+                        HeadModuleComponent hmc = hc.get(headModule.entity);
+
+                        confirmChooseTable.add(new Label(
+                                "cost: " + hmc.cost + "\n" +
+                                        "weight: " + hmc.weight + "\n" +
+                                        "power: " + hmc.power
+                                , skin)).width(Gdx.graphics.getWidth() / 2);
+                        confirmChooseTable.add(confirmButton).uniformX().height(confirmChooseTable.getHeight() / 2);
+                        stage.addActor(confirmChooseTable);
+                        return false;
+                    }
+                });
+
+                table.add(headModule).width(Gdx.graphics.getWidth() * 0.2f).height(Gdx.graphics.getHeight() * 0.2f);
+                table.add(new Label("x" + currentInventoryCell.amount, skin)).bottom().uniformX();
 
 
+            }
+        }catch (XmlLoadException e){
+            throw e;
         }
     }
 
-    public void createBodyTableArea(Table table) {
-        for (int i = 0; i < inventory.get(1).size(); ++i) {
-            if (i != 0 && i % 2 == 0) {
-                table.row();
-            }
-            InventoryCell currentInventoryCell = inventory.get(1).get(i);
-
-            Entity body = objectFactory.createBodyModule(rocketPosition, rocketAtlas, currentInventoryCell.id, false);
-
-            final MyActor bodyModule = new MyActor(rocketAtlas.findRegion("body_" + currentInventoryCell.id),
-                    body, currentInventoryCell.id, BODY);
-            bodyModule.addListener(new InputListener() {
-                public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-                    confirmChooseTable.clear();
-                    TextButton confirmButton = new TextButton("Confirm", skin);
-                    confirmButton.addListener(new ChangeListener() {
-                        @Override
-                        public void changed(ChangeEvent event, Actor actor) {
-
-                            engine.removeEntity(rocketComponent.bodyModule);
-
-                            rocketComponent.bodyModule =
-                                    objectFactory.createBodyModule(rocketPosition,rocketAtlas, bodyModule.getId(), true);
-                            bodyTransformComponent.scale.x = rocketScale;
-                            bodyTransformComponent.scale.y = rocketScale;
-                            Mapper.rocketComponentMapper = ComponentMapper.getFor(RocketComponent.class);
-
-                            System.out.println("It's confirmed");
-                        }
-                    });
-                    confirmChooseTable.add(new Image((bodyModule.entity.getComponent(TextureComponent.class).region)));
-
-                    ComponentMapper<BodyModuleComponent> bc = ComponentMapper.getFor(BodyModuleComponent.class);
-                    BodyModuleComponent bmc = bc.get(bodyModule.entity);
-
-                    confirmChooseTable.add(new Label(
-                            "cost: " + bmc.cost + "\n" +
-                                    "weight: " + bmc.weight + "\n" +
-                                    "power: " + bmc.power
-                            , skin)).width(Gdx.graphics.getWidth() / 2);
-                    confirmChooseTable.add(confirmButton).uniformX().height(confirmChooseTable.getHeight() / 2);
-                    stage.addActor(confirmChooseTable);
-                    return false;
+    public void createBodyTableArea(Table table) throws XmlLoadException{
+        try {
+            for (int i = 0; i < inventory.get(1).size(); ++i) {
+                if (i != 0 && i % 2 == 0) {
+                    table.row();
                 }
-            });
+                InventoryCell currentInventoryCell = inventory.get(1).get(i);
 
-            table.add(bodyModule).width(Gdx.graphics.getWidth() * 0.2f).height(Gdx.graphics.getHeight() * 0.2f);
-            table.add(new Label("x" + currentInventoryCell.amount, skin)).bottom().uniformX();
+                Entity body = objectFactory.createBodyModule(rocketPosition, rocketAtlas, currentInventoryCell.id, false);
+
+                final MyActor bodyModule = new MyActor(rocketAtlas.findRegion("body_" + currentInventoryCell.id),
+                        body, currentInventoryCell.id, BODY);
+                bodyModule.addListener(new InputListener() {
+                    public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
+                        confirmChooseTable.clear();
+                        TextButton confirmButton = new TextButton("Confirm", skin);
+                        confirmButton.addListener(new ChangeListener() {
+                            @Override
+                            public void changed(ChangeEvent event, Actor actor) {
+
+                                engine.removeEntity(rocketComponent.bodyModule);
+
+                                try {
+                                    rocketComponent.bodyModule =
+                                            objectFactory.createBodyModule(rocketPosition, rocketAtlas, bodyModule.getId(), true);
+                                }catch (XmlLoadException e){
+                                    createExceptionDialog(e);
+                                }
+                                bodyTransformComponent.scale.x = rocketScale;
+                                bodyTransformComponent.scale.y = rocketScale;
+                                Mapper.rocketComponentMapper = ComponentMapper.getFor(RocketComponent.class);
+
+                                System.out.println("It's confirmed");
+                            }
+                        });
+                        confirmChooseTable.add(new Image((bodyModule.entity.getComponent(TextureComponent.class).region)));
+
+                        ComponentMapper<BodyModuleComponent> bc = ComponentMapper.getFor(BodyModuleComponent.class);
+                        BodyModuleComponent bmc = bc.get(bodyModule.entity);
+
+                        confirmChooseTable.add(new Label(
+                                "cost: " + bmc.cost + "\n" +
+                                        "weight: " + bmc.weight + "\n" +
+                                        "power: " + bmc.power
+                                , skin)).width(Gdx.graphics.getWidth() / 2);
+                        confirmChooseTable.add(confirmButton).uniformX().height(confirmChooseTable.getHeight() / 2);
+                        stage.addActor(confirmChooseTable);
+                        return false;
+                    }
+                });
+
+                table.add(bodyModule).width(Gdx.graphics.getWidth() * 0.2f).height(Gdx.graphics.getHeight() * 0.2f);
+                table.add(new Label("x" + currentInventoryCell.amount, skin)).bottom().uniformX();
 
 
+            }
+        }catch (XmlLoadException e){
+            throw e;
         }
     }
 
-    public void createFinsTableArea(Table table) {
-        for (int i = 0; i < inventory.get(2).size(); ++i) {
-            if (i != 0 && i % 2 == 0) {
-                table.row();
-            }
-            InventoryCell currentInventoryCell = inventory.get(2).get(i);
-
-            Entity fins = objectFactory.createFinsModule(rocketPosition, rocketAtlas, currentInventoryCell.id, false);
-
-            final MyActor finsModule = new MyActor(rocketAtlas.findRegion("fins_" + currentInventoryCell.id),
-                    fins, currentInventoryCell.id, FINS);
-            finsModule.addListener(new InputListener() {
-                public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-                    confirmChooseTable.clear();
-                    TextButton confirmButton = new TextButton("Confirm", skin);
-                    confirmButton.addListener(new ChangeListener() {
-                        @Override
-                        public void changed(ChangeEvent event, Actor actor) {
-
-                            engine.removeEntity(rocketComponent.finsModule);
-
-                            rocketComponent.finsModule =
-                                    objectFactory.createFinsModule(rocketPosition,rocketAtlas, finsModule.getId(), true);
-                            finsTransformComponent.scale.x = rocketScale;
-                            finsTransformComponent.scale.y = rocketScale;
-                            Mapper.rocketComponentMapper = ComponentMapper.getFor(RocketComponent.class);
-
-
-                            System.out.println("It's confirmed");
-                        }
-                    });
-                    confirmChooseTable.add(new Image((finsModule.entity.getComponent(TextureComponent.class).region)));
-
-                    ComponentMapper<FinsModuleComponent> fc = ComponentMapper.getFor(FinsModuleComponent.class);
-                    FinsModuleComponent fmc = fc.get(finsModule.entity);
-
-                    confirmChooseTable.add(new Label(
-                            "cost: " + fmc.cost + "\n" +
-                                    "weight: " + fmc.weight + "\n" +
-                                    "maneuver: " + fmc.maneuver
-                            , skin)).width(Gdx.graphics.getWidth() / 2);
-                    confirmChooseTable.add(confirmButton).uniformX().height(confirmChooseTable.getHeight() / 2);
-                    stage.addActor(confirmChooseTable);
-                    return false;
+    public void createFinsTableArea(Table table) throws XmlLoadException{
+        try {
+            for (int i = 0; i < inventory.get(2).size(); ++i) {
+                if (i != 0 && i % 2 == 0) {
+                    table.row();
                 }
-            });
+                InventoryCell currentInventoryCell = inventory.get(2).get(i);
 
-            table.add(finsModule).width(Gdx.graphics.getWidth() * 0.2f).height(Gdx.graphics.getHeight() * 0.2f);
-            table.add(new Label("x" + currentInventoryCell.amount, skin)).bottom().uniformX();
+                Entity fins = objectFactory.createFinsModule(rocketPosition, rocketAtlas, currentInventoryCell.id, false);
+
+                final MyActor finsModule = new MyActor(rocketAtlas.findRegion("fins_" + currentInventoryCell.id),
+                        fins, currentInventoryCell.id, FINS);
+                finsModule.addListener(new InputListener() {
+                    public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
+                        confirmChooseTable.clear();
+                        TextButton confirmButton = new TextButton("Confirm", skin);
+                        confirmButton.addListener(new ChangeListener() {
+                            @Override
+                            public void changed(ChangeEvent event, Actor actor) {
+
+                                engine.removeEntity(rocketComponent.finsModule);
+
+                                try {
+                                    rocketComponent.finsModule =
+                                            objectFactory.createFinsModule(rocketPosition, rocketAtlas, finsModule.getId(), true);
+                                }catch (XmlLoadException e){
+                                    createExceptionDialog(e);
+                                }
+                                finsTransformComponent.scale.x = rocketScale;
+                                finsTransformComponent.scale.y = rocketScale;
+                                Mapper.rocketComponentMapper = ComponentMapper.getFor(RocketComponent.class);
 
 
+                                System.out.println("It's confirmed");
+                            }
+                        });
+                        confirmChooseTable.add(new Image((finsModule.entity.getComponent(TextureComponent.class).region)));
+
+                        ComponentMapper<FinsModuleComponent> fc = ComponentMapper.getFor(FinsModuleComponent.class);
+                        FinsModuleComponent fmc = fc.get(finsModule.entity);
+
+                        confirmChooseTable.add(new Label(
+                                "cost: " + fmc.cost + "\n" +
+                                        "weight: " + fmc.weight + "\n" +
+                                        "maneuver: " + fmc.maneuver
+                                , skin)).width(Gdx.graphics.getWidth() / 2);
+                        confirmChooseTable.add(confirmButton).uniformX().height(confirmChooseTable.getHeight() / 2);
+                        stage.addActor(confirmChooseTable);
+                        return false;
+                    }
+                });
+
+                table.add(finsModule).width(Gdx.graphics.getWidth() * 0.2f).height(Gdx.graphics.getHeight() * 0.2f);
+                table.add(new Label("x" + currentInventoryCell.amount, skin)).bottom().uniformX();
+
+
+            }
+        }catch (XmlLoadException e){
+            throw e;
         }
     }
 
-    public void createEngineTableArea(Table table) {
-        for (int i = 0; i < inventory.get(3).size(); ++i) {
-            if (i != 0 && i % 2 == 0) {
-                table.row();
-            }
-            InventoryCell currentInventoryCell = inventory.get(3).get(i);
-
-            Entity eng = objectFactory.createEngineModule(rocketPosition, rocketAtlas, currentInventoryCell.id, false);
-
-            final MyActor engineModule = new MyActor(rocketAtlas.findRegion("engine_" + currentInventoryCell.id),
-                    eng, currentInventoryCell.id, ENGINE);
-            engineModule.addListener(new InputListener() {
-                public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-                    confirmChooseTable.clear();
-                    TextButton confirmButton = new TextButton("Confirm", skin);
-                    confirmButton.addListener(new ChangeListener() {
-                        @Override
-                        public void changed(ChangeEvent event, Actor actor) {
-
-                            engine.removeEntity(rocketComponent.engineModule);
-
-                            rocketComponent.engineModule =
-                                    objectFactory.createEngineModule(rocketPosition,rocketAtlas, engineModule.getId(), true);
-                            engineTransformComponent.scale.x = rocketScale;
-                            engineTransformComponent.scale.y = rocketScale;
-                            Mapper.rocketComponentMapper = ComponentMapper.getFor(RocketComponent.class);
-
-
-                            System.out.println("It's confirmed");
-                        }
-                    });
-                    confirmChooseTable.add(new Image((engineModule.entity.getComponent(TextureComponent.class).region)));
-
-                    ComponentMapper<EngineModuleComponent> ec = ComponentMapper.getFor(EngineModuleComponent.class);
-                    EngineModuleComponent emc = ec.get(engineModule.entity);
-
-                    confirmChooseTable.add(new Label(
-                            "cost: " + emc.cost + "\n" +
-                                    "weight: " + emc.weight + "\n" +
-                                    "power: " + emc.power
-                            , skin)).width(Gdx.graphics.getWidth() / 2);
-                    confirmChooseTable.add(confirmButton).uniformX().height(confirmChooseTable.getHeight() / 2);
-                    stage.addActor(confirmChooseTable);
-                    return false;
+    public void createEngineTableArea(Table table) throws XmlLoadException{
+        try {
+            for (int i = 0; i < inventory.get(3).size(); ++i) {
+                if (i != 0 && i % 2 == 0) {
+                    table.row();
                 }
-            });
+                InventoryCell currentInventoryCell = inventory.get(3).get(i);
 
-            table.add(engineModule).width(Gdx.graphics.getWidth() * 0.2f).height(Gdx.graphics.getHeight() * 0.2f);
-            table.add(new Label("x" + currentInventoryCell.amount, skin)).bottom().uniformX();
+                Entity eng = objectFactory.createEngineModule(rocketPosition, rocketAtlas, currentInventoryCell.id, false);
+
+                final MyActor engineModule = new MyActor(rocketAtlas.findRegion("engine_" + currentInventoryCell.id),
+                        eng, currentInventoryCell.id, ENGINE);
+                engineModule.addListener(new InputListener() {
+                    public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
+                        confirmChooseTable.clear();
+                        TextButton confirmButton = new TextButton("Confirm", skin);
+                        confirmButton.addListener(new ChangeListener() {
+                            @Override
+                            public void changed(ChangeEvent event, Actor actor) {
+
+                                engine.removeEntity(rocketComponent.engineModule);
+
+                                try {
+                                    rocketComponent.engineModule =
+                                            objectFactory.createEngineModule(rocketPosition, rocketAtlas, engineModule.getId(), true);
+                                }catch (XmlLoadException e){
+                                    createExceptionDialog(e);
+                                }
+                                engineTransformComponent.scale.x = rocketScale;
+                                engineTransformComponent.scale.y = rocketScale;
+                                Mapper.rocketComponentMapper = ComponentMapper.getFor(RocketComponent.class);
 
 
+                                System.out.println("It's confirmed");
+                            }
+                        });
+                        confirmChooseTable.add(new Image((engineModule.entity.getComponent(TextureComponent.class).region)));
+
+                        ComponentMapper<EngineModuleComponent> ec = ComponentMapper.getFor(EngineModuleComponent.class);
+                        EngineModuleComponent emc = ec.get(engineModule.entity);
+
+                        confirmChooseTable.add(new Label(
+                                "cost: " + emc.cost + "\n" +
+                                        "weight: " + emc.weight + "\n" +
+                                        "power: " + emc.power
+                                , skin)).width(Gdx.graphics.getWidth() / 2);
+                        confirmChooseTable.add(confirmButton).uniformX().height(confirmChooseTable.getHeight() / 2);
+                        stage.addActor(confirmChooseTable);
+                        return false;
+                    }
+                });
+
+                table.add(engineModule).width(Gdx.graphics.getWidth() * 0.2f).height(Gdx.graphics.getHeight() * 0.2f);
+                table.add(new Label("x" + currentInventoryCell.amount, skin)).bottom().uniformX();
+
+
+            }
+        }catch (XmlLoadException e){
+            throw e;
         }
     }
 
@@ -501,17 +589,17 @@ public class HangarScreen implements Screen {
         // tell our stage to do actions and draw itself
         stage.act(Math.min(Gdx.graphics.getDeltaTime(), 1 / 30f));
 
-        pe.update(Gdx.graphics.getDeltaTime());
+        //pe.update(Gdx.graphics.getDeltaTime());
 
         stage.getBatch().begin();
         //backSprite.draw(stage.getBatch());
         backSprite.draw(stage.getBatch());
-        pe.draw(stage.getBatch());
+        //pe.draw(stage.getBatch());
         stage.getBatch().end();
 
-        if (pe.isComplete()) {
+        /*if (pe.isComplete()) {
             pe.reset();
-        }
+        }*/
 
         stage.draw();
 

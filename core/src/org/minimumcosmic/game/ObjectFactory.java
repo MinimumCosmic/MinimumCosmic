@@ -21,6 +21,7 @@ import org.minimumcosmic.game.entity.components.modules.EngineModuleComponent;
 import org.minimumcosmic.game.entity.components.modules.FinsModuleComponent;
 import org.minimumcosmic.game.entity.components.modules.HeadModuleComponent;
 import org.minimumcosmic.game.entity.systems.RenderingSystem;
+import org.minimumcosmic.game.exception.XmlLoadException;
 import org.minimumcosmic.game.parallax.Parallax;
 import org.minimumcosmic.game.parallax.ParallaxLayer;
 import org.minimumcosmic.game.parallax.TexturedParallaxLayer;
@@ -344,6 +345,7 @@ public class ObjectFactory {
         return entity;
     }
 
+<<<<<<< HEAD
 
     public Entity createRocket(TextureAtlas atlas, OrthographicCamera camera, String filePath, Vector2 rp) {
         return createRocket(atlas, camera, filePath, rp, null);
@@ -358,6 +360,17 @@ public class ObjectFactory {
     }
 
     public Entity createRocket(TextureAtlas atlas, OrthographicCamera camera, String filePath, Vector2 rp, ParticleEffect pe) {
+=======
+    public Entity createRocket(TextureAtlas atlas, OrthographicCamera camera, ParticleEffect pe, String filePath) throws XmlLoadException{
+        try{
+            return createRocket(atlas, camera, pe, filePath, null);
+        }catch (IOException e){
+            throw new XmlLoadException(1);
+        }
+    }
+
+    public Entity createRocket(TextureAtlas atlas, OrthographicCamera camera, ParticleEffect pe, String filePath, Vector2 rp) throws XmlLoadException{
+>>>>>>> a97c45b424b77760742a3fad0354033149ba4838
         XmlReader xmlReader = new XmlReader();
         try {
             FileHandle fileHandle = Gdx.files.local(filePath);
@@ -454,12 +467,11 @@ public class ObjectFactory {
             engine.addEntity(entity);
             return entity;
         } catch (IOException e) {
-            e.printStackTrace();
+            throw new XmlLoadException(1);
         }
-        return null;
     }
 
-    public Entity createHeadModule(Vector2 position, TextureAtlas atlas, int id, boolean engineAdding) {
+    public Entity createHeadModule(Vector2 position, TextureAtlas atlas, int id, boolean engineAdding) throws XmlLoadException{
         XmlReader xmlReader = new XmlReader();
         try {
             XmlReader.Element root = xmlReader.parse(Gdx.files.internal("xml/modules.xml"));
@@ -476,9 +488,10 @@ public class ObjectFactory {
 
             return headModule;
         } catch (IOException e) {
-            e.printStackTrace();
+            throw new XmlLoadException(1);
+        }catch (RuntimeException e){
+            throw new XmlLoadException(1);
         }
-        return null;
     }
 
     public Entity createHeadModule(float x, float y, TextureRegion texture, int weight, int cost, int hp, int power, int fuel, boolean engineAdding) {
@@ -510,7 +523,7 @@ public class ObjectFactory {
         return entity;
     }
 
-    public Entity createBodyModule(Vector2 position, TextureAtlas atlas, int id, boolean engineAdding) {
+    public Entity createBodyModule(Vector2 position, TextureAtlas atlas, int id, boolean engineAdding) throws XmlLoadException {
         XmlReader xmlReader = new XmlReader();
         try {
             XmlReader.Element root = xmlReader.parse(Gdx.files.internal("xml/modules.xml"));
@@ -526,9 +539,10 @@ public class ObjectFactory {
 
             return bodyModule;
         } catch (IOException e) {
-            e.printStackTrace();
+           throw new XmlLoadException(1);
+        }catch (RuntimeException e){
+            throw new XmlLoadException(1);
         }
-        return null;
     }
 
     public Entity createBodyModule(float x, float y, TextureRegion texture, int weight, int cost, int power, int fuel, boolean engineAdding) {
@@ -559,7 +573,7 @@ public class ObjectFactory {
         return entity;
     }
 
-    public Entity createFinsModule(Vector2 position, TextureAtlas atlas, int id, boolean engineAdding) {
+    public Entity createFinsModule(Vector2 position, TextureAtlas atlas, int id, boolean engineAdding) throws XmlLoadException{
         XmlReader xmlReader = new XmlReader();
         try {
             XmlReader.Element root = xmlReader.parse(Gdx.files.internal("xml/modules.xml"));
@@ -574,9 +588,10 @@ public class ObjectFactory {
 
             return finsModule;
         } catch (IOException e) {
-            e.printStackTrace();
+            throw new XmlLoadException(1);
+        }catch (RuntimeException e){
+            throw new XmlLoadException(1);
         }
-        return null;
     }
 
     public Entity createFinsModule(float x, float y, TextureRegion texture, int weight, int cost, int maneuver, boolean engineAdding) {
@@ -606,7 +621,7 @@ public class ObjectFactory {
         return entity;
     }
 
-    public Entity createEngineModule(Vector2 position, TextureAtlas atlas, int id, boolean engineAdding) {
+    public Entity createEngineModule(Vector2 position, TextureAtlas atlas, int id, boolean engineAdding) throws XmlLoadException {
         XmlReader xmlReader = new XmlReader();
         try {
             XmlReader.Element root = xmlReader.parse(Gdx.files.internal("xml/modules.xml"));
@@ -621,9 +636,10 @@ public class ObjectFactory {
 
             return engineModule;
         } catch (IOException e) {
-            e.printStackTrace();
+           throw new XmlLoadException(1);
+        }catch (RuntimeException e){
+            throw new XmlLoadException(1);
         }
-        return null;
     }
 
     public Entity createEngineModule(float x, float y, TextureRegion texture, int weight, int cost, int power, boolean engineAdding) {
