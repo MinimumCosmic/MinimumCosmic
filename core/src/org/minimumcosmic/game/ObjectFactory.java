@@ -345,22 +345,6 @@ public class ObjectFactory {
         return entity;
     }
 
-<<<<<<< HEAD
-
-    public Entity createRocket(TextureAtlas atlas, OrthographicCamera camera, String filePath, Vector2 rp) {
-        return createRocket(atlas, camera, filePath, rp, null);
-    }
-
-    public Entity createRocket(TextureAtlas atlas, OrthographicCamera camera, String filePath) {
-        return createRocket(atlas, camera, filePath, null, null);
-    }
-
-    public Entity createRocket(TextureAtlas atlas, OrthographicCamera camera, String filePath, ParticleEffect pe) {
-        return createRocket(atlas, camera, filePath, null, pe);
-    }
-
-    public Entity createRocket(TextureAtlas atlas, OrthographicCamera camera, String filePath, Vector2 rp, ParticleEffect pe) {
-=======
     public Entity createRocket(TextureAtlas atlas, OrthographicCamera camera, ParticleEffect pe, String filePath) throws XmlLoadException{
         try{
             return createRocket(atlas, camera, pe, filePath, null);
@@ -370,7 +354,6 @@ public class ObjectFactory {
     }
 
     public Entity createRocket(TextureAtlas atlas, OrthographicCamera camera, ParticleEffect pe, String filePath, Vector2 rp) throws XmlLoadException{
->>>>>>> a97c45b424b77760742a3fad0354033149ba4838
         XmlReader xmlReader = new XmlReader();
         try {
             FileHandle fileHandle = Gdx.files.local(filePath);

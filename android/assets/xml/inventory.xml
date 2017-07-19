@@ -10,7 +10,6 @@
 		<Module id="3" amount="1"/>
 	</BodyModules>
 	<FinsModules>
-<<<<<<< HEAD
 		<Module id="1" amount="4"/>
 		<Module id="2" amount="6"/>
 		<Module id="3" amount="1"/>
@@ -19,15 +18,6 @@
 		<Module id="1" amount="5"/>
 		<Module id="2" amount="3"/>
 		<Module id="3" amount="3"/>
-=======
-		<Module id="1" amount="1"/>
-		<Module id="2" amount="1"/>
-		<Module id="3" amount="1"/>
-	</FinsModules>
-	<EngineModules>
-		<Module id="1" amount="1"/>
-		<Module id="2" amount="1"/>
-		<Module id="3" amount="1"/>
->>>>>>> a97c45b424b77760742a3fad0354033149ba4838
+
 	</EngineModules>
 </Inventory>

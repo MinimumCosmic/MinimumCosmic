@@ -128,12 +128,7 @@ public class HangarScreen implements Screen {
     public void show(){
         try {
             init();
-<<<<<<< HEAD
 
-<<<<<<< HEAD
-        rocketPosition = new Vector2((Gdx.graphics.getWidth() * 0.75f) * RenderingSystem.PIXELS_TO_METRES, Gdx.graphics.getHeight() / 2 * RenderingSystem.PIXELS_TO_METRES);
-        rocket = objectFactory.createRocket(rocketAtlas, camera, "xml/rocket.xml", rocketPosition);
-=======
             rocketPosition = new Vector2((Gdx.graphics.getWidth() * 0.75f) * RenderingSystem.PIXELS_TO_METRES, Gdx.graphics.getHeight() / 2 * RenderingSystem.PIXELS_TO_METRES);
             pe = new ParticleEffect();
             pe = game.AssetManager.assetManager.get("smoke.p");
@@ -141,7 +136,7 @@ public class HangarScreen implements Screen {
 
             initMappers();
             inventory = SettingsLoader.loadInventory();
->>>>>>> a97c45b424b77760742a3fad0354033149ba4838
+
 
             scaleRocketSize(rocketScale);
 
@@ -162,36 +157,6 @@ public class HangarScreen implements Screen {
             table.left().defaults();
             table.add(back).fillX().uniformX().width(Gdx.graphics.getWidth() * 0.15f).height(Gdx.graphics.getHeight() * 0.07f);
 
-=======
-
-            rocketPosition = new Vector2((Gdx.graphics.getWidth() * 0.75f) * RenderingSystem.PIXELS_TO_METRES, Gdx.graphics.getHeight() / 2 * RenderingSystem.PIXELS_TO_METRES);
-            pe = new ParticleEffect();
-            pe = game.AssetManager.assetManager.get("smoke.p");
-            rocket = objectFactory.createRocket(rocketAtlas, camera, pe, "xml/rocket.xml", rocketPosition);
-
-            initMappers();
-            inventory = SettingsLoader.loadInventory();
-
-            scaleRocketSize(rocketScale);
-
-            //provide to catch keys and stage action
-            InputMultiplexer inputMultiplexer = new InputMultiplexer();
-            inputMultiplexer.addProcessor(stage);
-            inputMultiplexer.addProcessor(touchscreenController);
-
-            Gdx.input.setInputProcessor(inputMultiplexer);
-
-            final Table table = new Table(skin);
-            table.setFillParent(true);
-
-            stage.addActor(table);
-
-            TextButton back = new TextButton("Back", skin);
-            table.top().defaults();
-            table.left().defaults();
-            table.add(back).fillX().uniformX().width(Gdx.graphics.getWidth() * 0.15f).height(Gdx.graphics.getHeight() * 0.07f);
-
->>>>>>> a97c45b424b77760742a3fad0354033149ba4838
             back.addListener(new ChangeListener() {
                 @Override
                 public void changed(ChangeEvent event, Actor actor) {
@@ -316,37 +281,18 @@ public class HangarScreen implements Screen {
         }
     }
 
-    public void createExceptionDialog(XmlLoadException e){
+    public void createExceptionDialog(XmlLoadException e) {
         engine.removeAllEntities();
         objectFactory.dispose();
         Gdx.input.setInputProcessor(stage);
         Dialog dialog = new Dialog("", skin);
         dialog.add(e.getException()).center();
-        dialog.addListener(new InputListener(){
-            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button){
+        dialog.addListener(new InputListener() {
+            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
                 game.changeScreen(MinimumCosmic.MENU);
                 return false;
             }
         });
-<<<<<<< HEAD
-<<<<<<< HEAD
-
-        modules.add(headButton).width(Gdx.graphics.getWidth() / 4).height(Gdx.graphics.getHeight() * 0.05f);
-        modules.add(bodyButton).width(Gdx.graphics.getWidth() / 4).height(Gdx.graphics.getHeight() * 0.05f);
-        modules.add(finsButton).width(Gdx.graphics.getWidth() / 4).height(Gdx.graphics.getHeight() * 0.05f);
-        modules.add(engineButton).width(Gdx.graphics.getWidth() / 4).height(Gdx.graphics.getHeight() * 0.05f);
-        modules.row();
-
-        //adding actors
-        stage.addActor(listTable);
-        stage.addActor(rocketTable);
-        stage.addActor(modules);
-=======
-        dialog.show(stage);
->>>>>>> a97c45b424b77760742a3fad0354033149ba4838
-=======
-        dialog.show(stage);
->>>>>>> a97c45b424b77760742a3fad0354033149ba4838
     }
 
     public void createHeadTableArea(final Table table) throws XmlLoadException {

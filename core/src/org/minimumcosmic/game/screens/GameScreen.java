@@ -97,15 +97,15 @@ public class GameScreen implements Screen {
         engine.addSystem(new CameraSystem());
         engine.addSystem(new BoundsSystem());
         engine.addSystem(new EnemySystem());
-<<<<<<< HEAD
 
-        rocket = objectFactory.createRocket(textureAtlas, camera, "xml/rocket.xml", smokeParticles);
+
+        //rocket = objectFactory.createRocket(textureAtlas, camera, "xml/rocket.xml", smokeParticles);
         objectFactory.createFloor(textureAtlas.findRegion("player"));
         objectFactory.generateWorld(new TextureAtlas("images/items.atlas"));
         objectFactory.generateParallaxBackground(new TextureAtlas("images/parallaxbnd.atlas"), parallaxBackground);
         objectFactory.generateParallaxForeground(new TextureAtlas("images/parallaxbnd.atlas"), parallaxForeground);
 
-        Gdx.input.setInputProcessor(controller);
+        /*Gdx.input.setInputProcessor(controller);
 
         fuelMeter = new ProgressBar(0,
                 rocket.getComponent(RocketComponent.class).bodyModule.getComponent(BodyModuleComponent.class).fuel,
@@ -126,8 +126,8 @@ public class GameScreen implements Screen {
         stage.addActor(fpsLabel);
         stage.addActor(bodyCountLabel);
         stage.addActor(pickUpLabel);
-        stage.addActor(healthLabel);
-=======
+        stage.addActor(healthLabel);*/
+
         try{
             rocket = objectFactory.createRocket(textureAtlas, camera,
                 smokeParticles, "xml/rocket.xml");
@@ -172,7 +172,6 @@ public class GameScreen implements Screen {
             });
             dialog.show(stage);
         }
->>>>>>> a97c45b424b77760742a3fad0354033149ba4838
     }
 
     @Override
