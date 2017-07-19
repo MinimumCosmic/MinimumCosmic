@@ -32,7 +32,7 @@ public class LoseScreen implements Screen {
     public void show() {
 
         Gdx.input.setInputProcessor(stage);
-        text = new Label("YOU DIED", skin);
+        text = new Label("           YOU DIED", skin);
 
         TextButton restart = new TextButton("RESTART", skin);
         restart.addListener(new ChangeListener() {
