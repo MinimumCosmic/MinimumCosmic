@@ -13,6 +13,10 @@ public class B2dAssetManager {
 
     public final String smokeEffect = "smoke.p";
 
+    public final String explosionEffect = "explosion.p";
+
+    public final String starEffect = "star.p";
+
     public final String loadingImages = "images/loading_screen.atlas";
 
     public final String boxImages = "boxes2/box.atlas";
@@ -35,6 +39,8 @@ public class B2dAssetManager {
 
     public void queueAddParticleEffects() {
         assetManager.load(smokeEffect, ParticleEffect.class);
+        assetManager.load(explosionEffect, ParticleEffect.class);
+        assetManager.load(starEffect, ParticleEffect.class);
     }
 
     public void queueAddSkin() {

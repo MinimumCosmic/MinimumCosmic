@@ -31,7 +31,7 @@ import java.util.Random;
 public class ObjectFactory {
 
     public static final float WORLD_WIDTH = RenderingSystem.WORLD_WIDTH;
-    public static final float WORLD_HEIGHT = RenderingSystem.WORLD_HEIGHT * 30;
+    public static final float WORLD_HEIGHT = RenderingSystem.WORLD_HEIGHT * 40;
 
     private BodyFactory bodyFactory;
     public World world;
@@ -69,6 +69,8 @@ public class ObjectFactory {
             y += rand.nextFloat() * (10 * (Gdx.graphics.getHeight() / 800f));
 
         }
+
+        createStation(15, WORLD_HEIGHT, atlas);
     }
 
 
@@ -83,14 +85,14 @@ public class ObjectFactory {
         CollisionComponent collision = engine.createComponent(CollisionComponent.class);
         collision.collisionEntity = entity;
 
-        //TextureComponent textComp = engine.createComponent(TextureComponent.class);
-        //textComp.region = atlas.findRegion("icon");
+        TextureComponent textComp = engine.createComponent(TextureComponent.class);
+        textComp.region = atlas.findRegion("plane" + (rand.nextInt((5 - 1) + 1) + 1));
         EnemyComponent enemyComponent = engine.createComponent(EnemyComponent.class);
 
         TransformComponent position = engine.createComponent(TransformComponent.class);
         position.position.set(0, 0, 0);
-        position.scale.x = Gdx.graphics.getWidth() / 480.0f;
-        position.scale.y = Gdx.graphics.getHeight() / 800.0f;
+        position.scale.x = 0.5f * Gdx.graphics.getWidth() / 480.0f;
+        position.scale.y = 0.5f * Gdx.graphics.getHeight() / 800.0f;
 
         BoundsComponent boundsComponent = engine.createComponent(BoundsComponent.class);
 
@@ -98,7 +100,7 @@ public class ObjectFactory {
 
         entity.add(b2dBody);
         entity.add(position);
-        //entity.add(textComp);
+        entity.add(textComp);
         entity.add(enemyComponent);
         entity.add(boundsComponent);
         entity.add(type);
@@ -108,6 +110,7 @@ public class ObjectFactory {
 
         return entity;
     }
+
     public void generateParallaxBackground(TextureAtlas atlas, Parallax parallax) {
         TextureRegion startRegion = atlas.findRegion("startingplace");
         TexturedParallaxLayer startLayer =
@@ -225,6 +228,7 @@ public class ObjectFactory {
         parallax.addLayers(groundLayer);
 
     }
+
     // Create a platform
     public void createPlatform(float x, float y, TextureRegion texture) {
         Entity entity = engine.createEntity();
@@ -250,11 +254,44 @@ public class ObjectFactory {
         engine.addEntity(entity);
     }
 
+    public Entity createStation(float x, float y, TextureAtlas atlas) {
+        Entity entity = engine.createEntity();
+        B2dBodyComponent b2dBody = engine.createComponent(B2dBodyComponent.class);
+        b2dBody.body = bodyFactory.makeSensorBody(x, y,
+                10 * Gdx.graphics.getWidth() / 480.0f, BodyDef.BodyType.StaticBody, true);
+
+        TypeComponent type = engine.createComponent(TypeComponent.class);
+        type.type = TypeComponent.OTHER;
+
+        CollisionComponent collision = engine.createComponent(CollisionComponent.class);
+        collision.collisionEntity = entity;
+        TextureComponent textComp = engine.createComponent(TextureComponent.class);
+        textComp.region = atlas.findRegion("station");
+
+        TransformComponent position = engine.createComponent(TransformComponent.class);
+        position.position.set(0, 0, 0);
+        position.scale.x = 0.5f * Gdx.graphics.getWidth() / 480.0f;
+        position.scale.y = 0.5f * Gdx.graphics.getHeight() / 800.0f;
+
+        b2dBody.body.setUserData(entity);
+
+        entity.add(b2dBody);
+        entity.add(position);
+        entity.add(textComp);
+        entity.add(type);
+        entity.add(collision);
+
+        engine.addEntity(entity);
+
+        return entity;
+    }
+
     // Create a floor entity
     public void createFloor(TextureRegion texture) {
         Entity entity = engine.createEntity();
         B2dBodyComponent b2dBody = engine.createComponent(B2dBodyComponent.class);
-        b2dBody.body = bodyFactory.makeBoxBody(0, 0, 100, 0.2f, BodyFactory.STONE, BodyDef.BodyType.StaticBody);
+        b2dBody.body = bodyFactory.makeBoxBody(0, 0, 100, 0.2f,
+                BodyFactory.STONE, BodyDef.BodyType.StaticBody);
 
         TypeComponent type = engine.createComponent(TypeComponent.class);
         type.type = TypeComponent.SCENERY;
@@ -307,19 +344,27 @@ public class ObjectFactory {
         return entity;
     }
 
-    public Entity createRocket(TextureAtlas atlas, OrthographicCamera camera, ParticleEffect pe, String filePath) {
-        return createRocket(atlas, camera, pe, filePath, null);
+
+    public Entity createRocket(TextureAtlas atlas, OrthographicCamera camera, String filePath, Vector2 rp) {
+        return createRocket(atlas, camera, filePath, rp, null);
     }
 
-    public Entity createRocket(TextureAtlas atlas, OrthographicCamera camera, ParticleEffect pe, String filePath, Vector2 rp) {
+    public Entity createRocket(TextureAtlas atlas, OrthographicCamera camera, String filePath) {
+        return createRocket(atlas, camera, filePath, null, null);
+    }
+
+    public Entity createRocket(TextureAtlas atlas, OrthographicCamera camera, String filePath, ParticleEffect pe) {
+        return createRocket(atlas, camera, filePath, null, pe);
+    }
+
+    public Entity createRocket(TextureAtlas atlas, OrthographicCamera camera, String filePath, Vector2 rp, ParticleEffect pe) {
         XmlReader xmlReader = new XmlReader();
         try {
             FileHandle fileHandle = Gdx.files.local(filePath);
             XmlReader.Element root;
-            if(fileHandle.exists()){
+            if (fileHandle.exists()) {
                 root = xmlReader.parse(Gdx.files.local(filePath));
-            }
-            else {
+            } else {
                 root = xmlReader.parse(Gdx.files.internal(filePath));
             }
             Vector2 rocketPosition = new Vector2();
@@ -366,17 +411,19 @@ public class ObjectFactory {
                     createEngineModule(rocketPosition, atlas,
                             root.getChildByName("EngineModule").getInt("id"), true);
 
+            rocketComponent.health = 10000;
+
             player.camera = camera;
 
             float scaleX = root.getChildByName("Scale").getInt("factor") * Gdx.graphics.getWidth() / 480f;
             float scaleY = root.getChildByName("Scale").getInt("factor") * Gdx.graphics.getHeight() / 800f;
 
-
-            partEffComponent.particleEffect = pe;
-            pe.getEmitters().first().setPosition(rocketPosition.x,
-                    rocketPosition.y - 3 * root.getChildByName("Scale").getInt("factor"));
-
-            partEffComponent.particleEffect.start();
+            if (pe != null) {
+                partEffComponent.particleEffect = pe;
+                pe.getEmitters().first().setPosition(rocketPosition.x,
+                        rocketPosition.y - 3 * root.getChildByName("Scale").getInt("factor"));
+                entity.add(partEffComponent);
+            }
 
             Vector2[] vertices = new Vector2[4];
             vertices[0] = new Vector2(-2 * scaleX, -3 * scaleY);
@@ -397,7 +444,6 @@ public class ObjectFactory {
             entity.add(position);
             entity.add(player);
             entity.add(rocketComponent);
-            entity.add(partEffComponent);
             entity.add(textureComponent);
             entity.add(boundsComponent);
             entity.add(collision);

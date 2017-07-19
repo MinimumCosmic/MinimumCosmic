@@ -1,5 +1,7 @@
 package org.minimumcosmic.game.actors;
 
+import com.badlogic.gdx.graphics.g2d.ParticleEffect;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
@@ -21,18 +23,27 @@ public class BoxItemDropActor extends Image {
     private int numberOfTouch;
     private int boxNumber;
     private TextureAtlas rocketAtlas;
+    private SpriteBatch spriteBatch;
     public BoxItemDropActor(final TextureAtlas.AtlasRegion atlasRegion, final int touch, final Label openCount,
-                            final Dialog dialog, final Skin skin, int boxNumber, TextureAtlas rocketAtlas){
+                            final Dialog dialog, final Skin skin, int boxNumber, TextureAtlas rocketAtlas,
+                            final ParticleEffect effect1, final ParticleEffect effect2){
         super(atlasRegion);
         this.numberOfTouch = touch;
         this.boxNumber = boxNumber;
         this.rocketAtlas = rocketAtlas;
         this.addListener(new InputListener(){
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button){
+                //if (effect.isComplete())
+                //{
                 numberOfTouch = numberOfTouch - 1;
+                effect1.reset();
+                effect1.start();
+                //}
                 openCount.setText("Tap to unlock! " + numberOfTouch);
+
                 if(numberOfTouch == 0){
                     dialog.clear();
+                    effect2.start();
                     getRandomModule(skin, dialog);
                     //dialog.add(new Label("Your prise!", skin));
 

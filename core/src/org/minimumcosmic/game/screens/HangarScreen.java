@@ -95,8 +95,9 @@ public class HangarScreen implements Screen {
         backSprite = textureAtlas.createSprite("background");
         backSprite.setBounds(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 
-        Gdx.input.setCatchBackKey(true);
+        pe = game.AssetManager.assetManager.get("smoke.p");
 
+        Gdx.input.setCatchBackKey(true);
     }
 
     private void init(){
@@ -108,7 +109,6 @@ public class HangarScreen implements Screen {
         renderingSystem = new RenderingSystem(spriteBatch);
         camera = new OrthographicCamera();
         spriteBatch.setProjectionMatrix(camera.combined);
-
 
         engine.addSystem(renderingSystem);
 
@@ -129,11 +129,8 @@ public class HangarScreen implements Screen {
     public void show(){
         init();
 
-
         rocketPosition = new Vector2((Gdx.graphics.getWidth() * 0.75f) * RenderingSystem.PIXELS_TO_METRES, Gdx.graphics.getHeight() / 2 * RenderingSystem.PIXELS_TO_METRES);
-        pe = new ParticleEffect();
-        pe = game.AssetManager.assetManager.get("smoke.p");
-        rocket = objectFactory.createRocket(rocketAtlas, camera, pe, "xml/rocket.xml", rocketPosition);
+        rocket = objectFactory.createRocket(rocketAtlas, camera, "xml/rocket.xml", rocketPosition);
 
         initMappers();
         inventory = SettingsLoader.loadInventory();
@@ -258,10 +255,6 @@ public class HangarScreen implements Screen {
         stage.addActor(listTable);
         stage.addActor(rocketTable);
         stage.addActor(modules);
-
-        pe.getEmitters().first().setPosition(Gdx.graphics.getWidth() / 2, Gdx.graphics.getHeight() / 2);
-        pe.scaleEffect(0.25f);
-        pe.start();
     }
 
     public void createHeadTableArea(final Table table) {

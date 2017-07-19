@@ -8,6 +8,7 @@ import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.ParticleEffect;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.math.Vector2;
@@ -75,6 +76,8 @@ public class ShopScreen implements Screen {
     private ObjectFactory objectFactory;
     private Image moneyIcon;
     private static Array<ArrayList<InventoryCell>> inventory;
+    private ParticleEffect expParticles;
+    private ParticleEffect starParticles;
     private TouchscreenController touchscreenController;
     Sprite backSprite;
 
@@ -90,6 +93,10 @@ public class ShopScreen implements Screen {
         rocketAtlas = game.AssetManager.assetManager.get("images/rocket.atlas");
         boxAtlas = game.AssetManager.assetManager.get("boxes2/box.atlas");
 
+        expParticles = game.AssetManager.assetManager.get("explosion.p");
+        starParticles = game.AssetManager.assetManager.get("star.p");
+        //expParticles.scaleEffect(0.075f);
+
         money = new TextureAtlas(Gdx.files.internal("images/items.atlas"));
 
         moneyIcon = new Image(money.findRegion("icon"));
@@ -103,6 +110,11 @@ public class ShopScreen implements Screen {
     }
 
     public void init(){
+
+
+        expParticles.setPosition(Gdx.graphics.getWidth() / 2, Gdx.graphics.getHeight() / 2);
+        starParticles.setPosition(Gdx.graphics.getWidth() / 2, Gdx.graphics.getHeight() / 2);
+
         engine = new PooledEngine();
         objectFactory = new ObjectFactory(engine);
 
@@ -192,7 +204,7 @@ public class ShopScreen implements Screen {
 
     private void fillSimpleBoxTable(Table simpleBoxTable){
         final BoxActor simpleBox = new BoxActor(boxAtlas.findRegion("box_1"), SIMPLEBOX, skin,
-                stage, researchPoint, rocketAtlas);
+                stage, researchPoint, rocketAtlas, expParticles, starParticles);
         simpleBox.addListener(new InputListener() {
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
                 System.out.println("1");
@@ -204,7 +216,7 @@ public class ShopScreen implements Screen {
 
     private void fillMediumBoxTable(Table mediumBoxTable){
         final BoxActor mediumBox = new BoxActor(boxAtlas.findRegion("box_2"), MEDIUMBOX, skin,
-                stage, researchPoint, rocketAtlas);
+                stage, researchPoint, rocketAtlas, expParticles, starParticles);
         mediumBox.addListener(new InputListener() {
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
                 System.out.println("2");
@@ -216,7 +228,7 @@ public class ShopScreen implements Screen {
 
     private void fillSuperBoxTable(Table superBoxTable){
         final BoxActor superBox = new BoxActor(boxAtlas.findRegion("box_3"), SUPERBOX, skin, stage, researchPoint,
-                rocketAtlas);
+                rocketAtlas, expParticles, starParticles);
         superBox.addListener(new InputListener() {
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
                 System.out.println("3");
@@ -506,12 +518,20 @@ public class ShopScreen implements Screen {
 
         // tell our stage to do actions and draw itself
         stage.act(Math.min(Gdx.graphics.getDeltaTime(), 1 / 30f));
+        expParticles.update(delta);
+        starParticles.update(delta);
 
         stage.getBatch().begin();
         backSprite.draw(stage.getBatch());
+        expParticles.draw(stage.getBatch());
         stage.getBatch().end();
 
         stage.draw();
+
+        stage.getBatch().begin();
+        expParticles.draw(stage.getBatch());
+        starParticles.draw(stage.getBatch());
+        stage.getBatch().end();
 
         if (Gdx.input.isKeyJustPressed(Input.Keys.BACK) || Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
             SettingsSaver.saveInventory(inventory);

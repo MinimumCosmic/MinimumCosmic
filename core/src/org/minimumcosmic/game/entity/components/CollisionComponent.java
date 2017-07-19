@@ -5,5 +5,5 @@ import com.badlogic.ashley.core.Entity;
 
 public class CollisionComponent implements Component {
     public Entity collisionEntity;
-    public float speed;
+    public float speed = 0.0f;
 }

@@ -43,13 +43,25 @@ public class CollisionSystem extends IteratingSystem {
                                 + " Speed: " + speed
                                 + " Health left: " + entity.getComponent(RocketComponent.class).health);
                         }
+                        if (entity.getComponent(RocketComponent.class).health <= 0) {
+                            entity.getComponent(RocketComponent.class).state = -1;
+                        }
                         break;
                     case TypeComponent.SCENERY:
+                        System.out.print("Scenery collision ");
                         if (speed > 200.0f) {
                             entity.getComponent(RocketComponent.class).health -= speed;
                             System.out.println("Inertia: " + entity.getComponent(B2dBodyComponent.class).body.getInertia()
                                     + " Speed: " + speed
                                     + " Health left: " + entity.getComponent(RocketComponent.class).health);
+                        }
+                        else
+                            System.out.print(" Speed: " + speed);
+                        if (speed == 0.0f){
+                            System.out.print(" bug ");
+                        }
+                        if (entity.getComponent(RocketComponent.class).health <= 0) {
+                            entity.getComponent(RocketComponent.class).state = -1;
                         }
                         break;
                     case TypeComponent.PICKUP:
@@ -58,6 +70,8 @@ public class CollisionSystem extends IteratingSystem {
                         entity.getComponent(PickupComponent.class).count++;
                         break;
                     case TypeComponent.OTHER:
+                        System.out.println("You've made it");
+                        entity.getComponent(RocketComponent.class).state = 1;
                         break;
 
                 }

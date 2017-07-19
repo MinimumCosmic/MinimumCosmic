@@ -9,3 +9,75 @@ icon
   orig: 32, 32
   offset: 0, 0
   index: -1
+
+plane7.png
+format: RGBA8888
+filter: MipMapLinearLinear,MipMapLinearLinear
+repeat: none
+plane1
+  rotate: false
+  xy: 0, 0
+  size: 250, 69
+  orig: 250, 69
+  offset: 0, 0
+  index: -1
+
+plane8.png
+format: RGBA8888
+filter: MipMapLinearLinear,MipMapLinearLinear
+repeat: none
+plane2
+  rotate: false
+  xy: 0, 0
+  size: 280, 101
+  orig: 280, 101
+  offset: 0, 0
+  index: -1
+
+plane9.png
+format: RGBA8888
+filter: MipMapLinearLinear,MipMapLinearLinear
+repeat: none
+plane3
+  rotate: false
+  xy: 0, 0
+  size: 250, 104
+  orig: 250, 104
+  offset: 0, 0
+  index: -1
+
+plane10.png
+format: RGBA8888
+filter: MipMapLinearLinear,MipMapLinearLinear
+repeat: none
+plane4
+  rotate: false
+  xy: 0, 0
+  size: 300, 73
+  orig: 300, 73
+  offset: 0, 0
+  index: -1
+
+plane14.png
+format: RGBA8888
+filter: MipMapLinearLinear,MipMapLinearLinear
+repeat: none
+plane5
+  rotate: false
+  xy: 0, 0
+  size: 518, 100
+  orig: 518, 100
+  offset: 0, 0
+  index: -1
+
+SS1.png
+format: RGBA8888
+filter: MipMapLinearLinear,MipMapLinearLinear
+repeat: none
+station
+  rotate: false
+  xy: 0, 0
+  size: 1024, 1024
+  orig: 1024, 1024
+  offset: 0, 0
+  index: -1

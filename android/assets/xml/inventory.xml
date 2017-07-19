@@ -11,12 +11,12 @@
 	</BodyModules>
 	<FinsModules>
 		<Module id="1" amount="4"/>
-		<Module id="2" amount="3"/>
+		<Module id="2" amount="6"/>
 		<Module id="3" amount="1"/>
 	</FinsModules>
 	<EngineModules>
-		<Module id="1" amount="3"/>
+		<Module id="1" amount="5"/>
 		<Module id="2" amount="3"/>
-		<Module id="3" amount="2"/>
+		<Module id="3" amount="3"/>
 	</EngineModules>
 </Inventory>

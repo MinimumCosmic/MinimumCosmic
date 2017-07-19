@@ -18,6 +18,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import org.minimumcosmic.game.BodyFactory;
 import org.minimumcosmic.game.MinimumCosmic;
 import org.minimumcosmic.game.ObjectFactory;
+import org.minimumcosmic.game.entity.components.TransformComponent;
 import org.minimumcosmic.game.entity.systems.*;
 import org.minimumcosmic.game.loader.SettingsLoader;
 import org.minimumcosmic.game.saver.SettingsSaver;
@@ -48,6 +49,8 @@ public class GameScreen implements Screen {
     private Parallax parallaxBackground;
     private Parallax parallaxForeground;
     private ParticleEffect smokeParticles;
+    private ParticleEffect explosionParticles;
+    private float countDown = .75f;
 
 
     public GameScreen(MinimumCosmic game) {
@@ -61,11 +64,14 @@ public class GameScreen implements Screen {
         smokeParticles = game.AssetManager.assetManager.get("smoke.p");
         smokeParticles.scaleEffect(0.075f);
 
+        explosionParticles = game.AssetManager.assetManager.get("explosion.p");
+
         Gdx.input.setCatchBackKey(true);
     }
 
     @Override
     public void show() {
+        explosionParticles.allowCompletion();
         stage = new Stage();
         controller = new KeyboardController();
         engine = new PooledEngine();
@@ -88,8 +94,7 @@ public class GameScreen implements Screen {
         engine.addSystem(new BoundsSystem());
         engine.addSystem(new EnemySystem());
 
-        rocket = objectFactory.createRocket(textureAtlas, camera,
-                smokeParticles, "xml/rocket.xml");
+        rocket = objectFactory.createRocket(textureAtlas, camera, "xml/rocket.xml", smokeParticles);
         objectFactory.createFloor(textureAtlas.findRegion("player"));
         objectFactory.generateWorld(new TextureAtlas("images/items.atlas"));
         objectFactory.generateParallaxBackground(new TextureAtlas("images/parallaxbnd.atlas"), parallaxBackground);
@@ -145,9 +150,26 @@ public class GameScreen implements Screen {
 
         spriteBatch.begin();
         parallaxForeground.draw(camera, spriteBatch);
+        explosionParticles.draw(spriteBatch, delta);
         spriteBatch.end();
 
         stage.draw();
+
+        switch (rocket.getComponent(RocketComponent.class).state) {
+            case 1:
+                game.changeScreen(MinimumCosmic.WIN);
+                break;
+            case -1:
+                explosionParticles.setPosition(rocket.getComponent(TransformComponent.class).position.x,
+                        rocket.getComponent(TransformComponent.class).position.y);
+
+                explosionParticles.start();
+                countDown -= delta;
+                if (countDown < 0.0f) {
+                    game.changeScreen(MinimumCosmic.LOSE);
+                }
+                break;
+        }
 
         if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE) || Gdx.input.isKeyJustPressed(Input.Keys.BACK)) {
             SettingsSaver.saveResearchPoint(rocket.getComponent(PickupComponent.class).count

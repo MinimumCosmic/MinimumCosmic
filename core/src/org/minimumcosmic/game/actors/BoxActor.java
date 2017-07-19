@@ -1,6 +1,7 @@
 package org.minimumcosmic.game.actors;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.g2d.ParticleEffect;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
@@ -17,7 +18,7 @@ public class BoxActor extends Image {
     private int boxNumber;
     private int boxCost;
     public BoxActor(final TextureAtlas.AtlasRegion atlasRegion, final int boxNumber, final Skin skin, final Stage stage,
-                    final Label researchPoint, final TextureAtlas rocketAtlas) {
+                    final Label researchPoint, final TextureAtlas rocketAtlas, final ParticleEffect effect1, final ParticleEffect effect2) {
         super(atlasRegion);
         setBoxCost(boxNumber);
         this.boxNumber = boxNumber;
@@ -31,7 +32,7 @@ public class BoxActor extends Image {
                     tmpDialogTable.add(openCount);
                     tmpDialogTable.row();
                     org.minimumcosmic.game.actors.BoxItemDropActor boxImage = new org.minimumcosmic.game.actors.BoxItemDropActor(atlasRegion, 5, openCount,
-                            dialog, skin, boxNumber, rocketAtlas);
+                            dialog, skin, boxNumber, rocketAtlas, effect1, effect2);
                     tmpDialogTable.add(boxImage).width(Gdx.graphics.getHeight() * 0.25f)
                             .height(Gdx.graphics.getHeight() * 0.25f);
                     dialog.add(tmpDialogTable);
